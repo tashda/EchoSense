@@ -18,8 +18,8 @@ A modular Swift engine for building database-aware SQL autocompletion.
 
 ## Usage
 
-1. Add the package to your project (Xcode > File > Add Packages… and point to this repo once it’s pushed).
-2. Adopt `SQLMetadataProvider` to expose schemas, objects, and columns from your app’s cache or API.
+1. Add the package to your project (Xcode > File > Add Packages… and point to this repo once it's pushed).
+2. Adopt `SQLMetadataProvider` to expose schemas, objects, and columns from your app's cache or API.
 3. Construct `SQLCompletionRequest` whenever you need completions and call `SQLCompletionEngine().completions(for:)`.
 4. Render `SQLCompletionSuggestion` results however you like (popover, menu, table view, etc.).
 
