@@ -13,24 +13,31 @@ struct SQLIdentifierQuoter {
     private let reservedWords: Set<String>
 
     static func forDialect(_ dialect: SQLDialect) -> SQLIdentifierQuoter {
-        let keywords = SQLReservedKeywords.allLowercased
         switch dialect {
         case .postgresql:
+            var keywords = SQLReservedKeywords.allLowercased
+            // Allow unquoted use of the common "public" schema in PostgreSQL.
+            // It is technically a reserved word in some SQL dialects, but in
+            // practice users expect to write it without quotes.
+            keywords.remove("public")
             return SQLIdentifierQuoter(openingQuote: "\"",
                                        closingQuote: "\"",
                                        rules: [.camelCase, .reservedWord, .whitespace],
                                        reservedWords: keywords)
         case .mysql:
+            let keywords = SQLReservedKeywords.allLowercased
             return SQLIdentifierQuoter(openingQuote: "`",
                                        closingQuote: "`",
                                        rules: [.reservedWord, .whitespace],
                                        reservedWords: keywords)
         case .sqlite:
+            let keywords = SQLReservedKeywords.allLowercased
             return SQLIdentifierQuoter(openingQuote: "\"",
                                        closingQuote: "\"",
                                        rules: [.reservedWord, .whitespace],
                                        reservedWords: keywords)
         case .microsoftSQL:
+            let keywords = SQLReservedKeywords.allLowercased
             return SQLIdentifierQuoter(openingQuote: "[",
                                        closingQuote: "]",
                                        rules: [.reservedWord, .whitespace],

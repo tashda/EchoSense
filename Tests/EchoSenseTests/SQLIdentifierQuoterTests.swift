@@ -8,7 +8,8 @@ func postgresQuotingRules() async throws {
     #expect(quoter.quoteIfNeeded("select") == "\"select\"")
     #expect(quoter.quoteIfNeeded("already_quoted") == "already_quoted")
     #expect(quoter.quoteIfNeeded("\"quoted\"") == "\"quoted\"")
-    #expect(quoter.qualify(["public", "Order Items"]) == "\"public\".\"Order Items\"")
+    // "public" is intentionally excluded from reserved-word quoting in PostgreSQL
+    #expect(quoter.qualify(["public", "Order Items"]) == "public.\"Order Items\"")
 }
 
 @Test
