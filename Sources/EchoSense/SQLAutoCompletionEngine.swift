@@ -677,12 +677,12 @@ public final class SQLAutoCompletionEngine {
             ]
 
             if !tokenLower.isEmpty &&
-                comparisonPool.contains(where: { $0.hasPrefix(tokenLower) }) {
+                comparisonPool.contains(where: { FuzzyMatcher.match(pattern: tokenLower, candidate: $0) != nil }) {
                 return true
             }
 
             if !prefixLower.isEmpty &&
-                comparisonPool.contains(where: { $0.hasPrefix(prefixLower) }) {
+                comparisonPool.contains(where: { FuzzyMatcher.match(pattern: prefixLower, candidate: $0) != nil }) {
                 return true
             }
         }
@@ -708,14 +708,14 @@ public final class SQLAutoCompletionEngine {
 
         if let targetComponent,
            !tokenLower.isEmpty,
-           targetComponent.hasPrefix(tokenLower),
+           FuzzyMatcher.match(pattern: tokenLower, candidate: targetComponent) != nil,
            pathMatches() {
             return true
         }
 
         if let targetComponent,
            !prefixLower.isEmpty,
-           targetComponent.hasPrefix(prefixLower),
+           FuzzyMatcher.match(pattern: prefixLower, candidate: targetComponent) != nil,
            pathMatches() {
             return true
         }
@@ -726,11 +726,11 @@ public final class SQLAutoCompletionEngine {
 
         let insertLower = suggestion.insertText.lowercased()
 
-        if !tokenLower.isEmpty && insertLower.hasPrefix(tokenLower) {
+        if !tokenLower.isEmpty && FuzzyMatcher.match(pattern: tokenLower, candidate: insertLower) != nil {
             return true
         }
 
-        if !prefixLower.isEmpty && insertLower.hasPrefix(prefixLower) {
+        if !prefixLower.isEmpty && FuzzyMatcher.match(pattern: prefixLower, candidate: insertLower) != nil {
             return true
         }
 
@@ -768,7 +768,11 @@ public final class SQLAutoCompletionEngine {
         }
 
         if !tokenLower.isEmpty {
-            return suggestion.title.lowercased().hasPrefix(tokenLower)
+            // Exact prefix match first, then fall back to fuzzy matching
+            if suggestion.title.lowercased().hasPrefix(tokenLower) {
+                return true
+            }
+            return FuzzyMatcher.match(pattern: tokenLower, candidate: suggestion.title) != nil
         }
 
         return true
@@ -949,8 +953,6 @@ public final class SQLAutoCompletionEngine {
         case .snippet: return .snippet
         case .parameter: return .parameter
         case .join: return .join
-        default:
-            return nil
         }
     }
 

@@ -181,6 +181,13 @@ private struct IdentifierContext {
         guard !lowercasePrefix.isEmpty else { return true }
         return candidate.lowercased().hasPrefix(lowercasePrefix)
     }
+
+    /// Returns a fuzzy match score (0.0–1.0) or nil if no match.
+    /// Prefix matches always win (score 0.95–1.0), fuzzy is lower.
+    func fuzzyScore(for candidate: String) -> Double? {
+        guard !lowercasePrefix.isEmpty else { return 1.0 }
+        return FuzzyMatcher.match(pattern: lowercasePrefix, candidate: candidate)?.score
+    }
 }
 
 private struct TableResolution {
@@ -196,7 +203,6 @@ private struct KeywordSuggestionProvider: SuggestionProvider {
     func suggestions(in context: ProviderContext) -> [SQLCompletionSuggestion] {
         let keywords = context.keywordProvider.keywords(for: context.dialect,
                                                         context: context.sqlContext)
-        let prefix = context.identifier.lowercasePrefix
 
         var seen = Set<String>()
         var results: [SQLCompletionSuggestion] = []
@@ -204,13 +210,16 @@ private struct KeywordSuggestionProvider: SuggestionProvider {
         for keyword in keywords {
             let lower = keyword.lowercased()
             guard seen.insert(lower).inserted else { continue }
-            if !prefix.isEmpty && !lower.hasPrefix(prefix) {
+
+            guard let score = context.identifier.fuzzyScore(for: lower) else {
                 continue
             }
 
             let (display, insert) = KeywordSuggestionProvider.casedKeyword(keyword,
                                                                            option: context.request.options.keywordCasing)
-            let priority = KeywordSuggestionProvider.priority(for: context.sqlContext.clause)
+            let basePriority = KeywordSuggestionProvider.priority(for: context.sqlContext.clause)
+            let fuzzyAdjustment = score < 0.95 ? Int(-100 * (1.0 - score)) : 0
+            let priority = basePriority + fuzzyAdjustment
 
             results.append(SQLCompletionSuggestion(id: "keyword|\(lower)",
                                                    title: display,
@@ -266,12 +275,11 @@ private struct SchemaSuggestionProvider: SuggestionProvider {
             return []
         }
 
-        let prefix = identifier.lowercasePrefix
         let selectedDatabase = context.request.selectedDatabase
         var results: [SQLCompletionSuggestion] = []
 
         for schema in context.catalog.schemas {
-            if !prefix.isEmpty && !schema.name.lowercased().hasPrefix(prefix) {
+            guard let score = context.identifier.fuzzyScore(for: schema.name) else {
                 continue
             }
 
@@ -284,6 +292,7 @@ private struct SchemaSuggestionProvider: SuggestionProvider {
 
             let insertText = context.qualify(components) + "."
             let detail = selectedDatabase.map { "\($0).\(schema.name)" }
+            let fuzzyAdjustment = score < 0.95 ? Int(-100 * (1.0 - score)) : 0
 
             results.append(SQLCompletionSuggestion(id: "schema|\(schema.name.lowercased())",
                                                    title: schema.name,
@@ -291,7 +300,7 @@ private struct SchemaSuggestionProvider: SuggestionProvider {
                                                    detail: detail,
                                                    insertText: insertText,
                                                    kind: .schema,
-                                                   priority: 950))
+                                                   priority: 950 + fuzzyAdjustment))
         }
 
         return results
@@ -309,7 +318,6 @@ private struct TableSuggestionProvider: SuggestionProvider {
         guard isObjectClause else { return [] }
 
         let identifier = context.identifier
-        let prefix = identifier.lowercasePrefix
 
         let schemaFilterLower = identifier.precedingLowercased.last
         let exactSchema = schemaFilterLower.flatMap { filter in
@@ -333,8 +341,7 @@ private struct TableSuggestionProvider: SuggestionProvider {
             }
 
             for object in schema.objects where Self.supportedObjectTypes.contains(object.type) {
-                let objectLower = object.name.lowercased()
-                if !prefix.isEmpty && !objectLower.hasPrefix(prefix) {
+                guard let fuzzyScore = context.identifier.fuzzyScore(for: object.name) else {
                     continue
                 }
 
@@ -359,10 +366,13 @@ private struct TableSuggestionProvider: SuggestionProvider {
                     insertText += " \(alias)"
                 }
 
+                let objectLower = object.name.lowercased()
                 let id = "object|\(schema.name.lowercased())|\(objectLower)"
-                let priority = Self.priority(for: clause,
+                let basePriority = Self.priority(for: clause,
                                              schema: schema,
                                              defaultSchemaLower: context.defaultSchemaLowercased)
+                let fuzzyAdjustment = fuzzyScore < 0.95 ? Int(-100 * (1.0 - fuzzyScore)) : 0
+                let priority = basePriority + fuzzyAdjustment
 
                 results.append(SQLCompletionSuggestion(id: id,
                                                        title: object.name,
@@ -534,11 +544,10 @@ private struct JoinSuggestionProvider: SuggestionProvider {
                                                                               defaultSchemaLower: context.defaultSchemaLowercased,
                                                                               context: context)
 
-                if !prefix.isEmpty &&
-                    !identifierText.lowercased().hasPrefix(prefix) &&
-                    !displayName.lowercased().hasPrefix(prefix) &&
-                    !(alias?.lowercased().hasPrefix(prefix) ?? false) {
-                    continue
+                if !prefix.isEmpty {
+                    let candidates = [identifierText, displayName] + (alias.map { [$0] } ?? [])
+                    let bestScore = candidates.compactMap { FuzzyMatcher.match(pattern: prefix, candidate: $0)?.score }.max()
+                    guard bestScore != nil else { continue }
                 }
 
                 let coreInsert = "\(identifierText)\(alias.map { " \($0)" } ?? "") ON \(expression)"
@@ -585,11 +594,10 @@ private struct JoinSuggestionProvider: SuggestionProvider {
                                                                                   defaultSchemaLower: context.defaultSchemaLowercased,
                                                                                   context: context)
 
-                    if !prefix.isEmpty &&
-                        !identifierText.lowercased().hasPrefix(prefix) &&
-                        !displayName.lowercased().hasPrefix(prefix) &&
-                        !(alias?.lowercased().hasPrefix(prefix) ?? false) {
-                        continue
+                    if !prefix.isEmpty {
+                        let candidates = [identifierText, displayName] + (alias.map { [$0] } ?? [])
+                        let bestScore = candidates.compactMap { FuzzyMatcher.match(pattern: prefix, candidate: $0)?.score }.max()
+                        guard bestScore != nil else { continue }
                     }
 
                     let coreInsert = "\(identifierText)\(alias.map { " \($0)" } ?? "") ON \(expression)"
@@ -933,12 +941,16 @@ private struct ColumnSuggestionProvider: SuggestionProvider {
 
         for column in resolution.object.columns {
             let lower = column.name.lowercased()
-            if !prefix.isEmpty && !lower.hasPrefix(prefix) {
-                continue
+            var fuzzyPenalty = 0
+            if !prefix.isEmpty {
+                guard let score = FuzzyMatcher.match(pattern: prefix, candidate: column.name)?.score else {
+                    continue
+                }
+                if score < 0.95 { fuzzyPenalty = Int(-100 * (1.0 - score)) }
             }
 
             let baseID = "column|\(resolution.schema.name.lowercased())|\(resolution.object.name.lowercased())|\(lower)"
-            let priority = Self.priority(for: clause) + ColumnSuggestionProvider.priorityBoost(for: column)
+            let priority = Self.priority(for: clause) + ColumnSuggestionProvider.priorityBoost(for: column) + fuzzyPenalty
 
             if includeAlias, let alias = tableRef.alias {
                 let aliasKey = baseID + "|alias=" + alias.lowercased()
@@ -993,12 +1005,16 @@ private struct ColumnSuggestionProvider: SuggestionProvider {
 
         for column in columns {
             let lower = column.lowercased()
-            if !prefix.isEmpty && !lower.hasPrefix(prefix) {
-                continue
+            var fuzzyPenalty = 0
+            if !prefix.isEmpty {
+                guard let score = FuzzyMatcher.match(pattern: prefix, candidate: column)?.score else {
+                    continue
+                }
+                if score < 0.95 { fuzzyPenalty = Int(-100 * (1.0 - score)) }
             }
 
             let baseID = "cte|\(qualifier.lowercased())|\(lower)"
-            let priority = Self.priority(for: clause)
+            let priority = Self.priority(for: clause) + fuzzyPenalty
 
             if includeAlias, let alias = tableRef.alias {
                 let aliasKey = baseID + "|alias=" + alias.lowercased()
@@ -1068,20 +1084,20 @@ private struct FunctionSuggestionProvider: SuggestionProvider {
         let isColumnClause = Self.supportedClauses.contains(clause) || context.hasColumnKeywordContext
         guard isColumnClause else { return [] }
 
-        let prefix = context.identifier.lowercasePrefix
         var results: [SQLCompletionSuggestion] = []
         var seen = Set<String>()
 
         for schema in context.catalog.schemas {
             for object in schema.objects where object.type == .function {
                 let lower = object.name.lowercased()
-                if !prefix.isEmpty && !lower.hasPrefix(prefix) {
+                guard let score = context.identifier.fuzzyScore(for: object.name) else {
                     continue
                 }
                 let id = "function|\(schema.name.lowercased())|\(lower)"
                 guard seen.insert(id).inserted else { continue }
 
-                let priority = Self.priority(for: clause)
+                let fuzzyAdjustment = score < 0.95 ? Int(-100 * (1.0 - score)) : 0
+                let priority = Self.priority(for: clause) + fuzzyAdjustment
                 results.append(SQLCompletionSuggestion(id: id,
                                                        title: object.name,
                                                        subtitle: schema.name,
@@ -1115,14 +1131,13 @@ private struct ParameterSuggestionProvider: SuggestionProvider {
     func suggestions(in context: ProviderContext) -> [SQLCompletionSuggestion] {
         guard Self.supportedClauses.contains(context.sqlContext.clause) else { return [] }
 
-        let prefix = context.identifier.lowercasePrefix
         let candidates = SQLParameterSuggester.parameterSuggestions(for: context.request.text,
                                                                     dialect: context.dialect)
         var results: [SQLCompletionSuggestion] = []
 
         for candidate in candidates {
             let lower = candidate.lowercased()
-            if !prefix.isEmpty && !lower.hasPrefix(prefix) {
+            guard context.identifier.fuzzyScore(for: candidate) != nil else {
                 continue
             }
             results.append(SQLCompletionSuggestion(id: "parameter|\(lower)",
@@ -1147,22 +1162,21 @@ private struct SnippetSuggestionProvider: SuggestionProvider {
         let allowedGroups = Self.allowedGroups(for: context.sqlContext.clause)
         guard !allowedGroups.isEmpty else { return [] }
 
-        let prefix = context.identifier.lowercasePrefix
         let snippets = SQLSnippetCatalog.snippets(for: context.dialect)
 
         var results: [SQLCompletionSuggestion] = []
         for snippet in snippets where allowedGroups.contains(snippet.group) {
-            let lowerTitle = snippet.title.lowercased()
-            if !prefix.isEmpty && !lowerTitle.hasPrefix(prefix) {
+            guard let score = context.identifier.fuzzyScore(for: snippet.title) else {
                 continue
             }
+            let fuzzyAdjustment = score < 0.95 ? Int(-100 * (1.0 - score)) : 0
             results.append(SQLCompletionSuggestion(id: "snippet|\(snippet.id)",
                                                    title: snippet.title,
                                                    subtitle: "Snippet",
                                                    detail: snippet.detail,
                                                    insertText: snippet.insertText,
                                                    kind: .snippet,
-                                                   priority: snippet.priority))
+                                                   priority: snippet.priority + fuzzyAdjustment))
         }
 
         return results

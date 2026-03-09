@@ -107,8 +107,10 @@ public final class SQLAutoCompletionHistoryStore: @unchecked Sendable {
                     Self.score(for: lhs, now: now) > Self.score(for: rhs, now: now)
                 }
                 .compactMap { entry -> SQLAutoCompletionSuggestion? in
-                    let titleLower = entry.suggestion.title.lowercased()
-                    if normalizedPrefix.isEmpty || titleLower.hasPrefix(normalizedPrefix) {
+                    if normalizedPrefix.isEmpty {
+                        return entry.suggestion.withSource(.history)
+                    }
+                    if FuzzyMatcher.match(pattern: normalizedPrefix, candidate: entry.suggestion.title) != nil {
                         return entry.suggestion.withSource(.history)
                     }
                     return nil
