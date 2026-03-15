@@ -1,8 +1,12 @@
 import Foundation
 
+/// Generic trie for fast prefix-based lookups with weighted entries.
+///
+/// Thread-safety: Uses NSLock for all mutations and reads.
+/// Not converted to `actor` because callers require synchronous access.
 final class PrefixTrie<Value: Sendable>: @unchecked Sendable {
 
-    struct Entry: Sendable {
+    struct TrieEntry: Sendable {
         let key: String
         let value: Value
         var weight: Double
@@ -12,7 +16,7 @@ final class PrefixTrie<Value: Sendable>: @unchecked Sendable {
 
     private final class Node {
         var children: [Character: Node] = [:]
-        var entry: Entry?
+        var entry: TrieEntry?
     }
 
     // MARK: - State
@@ -50,7 +54,7 @@ final class PrefixTrie<Value: Sendable>: @unchecked Sendable {
         if current.entry == nil {
             _count += 1
         }
-        current.entry = Entry(key: key, value: value, weight: weight)
+        current.entry = TrieEntry(key: key, value: value, weight: weight)
     }
 
     // MARK: - Update Weight
@@ -70,7 +74,7 @@ final class PrefixTrie<Value: Sendable>: @unchecked Sendable {
 
     // MARK: - Search
 
-    func search(prefix: String, limit: Int = 50) -> [Entry] {
+    func search(prefix: String, limit: Int = 50) -> [TrieEntry] {
         let lowered = prefix.lowercased()
         lock.lock()
         defer { lock.unlock() }
@@ -85,7 +89,7 @@ final class PrefixTrie<Value: Sendable>: @unchecked Sendable {
         }
 
         // Collect all terminal descendants.
-        var results: [Entry] = []
+        var results: [TrieEntry] = []
         collectEntries(from: current, into: &results)
 
         // Sort by weight descending, then alphabetically for stability.
@@ -137,7 +141,7 @@ final class PrefixTrie<Value: Sendable>: @unchecked Sendable {
         return current
     }
 
-    private func collectEntries(from node: Node, into results: inout [Entry]) {
+    private func collectEntries(from node: Node, into results: inout [TrieEntry]) {
         if let entry = node.entry {
             results.append(entry)
         }
