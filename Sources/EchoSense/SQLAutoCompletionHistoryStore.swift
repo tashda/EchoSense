@@ -1,7 +1,12 @@
 import Foundation
 
+/// Tracks user selection history with frequency/recency scoring.
+///
+/// Thread-safety: Uses concurrent DispatchQueue with barrier writes (reader-writer pattern).
+/// Not converted to `actor` because the completion engine requires synchronous access
+/// from `rankSuggestions()` via `weight(for:context:)`.
 public final class SQLAutoCompletionHistoryStore: @unchecked Sendable {
-    struct Entry: Sendable {
+    struct HistoryEntry: Sendable {
         var suggestion: SQLAutoCompletionSuggestion
         var lastUsed: Date
         var usageCount: Int
@@ -9,7 +14,7 @@ public final class SQLAutoCompletionHistoryStore: @unchecked Sendable {
 
     public static let shared = SQLAutoCompletionHistoryStore()
 
-    private var storage: [String: [Entry]] = [:]
+    private var storage: [String: [HistoryEntry]] = [:]
     private let queue = DispatchQueue(label: "com.fuzee.sqlautocompletion.history", attributes: .concurrent)
     private let maxEntriesPerContext = 20
     private let fileURL: URL
@@ -42,15 +47,15 @@ public final class SQLAutoCompletionHistoryStore: @unchecked Sendable {
 
     public struct Snapshot: Codable, Sendable {
         var version: Int
-        var entriesByContext: [String: [PersistedEntry]]
+        var entriesByContext: [String: [PersistedHistoryEntry]]
     }
 
-    struct PersistedEntry: Codable, Sendable {
+    struct PersistedHistoryEntry: Codable, Sendable {
         var suggestion: SQLAutoCompletionSuggestion
         var lastUsed: Date
         var usageCount: Int
 
-        init(entry: Entry) {
+        init(entry: HistoryEntry) {
             var storedSuggestion = entry.suggestion
             storedSuggestion = storedSuggestion.withSource(.history)
             self.suggestion = storedSuggestion
@@ -58,8 +63,8 @@ public final class SQLAutoCompletionHistoryStore: @unchecked Sendable {
             self.usageCount = entry.usageCount
         }
 
-        func makeEntry() -> Entry {
-            Entry(suggestion: suggestion.withSource(.history),
+        func makeEntry() -> HistoryEntry {
+            HistoryEntry(suggestion: suggestion.withSource(.history),
                   lastUsed: lastUsed,
                   usageCount: max(usageCount, 1))
         }
@@ -79,7 +84,7 @@ public final class SQLAutoCompletionHistoryStore: @unchecked Sendable {
                 entries[index].lastUsed = now
                 entries[index].usageCount += 1
             } else {
-                entries.append(Entry(suggestion: storedSuggestion,
+                entries.append(HistoryEntry(suggestion: storedSuggestion,
                                      lastUsed: now,
                                      usageCount: 1))
             }
@@ -107,8 +112,10 @@ public final class SQLAutoCompletionHistoryStore: @unchecked Sendable {
                     Self.score(for: lhs, now: now) > Self.score(for: rhs, now: now)
                 }
                 .compactMap { entry -> SQLAutoCompletionSuggestion? in
-                    let titleLower = entry.suggestion.title.lowercased()
-                    if normalizedPrefix.isEmpty || titleLower.hasPrefix(normalizedPrefix) {
+                    if normalizedPrefix.isEmpty {
+                        return entry.suggestion.withSource(.history)
+                    }
+                    if FuzzyMatcher.match(pattern: normalizedPrefix, candidate: entry.suggestion.title) != nil {
                         return entry.suggestion.withSource(.history)
                     }
                     return nil
@@ -131,7 +138,7 @@ public final class SQLAutoCompletionHistoryStore: @unchecked Sendable {
         return weight
     }
 
-    private static func score(for entry: Entry, now: Date) -> Double {
+    private static func score(for entry: HistoryEntry, now: Date) -> Double {
         let recency = now.timeIntervalSince(entry.lastUsed)
         let recencyDecay = max(0, 3600 - recency) / 10.0
         let frequencyBoost = Double(entry.usageCount) * 45.0
@@ -225,7 +232,8 @@ public final class SQLAutoCompletionHistoryStore: @unchecked Sendable {
     private func scheduleSaveLocked() {
         saveWorkItem?.cancel()
         let workItem = DispatchWorkItem { [weak self] in
-            self?.queue.async(flags: .barrier) {
+            guard let self else { return }
+            self.queue.async(flags: .barrier) { [weak self] in
                 self?.persistImmediatelyLocked()
             }
         }
@@ -235,7 +243,7 @@ public final class SQLAutoCompletionHistoryStore: @unchecked Sendable {
 
     private func makeSnapshotLocked() -> Snapshot {
         let entries = storage.mapValues { contextEntries in
-            contextEntries.map { PersistedEntry(entry: $0) }
+            contextEntries.map { PersistedHistoryEntry(entry: $0) }
         }
         return Snapshot(version: persistenceVersion, entriesByContext: entries)
     }
@@ -257,7 +265,7 @@ public final class SQLAutoCompletionHistoryStore: @unchecked Sendable {
             let data = try Data(contentsOf: fileURL)
             let snapshot = try decoder.decode(Snapshot.self, from: data)
             guard snapshot.version == persistenceVersion else { return }
-            var restored: [String: [Entry]] = [:]
+            var restored: [String: [HistoryEntry]] = [:]
             for (context, entries) in snapshot.entriesByContext {
                 let mapped = entries.map { $0.makeEntry() }
                 if !mapped.isEmpty {

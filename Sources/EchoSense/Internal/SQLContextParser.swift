@@ -75,7 +75,7 @@ public final class SQLContextParser {
         let range: NSRange
     }
 
-    private let text: String
+    let text: String
     private let caretLocation: Int
     private let dialect: SQLDialect
     private let catalog: SQLDatabaseCatalog
@@ -103,7 +103,11 @@ public final class SQLContextParser {
         let tableMatches = parseTableMatches()
         let tables = deduplicatedReferences(from: tableMatches)
         let focusTable = inferFocusTable(matches: tableMatches, caretLocation: trimmedLocation)
-        let cteColumns = parseCTEColumns()
+        var cteColumns = parseCTEColumns()
+        let derivedColumns = parseDerivedTableColumns()
+        for (key, columns) in derivedColumns where cteColumns[key] == nil {
+            cteColumns[key] = columns
+        }
 
         return SQLContext(caretLocation: trimmedLocation,
                           currentToken: token,
@@ -145,130 +149,31 @@ public final class SQLContextParser {
     }
 
     private func inferClause(tokens: [SQLToken], caretLocation: Int) -> SQLClause {
-        var clause: SQLClause = .unknown
-        var pendingGroupBy = false
-        var pendingOrderBy = false
-        var encounteredInsert = false
-        var encounteredUpdate = false
-        var encounteredDelete = false
-        var insertColumnDepth = 0
-
+        var machine = ClauseStateMachine()
         for token in tokens {
             guard token.range.location < caretLocation else { break }
-            let value = token.lowercased
-            switch token.kind {
-            case .keyword, .identifier:
-                switch value {
-                case "with":
-                    clause = .withCTE
-                case "select":
-                    clause = .selectList
-                    pendingGroupBy = false
-                    pendingOrderBy = false
-                    encounteredInsert = false
-                    encounteredUpdate = false
-                    encounteredDelete = false
-                    insertColumnDepth = 0
-                case "from":
-                    clause = .from
-                case "join", "inner", "left", "right", "full", "outer", "cross":
-                    clause = .joinTarget
-                case "on":
-                    clause = .joinCondition
-                case "where":
-                    clause = .whereClause
-                case "group":
-                    pendingGroupBy = true
-                case "order":
-                    pendingOrderBy = true
-                case "by":
-                    if pendingGroupBy {
-                        clause = .groupBy
-                        pendingGroupBy = false
-                    } else if pendingOrderBy {
-                        clause = .orderBy
-                        pendingOrderBy = false
-                    }
-                case "having":
-                    clause = .having
-                case "limit":
-                    clause = .limit
-                case "offset":
-                    clause = .offset
-                case "insert":
-                    encounteredInsert = true
-                    encounteredUpdate = false
-                    encounteredDelete = false
-                    insertColumnDepth = 0
-                    clause = .from
-                case "into" where encounteredInsert:
-                    clause = .from
-                case "values":
-                    clause = .values
-                    encounteredInsert = false
-                    insertColumnDepth = 0
-                case "update":
-                    encounteredUpdate = true
-                    encounteredInsert = false
-                    encounteredDelete = false
-                    insertColumnDepth = 0
-                    clause = .from
-                case "set" where encounteredUpdate:
-                    clause = .updateSet
-                case "delete":
-                    encounteredDelete = true
-                    encounteredInsert = false
-                    encounteredUpdate = false
-                    insertColumnDepth = 0
-                    clause = .from
-                case "returning":
-                    clause = .selectList
-                default:
-                    continue
-                }
-            default:
-                if token.text == "," {
-                    if clause == .insertColumns {
-                        clause = .insertColumns
-                    } else if clause == .from || clause == .joinTarget {
-                        clause = .from
-                    } else if clause == .selectList || clause == .groupBy || clause == .orderBy {
-                        // clause stays the same for comma-separated expressions
-                    }
-                } else if token.text == "(" {
-                    pendingGroupBy = false
-                    pendingOrderBy = false
-                    if encounteredInsert && clause == .from {
-                        clause = .insertColumns
-                        insertColumnDepth += 1
-                    } else if insertColumnDepth > 0 {
-                        insertColumnDepth += 1
-                    }
-                } else if token.text == ")" {
-                    if insertColumnDepth > 0 {
-                        insertColumnDepth -= 1
-                        if insertColumnDepth == 0 {
-                            clause = .from
-                        }
-                    }
-                }
-            }
+            machine.feed(token)
         }
-
-        if clause == .unknown, encounteredDelete {
-            clause = .deleteWhere
-        }
-
-        return clause
+        return machine.currentClause
     }
+
+    private static let tableMatchRegex: NSRegularExpression? = {
+        let pattern = "(?ix)\\b(from|join|update|into)\\s+([A-Za-z0-9_.\\\"`\\[\\]]+)(?:\\s+(?:AS\\s+)?([A-Za-z0-9_]+))?"
+        return try? NSRegularExpression(pattern: pattern, options: [])
+    }()
+
+    private static let ctePatternRegexes: [NSRegularExpression] = {
+        let patterns = [
+            "(?is)\\bwith\\s+([A-Za-z0-9_\"`\\[\\]]+)\\s*\\(([^)]+)\\)",
+            "(?is)\\)\\s+([A-Za-z0-9_]+)\\s*\\(([^)]+)\\)"
+        ]
+        return patterns.compactMap { try? NSRegularExpression(pattern: $0, options: []) }
+    }()
 
     private func parseTableMatches() -> [TableMatch] {
         guard !text.isEmpty else { return [] }
 
-        // include quoted identifiers and optional alias definitions
-        let pattern = "(?ix)\\b(from|join|update|into)\\s+([A-Za-z0-9_.\\\"`\\[\\]]+)(?:\\s+(?:AS\\s+)?([A-Za-z0-9_]+))?"
-
-        guard let regex = try? NSRegularExpression(pattern: pattern, options: []) else { return [] }
+        guard let regex = SQLContextParser.tableMatchRegex else { return [] }
         let nsRange = NSRange(text.startIndex..<text.endIndex, in: text)
         var matches: [TableMatch] = []
 
@@ -327,7 +232,7 @@ public final class SQLContextParser {
                                          matchLocation: candidate.range.location)
     }
 
-    private static func normalizeIdentifier(_ value: String) -> String {
+    static func normalizeIdentifier(_ value: String) -> String {
         var identifier = value.trimmingCharacters(in: .whitespacesAndNewlines)
         if let spaceIndex = identifier.firstIndex(where: { $0.isWhitespace }) {
             identifier = String(identifier[..<spaceIndex])
@@ -338,7 +243,7 @@ public final class SQLContextParser {
         return identifier
     }
 
-    private static func isValidIdentifier(_ value: String) -> Bool {
+    static func isValidIdentifier(_ value: String) -> Bool {
         guard let first = value.unicodeScalars.first else { return false }
         let startSet = CharacterSet.letters.union(CharacterSet(charactersIn: "_"))
         let bodySet = CharacterSet.alphanumerics.union(CharacterSet(charactersIn: "_"))
@@ -357,7 +262,7 @@ public final class SQLContextParser {
         "from", "join", "inner", "left", "right", "full", "outer", "cross", "update", "into", "delete"
     ]
 
-    private static let aliasTerminatingKeywords: Set<String> = [
+    static let aliasTerminatingKeywords: Set<String> = [
         "WHERE", "INNER", "LEFT", "RIGHT", "ON", "JOIN", "SET", "ORDER", "GROUP", "HAVING", "LIMIT"
     ]
 
@@ -373,13 +278,7 @@ public final class SQLContextParser {
     private func parseCTEColumns() -> [String: [String]] {
         var mapping: [String: [String]] = [:]
 
-        let patterns = [
-            "(?is)\\bwith\\s+([A-Za-z0-9_\"`\\[\\]]+)\\s*\\(([^)]+)\\)",
-            "(?is)\\)\\s+([A-Za-z0-9_]+)\\s*\\(([^)]+)\\)"
-        ]
-
-        for pattern in patterns {
-            guard let regex = try? NSRegularExpression(pattern: pattern, options: []) else { continue }
+        for regex in SQLContextParser.ctePatternRegexes {
             let nsRange = NSRange(text.startIndex..<text.endIndex, in: text)
 
             regex.enumerateMatches(in: text, options: [], range: nsRange) { match, _, _ in
