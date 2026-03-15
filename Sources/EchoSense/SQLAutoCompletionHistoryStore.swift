@@ -1,7 +1,14 @@
 import Foundation
+import os
 
-public final class SQLAutoCompletionHistoryStore: @unchecked Sendable {
-    struct Entry: Sendable {
+/// Tracks user selection history with frequency/recency scoring.
+///
+/// Thread-safety: Uses `OSAllocatedUnfairLock` for synchronous mutual exclusion.
+/// This avoids the cooperative-thread-pool deadlock that occurs with `DispatchQueue`
+/// reader-writer patterns under Swift Testing's parallel execution.
+public final class SQLAutoCompletionHistoryStore: Sendable {
+
+    struct HistoryEntry: Sendable {
         var suggestion: SQLAutoCompletionSuggestion
         var lastUsed: Date
         var usageCount: Int
@@ -9,14 +16,15 @@ public final class SQLAutoCompletionHistoryStore: @unchecked Sendable {
 
     public static let shared = SQLAutoCompletionHistoryStore()
 
-    private var storage: [String: [Entry]] = [:]
-    private let queue = DispatchQueue(label: "com.fuzee.sqlautocompletion.history", attributes: .concurrent)
+    private struct State: Sendable {
+        var storage: [String: [HistoryEntry]] = [:]
+        var pendingSave: Bool = false
+    }
+
+    private let state: OSAllocatedUnfairLock<State>
     private let maxEntriesPerContext = 20
     private let fileURL: URL
-    private var saveWorkItem: DispatchWorkItem?
     private let saveDebounceInterval: TimeInterval = 1.0
-    private let encoder = JSONEncoder()
-    private let decoder = JSONDecoder()
     private let persistenceVersion = 1
 
     private init() {
@@ -34,23 +42,40 @@ public final class SQLAutoCompletionHistoryStore: @unchecked Sendable {
             try? fm.createDirectory(at: historyDir, withIntermediateDirectories: true)
         }
         fileURL = historyDir.appendingPathComponent("history.json")
-        encoder.outputFormatting = [.prettyPrinted]
-        queue.sync(flags: .barrier) {
-            loadFromDiskLocked()
+
+        // Load from disk
+        var initialStorage: [String: [HistoryEntry]] = [:]
+        if fm.fileExists(atPath: fileURL.path) {
+            do {
+                let data = try Data(contentsOf: fileURL)
+                let snapshot = try JSONDecoder().decode(Snapshot.self, from: data)
+                if snapshot.version == 1 {
+                    for (context, entries) in snapshot.entriesByContext {
+                        let mapped = entries.map { $0.makeEntry() }
+                        if !mapped.isEmpty {
+                            initialStorage[context] = mapped
+                        }
+                    }
+                }
+            } catch {
+                try? fm.removeItem(at: fileURL)
+            }
         }
+
+        state = OSAllocatedUnfairLock(initialState: State(storage: initialStorage))
     }
 
     public struct Snapshot: Codable, Sendable {
         var version: Int
-        var entriesByContext: [String: [PersistedEntry]]
+        var entriesByContext: [String: [PersistedHistoryEntry]]
     }
 
-    struct PersistedEntry: Codable, Sendable {
+    struct PersistedHistoryEntry: Codable, Sendable {
         var suggestion: SQLAutoCompletionSuggestion
         var lastUsed: Date
         var usageCount: Int
 
-        init(entry: Entry) {
+        init(entry: HistoryEntry) {
             var storedSuggestion = entry.suggestion
             storedSuggestion = storedSuggestion.withSource(.history)
             self.suggestion = storedSuggestion
@@ -58,8 +83,8 @@ public final class SQLAutoCompletionHistoryStore: @unchecked Sendable {
             self.usageCount = entry.usageCount
         }
 
-        func makeEntry() -> Entry {
-            Entry(suggestion: suggestion.withSource(.history),
+        func makeEntry() -> HistoryEntry {
+            HistoryEntry(suggestion: suggestion.withSource(.history),
                   lastUsed: lastUsed,
                   usageCount: max(usageCount, 1))
         }
@@ -70,25 +95,35 @@ public final class SQLAutoCompletionHistoryStore: @unchecked Sendable {
         guard shouldPersist(suggestion: suggestion) else { return }
         let key = contextKey(for: context)
         let now = Date()
+        let maxEntries = maxEntriesPerContext
 
-        queue.async(flags: .barrier) {
-            var entries = self.storage[key] ?? []
+        let needsSave = state.withLock { state in
+            var entries = state.storage[key] ?? []
             let storedSuggestion = suggestion.withSource(.history)
             if let index = entries.firstIndex(where: { $0.suggestion.id == suggestion.id }) {
                 entries[index].suggestion = storedSuggestion
                 entries[index].lastUsed = now
                 entries[index].usageCount += 1
             } else {
-                entries.append(Entry(suggestion: storedSuggestion,
+                entries.append(HistoryEntry(suggestion: storedSuggestion,
                                      lastUsed: now,
                                      usageCount: 1))
             }
-            if entries.count > self.maxEntriesPerContext {
+            if entries.count > maxEntries {
                 entries.sort { $0.lastUsed > $1.lastUsed }
-                entries = Array(entries.prefix(self.maxEntriesPerContext))
+                entries = Array(entries.prefix(maxEntries))
             }
-            self.storage[key] = entries
-            self.scheduleSaveLocked()
+            state.storage[key] = entries
+
+            if !state.pendingSave {
+                state.pendingSave = true
+                return true
+            }
+            return false
+        }
+
+        if needsSave {
+            scheduleSave()
         }
     }
 
@@ -97,41 +132,39 @@ public final class SQLAutoCompletionHistoryStore: @unchecked Sendable {
                             limit: Int) -> [SQLAutoCompletionSuggestion] {
         let key = contextKey(for: context)
         let normalizedPrefix = prefix.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
-        var result: [SQLAutoCompletionSuggestion] = []
+        let now = Date()
 
-        queue.sync {
-            guard let entries = storage[key] else { return }
-            let now = Date()
+        return state.withLock { state in
+            guard let entries = state.storage[key] else { return [] }
             let filtered = entries
                 .sorted { lhs, rhs in
                     Self.score(for: lhs, now: now) > Self.score(for: rhs, now: now)
                 }
                 .compactMap { entry -> SQLAutoCompletionSuggestion? in
-                    let titleLower = entry.suggestion.title.lowercased()
-                    if normalizedPrefix.isEmpty || titleLower.hasPrefix(normalizedPrefix) {
+                    if normalizedPrefix.isEmpty {
+                        return entry.suggestion.withSource(.history)
+                    }
+                    if FuzzyMatcher.match(pattern: normalizedPrefix, candidate: entry.suggestion.title) != nil {
                         return entry.suggestion.withSource(.history)
                     }
                     return nil
                 }
-            result = Array(filtered.prefix(limit))
+            return Array(filtered.prefix(limit))
         }
-
-        return result
     }
 
     public func weight(for suggestion: SQLAutoCompletionSuggestion,
                        context: SQLEditorCompletionContext?) -> Double {
         let key = contextKey(for: context)
-        var weight: Double = 0
-        queue.sync {
-            guard let entries = storage[key],
-                  let match = entries.first(where: { $0.suggestion.id == suggestion.id }) else { return }
-            weight = Self.score(for: match, now: Date())
+        let now = Date()
+        return state.withLock { state in
+            guard let entries = state.storage[key],
+                  let match = entries.first(where: { $0.suggestion.id == suggestion.id }) else { return 0 }
+            return Self.score(for: match, now: now)
         }
-        return weight
     }
 
-    private static func score(for entry: Entry, now: Date) -> Double {
+    private static func score(for entry: HistoryEntry, now: Date) -> Double {
         let recency = now.timeIntervalSince(entry.lastUsed)
         let recencyDecay = max(0, 3600 - recency) / 10.0
         let frequencyBoost = Double(entry.usageCount) * 45.0
@@ -139,23 +172,23 @@ public final class SQLAutoCompletionHistoryStore: @unchecked Sendable {
     }
 
     public func snapshot() -> Snapshot? {
-        var snapshot: Snapshot?
-        queue.sync {
-            guard !storage.isEmpty else { return }
-            snapshot = makeSnapshotLocked()
+        state.withLock { state in
+            guard !state.storage.isEmpty else { return nil }
+            return makeSnapshot(from: state.storage)
         }
-        return snapshot
     }
 
     public func importSnapshot(_ snapshot: Snapshot, merge: Bool = true) {
-        queue.async(flags: .barrier) {
-            guard snapshot.version == self.persistenceVersion else { return }
+        guard snapshot.version == persistenceVersion else { return }
+        let maxEntries = maxEntriesPerContext
+
+        let needsSave = state.withLock { state in
             if !merge {
-                self.storage.removeAll()
+                state.storage.removeAll()
             }
 
             for (context, entries) in snapshot.entriesByContext {
-                var existing = self.storage[context] ?? []
+                var existing = state.storage[context] ?? []
                 for persisted in entries {
                     let entry = persisted.makeEntry()
                     if let index = existing.firstIndex(where: { $0.suggestion.id == entry.suggestion.id }) {
@@ -167,34 +200,38 @@ public final class SQLAutoCompletionHistoryStore: @unchecked Sendable {
                     }
                 }
                 existing.sort { $0.lastUsed > $1.lastUsed }
-                if existing.count > self.maxEntriesPerContext {
-                    existing = Array(existing.prefix(self.maxEntriesPerContext))
+                if existing.count > maxEntries {
+                    existing = Array(existing.prefix(maxEntries))
                 }
-                self.storage[context] = existing
+                state.storage[context] = existing
             }
 
-            self.scheduleSaveLocked()
+            if !state.pendingSave {
+                state.pendingSave = true
+                return true
+            }
+            return false
+        }
+
+        if needsSave {
+            scheduleSave()
         }
     }
 
     public func currentUsageBytes() -> UInt64 {
-        var size: UInt64 = 0
-        queue.sync {
-            let fm = FileManager.default
-            if let attributes = try? fm.attributesOfItem(atPath: fileURL.path),
-               let fileSize = attributes[.size] as? NSNumber {
-                size = fileSize.uint64Value
-            }
+        let fm = FileManager.default
+        if let attributes = try? fm.attributesOfItem(atPath: fileURL.path),
+           let fileSize = attributes[.size] as? NSNumber {
+            return fileSize.uint64Value
         }
-        return size
+        return 0
     }
 
     public func flush() {
-        queue.sync(flags: .barrier) {
-            saveWorkItem?.cancel()
-            saveWorkItem = nil
-            persistImmediatelyLocked()
+        state.withLock { state in
+            state.pendingSave = false
         }
+        persistImmediately()
     }
 
     private func shouldPersist(suggestion: SQLAutoCompletionSuggestion) -> Bool {
@@ -214,66 +251,52 @@ public final class SQLAutoCompletionHistoryStore: @unchecked Sendable {
     }
 
     public func reset() {
-        queue.sync(flags: .barrier) {
-            saveWorkItem?.cancel()
-            saveWorkItem = nil
-            self.storage.removeAll()
-            removePersistedLocked()
+        state.withLock { state in
+            state.pendingSave = false
+            state.storage.removeAll()
         }
+        removePersistedFile()
     }
 
-    private func scheduleSaveLocked() {
-        saveWorkItem?.cancel()
-        let workItem = DispatchWorkItem { [weak self] in
-            self?.queue.async(flags: .barrier) {
-                self?.persistImmediatelyLocked()
+    private func scheduleSave() {
+        Task {
+            try? await Task.sleep(for: .seconds(saveDebounceInterval))
+            let shouldPersist = state.withLock { state in
+                if state.pendingSave {
+                    state.pendingSave = false
+                    return true
+                }
+                return false
+            }
+            if shouldPersist {
+                persistImmediately()
             }
         }
-        saveWorkItem = workItem
-        DispatchQueue.global(qos: .utility).asyncAfter(deadline: .now() + saveDebounceInterval, execute: workItem)
     }
 
-    private func makeSnapshotLocked() -> Snapshot {
+    private func makeSnapshot(from storage: [String: [HistoryEntry]]) -> Snapshot {
         let entries = storage.mapValues { contextEntries in
-            contextEntries.map { PersistedEntry(entry: $0) }
+            contextEntries.map { PersistedHistoryEntry(entry: $0) }
         }
         return Snapshot(version: persistenceVersion, entriesByContext: entries)
     }
 
-    private func persistImmediatelyLocked() {
-        let snapshot = makeSnapshotLocked()
+    private func persistImmediately() {
+        let snapshotData = state.withLock { state in
+            makeSnapshot(from: state.storage)
+        }
         do {
-            let data = try encoder.encode(snapshot)
+            let encoder = JSONEncoder()
+            encoder.outputFormatting = [.prettyPrinted]
+            let data = try encoder.encode(snapshotData)
             try data.write(to: fileURL, options: [.atomic])
         } catch {
             print("Failed to persist autocomplete history: \(error)")
         }
     }
 
-    private func loadFromDiskLocked() {
+    private func removePersistedFile() {
         let fm = FileManager.default
-        guard fm.fileExists(atPath: fileURL.path) else { return }
-        do {
-            let data = try Data(contentsOf: fileURL)
-            let snapshot = try decoder.decode(Snapshot.self, from: data)
-            guard snapshot.version == persistenceVersion else { return }
-            var restored: [String: [Entry]] = [:]
-            for (context, entries) in snapshot.entriesByContext {
-                let mapped = entries.map { $0.makeEntry() }
-                if !mapped.isEmpty {
-                    restored[context] = mapped
-                }
-            }
-            storage = restored
-        } catch {
-            try? fm.removeItem(at: fileURL)
-        }
-    }
-
-    private func removePersistedLocked() {
-        let fm = FileManager.default
-        saveWorkItem?.cancel()
-        saveWorkItem = nil
         if fm.fileExists(atPath: fileURL.path) {
             try? fm.removeItem(at: fileURL)
         }

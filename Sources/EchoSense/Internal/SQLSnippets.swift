@@ -1,7 +1,7 @@
 import Foundation
 
-struct SQLSnippet {
-    enum Group {
+public struct SQLSnippet: Sendable {
+    public enum Group: CaseIterable, Sendable {
         case select
         case filter
         case join
@@ -10,16 +10,16 @@ struct SQLSnippet {
         case general
     }
 
-    let id: String
-    let title: String
-    let detail: String?
-    let insertText: String
-    let group: Group
-    let priority: Int
+    public let id: String
+    public let title: String
+    public let detail: String?
+    public let insertText: String
+    public let group: Group
+    public let priority: Int
 }
 
-enum SQLSnippetCatalog {
-    static func snippets(for dialect: SQLDialect) -> [SQLSnippet] {
+public enum SQLSnippetCatalog {
+    public static func snippets(for dialect: SQLDialect) -> [SQLSnippet] {
         switch dialect {
         case .postgresql:
             return Self.postgresSnippets
