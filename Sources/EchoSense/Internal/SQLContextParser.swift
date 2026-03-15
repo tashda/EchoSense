@@ -75,7 +75,7 @@ public final class SQLContextParser {
         let range: NSRange
     }
 
-    private let text: String
+    let text: String
     private let caretLocation: Int
     private let dialect: SQLDialect
     private let catalog: SQLDatabaseCatalog
@@ -103,7 +103,11 @@ public final class SQLContextParser {
         let tableMatches = parseTableMatches()
         let tables = deduplicatedReferences(from: tableMatches)
         let focusTable = inferFocusTable(matches: tableMatches, caretLocation: trimmedLocation)
-        let cteColumns = parseCTEColumns()
+        var cteColumns = parseCTEColumns()
+        let derivedColumns = parseDerivedTableColumns()
+        for (key, columns) in derivedColumns where cteColumns[key] == nil {
+            cteColumns[key] = columns
+        }
 
         return SQLContext(caretLocation: trimmedLocation,
                           currentToken: token,
@@ -228,7 +232,7 @@ public final class SQLContextParser {
                                          matchLocation: candidate.range.location)
     }
 
-    private static func normalizeIdentifier(_ value: String) -> String {
+    static func normalizeIdentifier(_ value: String) -> String {
         var identifier = value.trimmingCharacters(in: .whitespacesAndNewlines)
         if let spaceIndex = identifier.firstIndex(where: { $0.isWhitespace }) {
             identifier = String(identifier[..<spaceIndex])
@@ -239,7 +243,7 @@ public final class SQLContextParser {
         return identifier
     }
 
-    private static func isValidIdentifier(_ value: String) -> Bool {
+    static func isValidIdentifier(_ value: String) -> Bool {
         guard let first = value.unicodeScalars.first else { return false }
         let startSet = CharacterSet.letters.union(CharacterSet(charactersIn: "_"))
         let bodySet = CharacterSet.alphanumerics.union(CharacterSet(charactersIn: "_"))
@@ -258,7 +262,7 @@ public final class SQLContextParser {
         "from", "join", "inner", "left", "right", "full", "outer", "cross", "update", "into", "delete"
     ]
 
-    private static let aliasTerminatingKeywords: Set<String> = [
+    static let aliasTerminatingKeywords: Set<String> = [
         "WHERE", "INNER", "LEFT", "RIGHT", "ON", "JOIN", "SET", "ORDER", "GROUP", "HAVING", "LIMIT"
     ]
 

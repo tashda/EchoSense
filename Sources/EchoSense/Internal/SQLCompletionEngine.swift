@@ -1,6 +1,6 @@
 import Foundation
 
-final class SQLCompletionEngine: SQLCompletionEngineProtocol {
+final class SQLCompletionEngine: SQLCompletionProviding {
     private let builderFactory: SQLSuggestionBuilderFactory
 
     init(builderFactory: SQLSuggestionBuilderFactory = DefaultSuggestionBuilderFactory()) {

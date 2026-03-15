@@ -246,7 +246,7 @@ public struct SQLForeignKey: Sendable {
     }
 }
 
-public protocol SQLCompletionEngineProtocol {
+public protocol SQLCompletionProviding {
     func completions(for request: SQLCompletionRequest) -> SQLCompletionResult
 }
 
