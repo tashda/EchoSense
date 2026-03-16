@@ -193,18 +193,19 @@ extension SQLAutoCompletionEngine {
 
     private func objectContextBoost(for kind: SQLAutoCompletionKind) -> (ClauseRelevance, Double) {
         switch kind {
+        case .schema:
+            // Schemas rank highest in FROM — enables schema.table drilling
+            return (.primary, 540)
         case .table, .view, .materializedView:
             return (.primary, 520)
         case .join:
             return (.primary, 500)
-        case .schema:
-            return (.secondary, 200)
         case .snippet, .parameter:
             return (.secondary, 180)
         case .column, .function:
-            return (.peripheral, -220)
+            return (.irrelevant, -220)
         case .keyword:
-            return (.peripheral, -260)
+            return (.irrelevant, -260)
         }
     }
 
