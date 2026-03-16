@@ -68,6 +68,10 @@ extension SQLAutoCompletionEngine {
                 score -= 140
             }
 
+            // Boost suggestions whose title starts with the typed prefix.
+            // This ensures "public" ranks above "player_dummy" when typing "pu".
+            score += prefixMatchBoost(for: suggestion, query: query)
+
             ranked.append((index, suggestion, score, relevance))
         }
 
@@ -224,6 +228,26 @@ extension SQLAutoCompletionEngine {
         case .join:
             return (.peripheral, -180)
         }
+    }
+
+    /// Boosts suggestions that start with the typed prefix over substring matches.
+    /// An exact prefix match gets a significant boost so that "public" ranks above
+    /// "player_dummy" when the user types "pu" in a FROM clause.
+    private func prefixMatchBoost(for suggestion: SQLAutoCompletionSuggestion,
+                                   query: SQLAutoCompletionQuery) -> Double {
+        let typed = query.normalizedPrefix
+        guard !typed.isEmpty else { return 0 }
+        let typedLower = typed.lowercased()
+        let titleLower = suggestion.title.lowercased()
+
+        if titleLower.hasPrefix(typedLower) {
+            // Stronger boost the more characters match proportionally
+            let matchRatio = Double(typedLower.count) / Double(max(titleLower.count, 1))
+            return 150 + matchRatio * 100
+        }
+
+        // Substring match (contains but doesn't start with) gets no boost
+        return 0
     }
 
     private func matchesFocus(_ suggestion: SQLAutoCompletionSuggestion,
