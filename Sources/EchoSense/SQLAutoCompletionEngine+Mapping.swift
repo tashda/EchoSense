@@ -192,6 +192,14 @@ extension SQLAutoCompletionEngine {
             return true
         }
 
+        // When the user has finished typing a dotted path qualifier (token ends with ".")
+        // and no additional prefix has been typed yet, any single-component adjusted
+        // insert text is a valid completion at this depth — providers already filtered
+        // for the correct catalog/schema level.
+        if tokenLower.hasSuffix(".") && prefixLower.isEmpty && !suggestion.insertText.contains(".") {
+            return true
+        }
+
         if tokenLower.isEmpty && prefixLower.isEmpty && pathMatches() {
             return true
         }
