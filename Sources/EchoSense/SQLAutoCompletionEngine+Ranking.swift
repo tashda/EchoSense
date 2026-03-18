@@ -19,7 +19,11 @@ extension SQLAutoCompletionEngine {
         let promoteClauseKeywords = shouldPromoteClauseKeywords(query: query)
 
         for (index, suggestion) in suggestions.enumerated() {
-            let (relevance, boost) = clauseBoost(for: query.clause, kind: suggestion.kind)
+            var (relevance, boost) = clauseBoost(for: query.clause, kind: suggestion.kind)
+
+            if promoteClauseKeywords && suggestion.kind == .keyword {
+                relevance = .peripheral
+            }
 
             switch aggressiveness {
             case .focused:
@@ -205,7 +209,7 @@ extension SQLAutoCompletionEngine {
         case .column, .function:
             return (.irrelevant, -220)
         case .keyword:
-            return (.irrelevant, -260)
+            return (.peripheral, -260)
         }
     }
 

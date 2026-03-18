@@ -120,6 +120,15 @@ extension SQLAutoCompletionEngine {
             $0.trimmingCharacters(in: SQLAutoCompletionEngine.identifierDelimiterCharacterSet).lowercased()
         }
 
+        if suggestion.kind == .keyword {
+            if tokenLower.isEmpty && prefixLower.isEmpty {
+                return true
+            }
+            let insertLower = suggestion.insertText.lowercased()
+            return FuzzyMatcher.match(pattern: tokenLower, candidate: insertLower) != nil ||
+                   FuzzyMatcher.match(pattern: prefixLower, candidate: insertLower) != nil
+        }
+
         if suggestion.id.hasPrefix("star|") {
             let trimmedToken = query.token.trimmingCharacters(in: .whitespacesAndNewlines)
             let trimmedPrefix = query.prefix.trimmingCharacters(in: .whitespacesAndNewlines)
