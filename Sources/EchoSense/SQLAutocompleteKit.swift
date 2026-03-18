@@ -123,6 +123,8 @@ public struct SQLEngineOptions {
 public protocol SQLMetadataProvider {
     /// Returns metadata for the specified database (or default database when `name` is nil).
     func catalog(for database: String?) -> SQLDatabaseCatalog?
+    /// Returns the names (original case) of all known databases on the server.
+    var databaseNames: [String] { get }
 }
 
 public struct SQLDatabaseCatalog: Sendable {

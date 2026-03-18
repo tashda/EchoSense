@@ -7,17 +7,42 @@ struct TableSuggestionProvider: SuggestionProvider {
         guard isObjectClause else { return [] }
 
         let identifier = context.identifier
+        let preceding = identifier.precedingLowercased
 
-        let schemaFilterLower = identifier.precedingLowercased.last
+        // Resolve catalog for cross-database references.
+        // Pattern: db.schema.⟨table⟩ → preceding = ["db", "schema"]
+        let targetCatalog: SQLDatabaseCatalog
+        if preceding.count == 2 {
+            let potentialDB = preceding[0]
+            if context.metadata.databaseNames.contains(where: { $0.lowercased() == potentialDB }),
+               let dbCatalog = context.metadata.catalog(for: potentialDB) {
+                targetCatalog = dbCatalog
+            } else {
+                targetCatalog = context.catalog
+            }
+        } else if preceding.count == 1 {
+            // If the single preceding component is a database name, schema suggestions handle this step.
+            let potentialDB = preceding[0]
+            if context.metadata.databaseNames.contains(where: { $0.lowercased() == potentialDB }) {
+                return []
+            }
+            targetCatalog = context.catalog
+        } else if preceding.count > 2 {
+            return []
+        } else {
+            targetCatalog = context.catalog
+        }
+
+        let schemaFilterLower = preceding.last
         let exactSchema = schemaFilterLower.flatMap { filter in
-            context.catalog.schemas.first(where: { $0.name.lowercased() == filter })
+            targetCatalog.schemas.first(where: { $0.name.lowercased() == filter })
         }
 
         var candidateSchemas: [SQLSchema]
         if let exactSchema {
             candidateSchemas = [exactSchema]
         } else {
-            candidateSchemas = context.catalog.schemas
+            candidateSchemas = targetCatalog.schemas
         }
 
         var results: [SQLCompletionSuggestion] = []
@@ -123,22 +148,52 @@ struct SchemaSuggestionProvider: SuggestionProvider {
         guard isObjectClause else { return [] }
 
         let identifier = context.identifier
-        if identifier.isTrailingDot,
-           let last = identifier.precedingLowercased.last,
-           context.catalog.schemas.contains(where: { $0.name.lowercased() == last }) {
-            return []
-        }
-        if !identifier.precedingSegments.isEmpty && !identifier.lowercasePrefix.isEmpty {
-            return []
-        }
+        let preceding = identifier.precedingLowercased
 
-        let selectedDatabase = context.request.selectedDatabase
-        var results: [SQLCompletionSuggestion] = []
-
-        for schema in context.catalog.schemas {
-            guard let score = context.identifier.fuzzyScore(for: schema.name) else {
-                continue
+        if preceding.count == 0 {
+            // No path prefix: suggest schemas from the current database.
+            return schemaResults(from: context.catalog,
+                                 identifier: identifier,
+                                 displayDatabase: context.request.selectedDatabase,
+                                 context: context)
+        } else if preceding.count == 1 {
+            let component = preceding[0]
+            if context.metadata.databaseNames.contains(where: { $0.lowercased() == component }),
+               let dbCatalog = context.metadata.catalog(for: component) {
+                // The preceding component is a database name — suggest its schemas.
+                // If it's a trailing dot after a schema name inside that catalog, let table suggestions handle it.
+                if identifier.isTrailingDot,
+                   dbCatalog.schemas.contains(where: { $0.name.lowercased() == component }) {
+                    return []
+                }
+                let displayDB = context.metadata.databaseNames.first { $0.lowercased() == component } ?? component
+                return schemaResults(from: dbCatalog,
+                                     identifier: identifier,
+                                     displayDatabase: displayDB,
+                                     context: context)
+            } else {
+                // The preceding component is a schema name in the current database.
+                if identifier.isTrailingDot,
+                   context.catalog.schemas.contains(where: { $0.name.lowercased() == component }) {
+                    return []
+                }
+                // Has a preceding non-DB segment and a non-empty prefix → table-level typing.
+                if !identifier.lowercasePrefix.isEmpty { return [] }
+                return []
             }
+        } else {
+            // Two or more preceding segments: at table level or deeper.
+            return []
+        }
+    }
+
+    private func schemaResults(from catalog: SQLDatabaseCatalog,
+                               identifier: IdentifierContext,
+                               displayDatabase: String?,
+                               context: ProviderContext) -> [SQLCompletionSuggestion] {
+        var results: [SQLCompletionSuggestion] = []
+        for schema in catalog.schemas {
+            guard let score = identifier.fuzzyScore(for: schema.name) else { continue }
 
             var components = identifier.precedingSegments
             if let last = components.last,
@@ -148,18 +203,56 @@ struct SchemaSuggestionProvider: SuggestionProvider {
             components.append(schema.name)
 
             let insertText = context.qualify(components) + "."
-            let detail = selectedDatabase.map { "\($0).\(schema.name)" }
+            let detail = displayDatabase.map { "\($0).\(schema.name)" }
             let fuzzyAdjustment = score < 0.95 ? Int(-100 * (1.0 - score)) : 0
 
             results.append(SQLCompletionSuggestion(id: "schema|\(schema.name.lowercased())",
                                                    title: schema.name,
-                                                   subtitle: selectedDatabase,
+                                                   subtitle: displayDatabase,
                                                    detail: detail,
                                                    insertText: insertText,
                                                    kind: .schema,
                                                    priority: 950 + fuzzyAdjustment))
         }
+        return results
+    }
 
+    private static let supportedClauses: Set<SQLClause> = [
+        .from, .joinTarget, .withCTE, .unknown
+    ]
+}
+
+// MARK: - Database Suggestion Provider
+
+/// Suggests database names when the user is at the first segment of a dotted identifier.
+/// Enables cross-database completion: typing `db2.` → schemas from db2; `db2.dbo.` → tables from db2.dbo.
+struct DatabaseSuggestionProvider: SuggestionProvider {
+    func suggestions(in context: ProviderContext) -> [SQLCompletionSuggestion] {
+        let clause = context.sqlContext.clause
+        let isObjectClause = Self.supportedClauses.contains(clause) || context.hasObjectKeywordContext
+        guard isObjectClause else { return [] }
+
+        // Only suggest databases when at the very first segment (no preceding path components).
+        guard context.identifier.precedingSegments.isEmpty else { return [] }
+
+        let databaseNames = context.metadata.databaseNames
+        guard !databaseNames.isEmpty else { return [] }
+
+        var results: [SQLCompletionSuggestion] = []
+        for dbName in databaseNames {
+            guard let score = context.identifier.fuzzyScore(for: dbName) else { continue }
+            let fuzzyAdjustment = score < 0.95 ? Int(-100 * (1.0 - score)) : 0
+            // Databases rank slightly below schemas from the current database so local objects stay on top.
+            let priority = 920 + fuzzyAdjustment
+            let insertText = context.qualify([dbName]) + "."
+            results.append(SQLCompletionSuggestion(id: "database|\(dbName.lowercased())",
+                                                   title: dbName,
+                                                   subtitle: "Database",
+                                                   detail: dbName,
+                                                   insertText: insertText,
+                                                   kind: .schema,
+                                                   priority: priority))
+        }
         return results
     }
 
