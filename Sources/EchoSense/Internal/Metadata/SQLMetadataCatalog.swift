@@ -3,6 +3,9 @@ import Foundation
 struct SQLStructureMetadataProvider: SQLMetadataProvider {
     let catalogsByDatabase: [String: SQLDatabaseCatalog]
     let defaultCatalog: SQLDatabaseCatalog
+    let orderedDatabaseNames: [String]
+
+    var databaseNames: [String] { orderedDatabaseNames }
 
     func catalog(for database: String?) -> SQLDatabaseCatalog? {
         if let database,
@@ -14,7 +17,8 @@ struct SQLStructureMetadataProvider: SQLMetadataProvider {
 
     static var empty: SQLStructureMetadataProvider {
         SQLStructureMetadataProvider(catalogsByDatabase: [:],
-                                     defaultCatalog: SQLDatabaseCatalog(schemas: []))
+                                     defaultCatalog: SQLDatabaseCatalog(schemas: []),
+                                     orderedDatabaseNames: [])
     }
 }
 
@@ -42,15 +46,18 @@ struct SQLMetadataCatalog {
             let defaultCatalog = builtIns.objects.isEmpty ? SQLDatabaseCatalog(schemas: []) : SQLDatabaseCatalog(schemas: [builtIns])
             self.objectsByKey = [:]
             self.metadataProvider = SQLStructureMetadataProvider(catalogsByDatabase: [:],
-                                                                 defaultCatalog: defaultCatalog)
+                                                                 defaultCatalog: defaultCatalog,
+                                                                 orderedDatabaseNames: [])
             return
         }
 
         var objectsIndex: [ObjectKey: [ObjectEntry]] = [:]
         var catalogsByDatabase: [String: SQLDatabaseCatalog] = [:]
+        var orderedDatabaseNames: [String] = []
 
         for database in structure.databases {
             let databaseLower = database.name.lowercased()
+            orderedDatabaseNames.append(database.name)
             var schemasForDatabase: [SQLSchema] = []
 
             for schema in database.schemas {
@@ -98,7 +105,8 @@ struct SQLMetadataCatalog {
 
         self.objectsByKey = objectsIndex
         self.metadataProvider = SQLStructureMetadataProvider(catalogsByDatabase: catalogsByDatabase,
-                                                             defaultCatalog: defaultCatalog)
+                                                             defaultCatalog: defaultCatalog,
+                                                             orderedDatabaseNames: orderedDatabaseNames)
     }
 
     func object(database: String?, schema: String, name: String) -> ObjectEntry? {

@@ -30,6 +30,7 @@ final class DefaultSuggestionBuilder: SQLSuggestionBuilder {
             ColumnSuggestionProvider(),
             TableSuggestionProvider(),
             SchemaSuggestionProvider(),
+            DatabaseSuggestionProvider(),
             FunctionSuggestionProvider(),
             ParameterSuggestionProvider(),
             SnippetSuggestionProvider(),
@@ -89,6 +90,10 @@ struct ProviderContext {
 
     var defaultSchemaLowercased: String? {
         request.defaultSchema?.lowercased()
+    }
+
+    var metadata: SQLMetadataProvider {
+        request.metadata
     }
 
     var hasObjectKeywordContext: Bool {
