@@ -191,6 +191,15 @@ struct SchemaSuggestionProvider: SuggestionProvider {
                                identifier: IdentifierContext,
                                displayDatabase: String?,
                                context: ProviderContext) -> [SQLCompletionSuggestion] {
+        // In FROM/JOIN context, schemas rank alongside tables so they appear interleaved by match quality.
+        // In other clauses keep schemas lower so they don't crowd out column suggestions.
+        let basePriority: Int
+        switch context.sqlContext.clause {
+        case .from, .joinTarget: basePriority = 1290
+        case .withCTE:           basePriority = 1090
+        default:                 basePriority = 950
+        }
+
         var results: [SQLCompletionSuggestion] = []
         for schema in catalog.schemas {
             guard let score = identifier.fuzzyScore(for: schema.name) else { continue }
@@ -212,7 +221,7 @@ struct SchemaSuggestionProvider: SuggestionProvider {
                                                    detail: detail,
                                                    insertText: insertText,
                                                    kind: .schema,
-                                                   priority: 950 + fuzzyAdjustment))
+                                                   priority: basePriority + fuzzyAdjustment))
         }
         return results
     }

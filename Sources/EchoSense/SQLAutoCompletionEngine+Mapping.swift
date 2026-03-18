@@ -14,7 +14,43 @@ extension SQLAutoCompletionEngine {
                                              context: context) else { continue }
             results.append(mapped)
         }
-        return results.filter { matchesQuery($0, query: query) }
+        let filtered = results.filter { matchesQuery($0, query: query) }
+        return rerankByMatchQuality(filtered, query: query)
+    }
+
+    /// Re-sorts filtered suggestions by fuzzy match quality against the current prefix so that
+    /// shorter / tighter matches surface above longer ones regardless of base priority.
+    /// When no prefix is typed, the original priority order is preserved.
+    private func rerankByMatchQuality(_ suggestions: [SQLAutoCompletionSuggestion],
+                                      query: SQLAutoCompletionQuery) -> [SQLAutoCompletionSuggestion] {
+        let rawPrefix = query.prefix.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+        let prefixLower = rawPrefix.trimmingCharacters(in: SQLAutoCompletionEngine.identifierDelimiterCharacterSet)
+        guard !prefixLower.isEmpty else { return suggestions }
+
+        struct Scored {
+            let suggestion: SQLAutoCompletionSuggestion
+            let score: Double
+        }
+
+        let scored: [Scored] = suggestions.map { s in
+            let titleLower = s.title.lowercased()
+            if titleLower.hasPrefix(prefixLower) {
+                // Prefer shorter titles for prefix matches — "employee" beats "employees" for "e"
+                let coverage = Double(prefixLower.count) / Double(max(titleLower.count, 1))
+                return Scored(suggestion: s, score: 0.90 + coverage * 0.10)
+            } else if let match = FuzzyMatcher.match(pattern: prefixLower, candidate: titleLower) {
+                return Scored(suggestion: s, score: match.score * 0.89)
+            } else {
+                return Scored(suggestion: s, score: 0.0)
+            }
+        }
+
+        return scored.sorted { lhs, rhs in
+            let diff = lhs.score - rhs.score
+            if abs(diff) > 0.005 { return lhs.score > rhs.score }
+            if lhs.suggestion.priority != rhs.suggestion.priority { return lhs.suggestion.priority > rhs.suggestion.priority }
+            return lhs.suggestion.title.localizedCaseInsensitiveCompare(rhs.suggestion.title) == .orderedAscending
+        }.map(\.suggestion)
     }
 
     private func mapSuggestion(_ suggestion: SQLCompletionSuggestion,
