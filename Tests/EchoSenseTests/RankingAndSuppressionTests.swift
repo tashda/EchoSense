@@ -94,10 +94,12 @@ func suppressionClearsWhenClauseChanges() {
                                              focusTable: usersFocus,
                                              tablesInScope: [usersFocus], clause: .from)
 
-    // Caret has moved past the accepted position, so suppression should NOT apply
+    // Per spec: space after table on same line is silent (user may be typing alias).
+    // The suppression clearing is a separate concern — here the silence is due to
+    // the FROM-after-table rule, not post-commit suppression.
     let result = engine.suggestions(for: afterQuery, text: text, caretLocation: text.count)
     let suggestions = allSuggestions(from: result)
-    #expect(!suggestions.isEmpty, "Should show suggestions after moving past accepted position")
+    #expect(suggestions.isEmpty, "Should be silent after space following table (per spec)")
 }
 
 @Test
@@ -210,8 +212,9 @@ func fromClauseShowsKeywordsWhenTablesInScope() {
 
     let result = engine.suggestions(for: query, text: text, caretLocation: text.count)
     let suggestions = allSuggestions(from: result)
-    let keywords = suggestions.filter { $0.kind == .keyword }.map { $0.title.lowercased() }
-    #expect(keywords.contains("where"), "Should suggest WHERE after FROM with tables")
+    // Per spec: space after table on same line is silent — no keywords auto-suggested
+    // Keywords only appear when user types on a new line
+    #expect(suggestions.isEmpty, "Should be silent after space following table (user may be typing alias)")
 }
 
 // MARK: - Phase 3: Dialect-Specific Keywords

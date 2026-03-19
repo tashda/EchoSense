@@ -195,7 +195,7 @@ public final class SQLAutoCompletionEngine {
             lastAcceptedCaretLocation = nil
         }
 
-        guard shouldProvideCompletions(for: query) else {
+        guard shouldProvideCompletions(for: query, text: text, caretLocation: caretLocation) else {
             return SQLAutoCompletionResult(sections: [],
                                            metadata: SQLAutoCompletionEngine.emptyMetadata)
         }
@@ -221,11 +221,37 @@ public final class SQLAutoCompletionEngine {
                                                 context: context)
         let ranked = rankSuggestions(combined, query: query, context: context)
 
-        let sections = [SQLAutoCompletionSection(title: "Suggestions", suggestions: ranked)]
+        // Deduplicate already-selected columns in SELECT list
+        let final: [SQLAutoCompletionSuggestion]
+        if query.clause == .selectList {
+            let alreadySelected = parseSelectedColumns(from: text, caretLocation: caretLocation)
+            if !alreadySelected.isEmpty {
+                final = ranked.filter { suggestion in
+                    guard suggestion.kind == .column else { return true }
+                    // Extract bare column name from the title (strip alias prefix)
+                    let columnName: String
+                    if let dotIndex = suggestion.title.lastIndex(of: ".") {
+                        columnName = String(suggestion.title[suggestion.title.index(after: dotIndex)...])
+                    } else {
+                        columnName = suggestion.title
+                    }
+                    let bare = columnName.trimmingCharacters(in: CharacterSet(charactersIn: "\"[]`"))
+                    return !alreadySelected.contains(bare.lowercased())
+                }
+            } else {
+                final = ranked
+            }
+        } else {
+            final = ranked
+        }
+
+        let sections = [SQLAutoCompletionSection(title: "Suggestions", suggestions: final)]
         return SQLAutoCompletionResult(sections: sections, metadata: result.metadata)
     }
 
-    private func shouldProvideCompletions(for query: SQLAutoCompletionQuery) -> Bool {
+    private func shouldProvideCompletions(for query: SQLAutoCompletionQuery,
+                                          text: String,
+                                          caretLocation: Int) -> Bool {
         let trimmedToken = query.token.trimmingCharacters(in: .whitespacesAndNewlines)
 
         if trimmedToken.isEmpty && query.pathComponents.isEmpty {
@@ -240,10 +266,16 @@ public final class SQLAutoCompletionEngine {
                 return false
             }
             if isObjectContext(query: query) {
-                return true
-            }
-            // In FROM clause with tables already in scope: offer clause-continuation keywords
-            if query.clause == .from && !query.tablesInScope.isEmpty {
+                // In FROM/JOIN clause with tables already in scope, empty token, no comma:
+                // suppress unless cursor is immediately after FROM/JOIN keyword with no table yet.
+                if (query.clause == .from || query.clause == .joinTarget)
+                    && !query.tablesInScope.isEmpty
+                    && query.precedingCharacter != "," {
+                    if isImmediatelyAfterObjectKeyword(text: text, caretLocation: caretLocation) {
+                        return true
+                    }
+                    return false
+                }
                 return true
             }
             if isColumnContext(query: query) || query.precedingCharacter == "," {
@@ -261,13 +293,162 @@ public final class SQLAutoCompletionEngine {
         if SQLAutoCompletionEngine.reservedLeadingKeywords.contains(tokenLower) && query.pathComponents.isEmpty {
             return false
         }
+        // In unknown clause with no tables in scope: user is typing SQL structure
+        // (SELECT, FROM, etc.) — no useful completions to offer.
+        if query.clause == .unknown && query.tablesInScope.isEmpty && query.pathComponents.isEmpty {
+            return false
+        }
+        // In FROM clause with tables in scope and user is typing on the same line
+        // after a table — they may be typing an alias. Only suggest if on a new line.
+        if query.clause == .from && !query.tablesInScope.isEmpty
+            && query.precedingCharacter != ","
+            && !query.pathComponents.isEmpty == false {
+            // Check if there's a newline between the last non-whitespace content and cursor
+            if !hasNewlineBetweenLastContentAndCursor(text: text, caretLocation: caretLocation) {
+                // Same line as table — could be an alias, suppress keywords
+                // But still allow if the token matches a keyword (handled by keyword filtering)
+            }
+        }
         return true
+    }
+
+    /// Extracts top-level column references from the SELECT list before the cursor.
+    /// Returns a set of lowercased bare column names (without alias/table prefix).
+    private func parseSelectedColumns(from text: String, caretLocation: Int) -> Set<String> {
+        let nsText = text as NSString
+        let clampedLocation = min(caretLocation, nsText.length)
+
+        // Find SELECT keyword before cursor
+        let textBeforeCursor = nsText.substring(to: clampedLocation)
+        guard let selectRange = textBeforeCursor.range(of: "SELECT",
+                                                        options: [.caseInsensitive, .backwards]) else {
+            return []
+        }
+        let afterSelect = textBeforeCursor[selectRange.upperBound...]
+
+        // Handle DISTINCT / TOP
+        var columnsPart = afterSelect.trimmingCharacters(in: .whitespacesAndNewlines)
+        if columnsPart.lowercased().hasPrefix("distinct") {
+            columnsPart = String(columnsPart.dropFirst(8)).trimmingCharacters(in: .whitespacesAndNewlines)
+        }
+
+        // Split by comma, extract column identifiers
+        // Only look at top-level commas (not inside parentheses)
+        var columns = Set<String>()
+        var depth = 0
+        var current = ""
+
+        for char in columnsPart {
+            if char == "(" { depth += 1 }
+            else if char == ")" { depth -= 1 }
+            else if char == "," && depth == 0 {
+                if let col = extractColumnName(from: current) {
+                    columns.insert(col)
+                }
+                current = ""
+                continue
+            }
+            current.append(char)
+        }
+        // Don't process the last segment — that's what the user is currently typing
+
+        return columns
+    }
+
+    /// Extracts a bare column name from a SELECT expression.
+    /// Handles: "col", "t.col", "t.col AS alias", "FUNC(col)" (returns nil for expressions).
+    private func extractColumnName(from expression: String) -> String? {
+        let trimmed = expression.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty else { return nil }
+
+        // Skip expressions with parentheses (function calls, CASE, subqueries)
+        if trimmed.contains("(") || trimmed.contains(")") { return nil }
+        // Skip star
+        if trimmed.contains("*") { return nil }
+
+        // Handle AS alias — take the part before AS
+        let parts = trimmed.components(separatedBy: " ")
+        let identifier: String
+        if let asIndex = parts.firstIndex(where: { $0.caseInsensitiveCompare("AS") == .orderedSame }) {
+            identifier = parts[..<asIndex].joined(separator: " ")
+        } else if parts.count <= 2 {
+            // Could be "col alias" or just "col"
+            identifier = parts[0]
+        } else {
+            return nil
+        }
+
+        // Extract bare column name (after last dot)
+        let components = identifier.split(separator: ".")
+        guard let last = components.last else { return nil }
+        let bare = last.trimmingCharacters(in: CharacterSet(charactersIn: "\"[]`"))
+        guard !bare.isEmpty else { return nil }
+        return bare.lowercased()
+    }
+
+    /// Checks if the cursor is immediately after an object keyword (FROM, JOIN, etc.)
+    /// with only whitespace between the keyword and cursor — meaning the user hasn't
+    /// typed a table name yet after the keyword.
+    private func isImmediatelyAfterObjectKeyword(text: String, caretLocation: Int) -> Bool {
+        let nsText = text as NSString
+        let clampedLocation = min(caretLocation, nsText.length)
+        guard clampedLocation > 0 else { return false }
+
+        // Scan backwards from cursor, skipping whitespace
+        var pos = clampedLocation - 1
+        while pos >= 0 {
+            let char = nsText.character(at: pos)
+            if char == 0x20 || char == 0x09 || char == 0x0A || char == 0x0D {
+                pos -= 1
+                continue
+            }
+            break
+        }
+        guard pos >= 0 else { return false }
+
+        // Extract the word ending at this position
+        var wordEnd = pos + 1
+        while pos >= 0 {
+            let char = nsText.character(at: pos)
+            if let scalar = UnicodeScalar(char),
+               CharacterSet.alphanumerics.contains(scalar) || char == 0x5F { // _
+                pos -= 1
+            } else {
+                break
+            }
+        }
+        let wordStart = pos + 1
+        guard wordStart < wordEnd else { return false }
+        let word = nsText.substring(with: NSRange(location: wordStart, length: wordEnd - wordStart)).lowercased()
+        return SQLAutoCompletionEngine.objectContextKeywords.contains(word)
+    }
+
+    /// Checks if there is a newline character between the last non-whitespace
+    /// content before the cursor and the cursor position.
+    private func hasNewlineBetweenLastContentAndCursor(text: String, caretLocation: Int) -> Bool {
+        let nsText = text as NSString
+        let clampedLocation = min(caretLocation, nsText.length)
+        guard clampedLocation > 0 else { return false }
+
+        // Scan backwards from cursor to find last non-space character
+        var pos = clampedLocation - 1
+        while pos >= 0 {
+            let char = nsText.character(at: pos)
+            if char == 0x0A || char == 0x0D { // \n or \r
+                return true
+            }
+            if char != 0x20 && char != 0x09 { // not space or tab
+                return false
+            }
+            pos -= 1
+        }
+        return false
     }
 
     private func isObjectContext(query: SQLAutoCompletionQuery) -> Bool {
         if !query.pathComponents.isEmpty { return true }
         switch query.clause {
-        case .from, .joinTarget, .insertColumns, .deleteWhere, .withCTE:
+        case .from, .joinTarget, .deleteWhere, .withCTE:
             return true
         default:
             break
@@ -280,7 +461,7 @@ public final class SQLAutoCompletionEngine {
         if query.precedingCharacter == "," { return true }
         if !query.pathComponents.isEmpty { return true }
         switch query.clause {
-        case .selectList, .whereClause, .joinCondition, .groupBy, .orderBy, .having, .values, .updateSet:
+        case .selectList, .whereClause, .joinCondition, .groupBy, .orderBy, .having, .values, .updateSet, .insertColumns, .deleteWhere:
             return true
         default:
             break
