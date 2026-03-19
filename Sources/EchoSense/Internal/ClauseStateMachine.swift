@@ -192,9 +192,16 @@ struct ClauseStateMachine: Sendable {
             handleOpenParen()
         case ")":
             handleCloseParen()
+        case ";":
+            handleSemicolon()
         default:
             break
         }
+    }
+
+    private mutating func handleSemicolon() {
+        // Semicolon ends the current statement — reset everything
+        state = State()
     }
 
     private mutating func handleComma() {

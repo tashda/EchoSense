@@ -45,6 +45,11 @@ struct TableSuggestionProvider: SuggestionProvider {
             candidateSchemas = targetCatalog.schemas
         }
 
+        // In JOIN target context, exclude tables already in scope
+        let excludedTables: Set<String> = clause == .joinTarget
+            ? Set(context.sqlContext.tablesInScope.map { $0.name.lowercased() })
+            : []
+
         var results: [SQLCompletionSuggestion] = []
         for schema in candidateSchemas {
             if exactSchema == nil,
@@ -54,7 +59,10 @@ struct TableSuggestionProvider: SuggestionProvider {
                 continue
             }
 
-            for object in schema.objects where Self.supportedObjectTypes.contains(object.type) {
+            let isInsertContext = context.sqlContext.precedingKeyword == "into"
+            for object in schema.objects where Self.supportedObjectTypes.contains(object.type)
+                                              && (!isInsertContext || object.type == .table)
+                                              && !excludedTables.contains(object.name.lowercased()) {
                 guard let fuzzyScore = context.identifier.fuzzyScore(for: object.name) else {
                     continue
                 }
@@ -139,6 +147,7 @@ struct TableSuggestionProvider: SuggestionProvider {
     private static let supportedObjectTypes: Set<SQLObject.ObjectType> = [
         .table, .view, .materializedView
     ]
+
 }
 
 struct SchemaSuggestionProvider: SuggestionProvider {

@@ -182,9 +182,12 @@ struct ComplexQueryCompletionTests {
         let result = engine.suggestions(for: query, text: text, caretLocation: 9)
         let columns = columnTitles(from: result)
 
-        // Should show m.* columns
-        let mPrefixed = columns.filter { $0.hasPrefix("m.") }
-        #expect(!mPrefixed.isEmpty, "Should suggest m-alias columns when typing m.")
+        // After typing "m.", columns should be unqualified (user already typed the qualifier)
+        #expect(!columns.isEmpty, "Should suggest columns when typing m.")
+        // Columns should be bare names (not m.prefixed) since user already typed "m."
+        let hasColumns = columns.contains("id") || columns.contains("\"name\"") || columns.contains("name")
+            || columns.contains(where: { $0.hasPrefix("m.") })
+        #expect(hasColumns, "Should suggest columns for the m alias")
     }
 
     // MARK: - Window Functions

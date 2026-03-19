@@ -21,21 +21,20 @@ extension SQLAutoCompletionEngine {
         for (index, suggestion) in suggestions.enumerated() {
             var (relevance, boost) = clauseBoost(for: query.clause, kind: suggestion.kind)
 
+            // Keywords are never word-completed. They only appear as contextual
+            // suggestions in specific clause contexts (FROM with tables, ORDER BY, etc.)
+            if suggestion.kind == .keyword {
+                if query.clause == .unknown {
+                    continue
+                }
+            }
+
             if promoteClauseKeywords && suggestion.kind == .keyword {
                 relevance = .peripheral
             }
 
-            switch aggressiveness {
-            case .focused:
-                if relevance == .peripheral || relevance == .irrelevant {
-                    continue
-                }
-            case .balanced:
-                if relevance == .irrelevant {
-                    continue
-                }
-            case .eager:
-                break
+            if relevance == .irrelevant {
+                continue
             }
 
             var score = Double(suggestion.priority) + boost
@@ -152,11 +151,11 @@ extension SQLAutoCompletionEngine {
     private func clauseBoost(for clause: SQLClause,
                              kind: SQLAutoCompletionKind) -> (ClauseRelevance, Double) {
         switch clause {
-        case .selectList, .whereClause, .groupBy, .orderBy, .having, .values, .updateSet:
+        case .selectList, .whereClause, .groupBy, .orderBy, .having, .values, .updateSet, .insertColumns, .deleteWhere:
             return columnContextBoost(for: kind)
         case .joinCondition:
             return joinConditionBoost(for: kind)
-        case .from, .joinTarget, .insertColumns, .deleteWhere, .withCTE:
+        case .from, .joinTarget, .withCTE:
             return objectContextBoost(for: kind)
         case .limit, .offset:
             return limitContextBoost(for: kind)

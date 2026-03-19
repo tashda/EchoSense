@@ -7,7 +7,7 @@ extension SQLContextParser {
     /// Extracts column names from derived tables (subqueries in FROM/JOIN clauses).
     /// Handles patterns like: `(SELECT col1, col2 FROM ...) [AS] alias`
     /// Only extracts explicitly named columns from the inner SELECT list.
-    func parseDerivedTableColumns() -> [String: [String]] {
+    func parseDerivedTableColumns(catalog: SQLDatabaseCatalog? = nil) -> [String: [String]] {
         guard !text.isEmpty else { return [:] }
         var mapping: [String: [String]] = [:]
 
@@ -64,7 +64,14 @@ extension SQLContextParser {
             }
 
             // Extract column names from the inner SELECT list
-            let columns = Self.extractSelectListColumns(from: innerText)
+            var columns = Self.extractSelectListColumns(from: innerText)
+            // If SELECT *, try to resolve from catalog
+            if columns.isEmpty, let catalog,
+               innerText.trimmingCharacters(in: .whitespacesAndNewlines).uppercased().contains("SELECT *") ||
+               innerText.trimmingCharacters(in: .whitespacesAndNewlines).uppercased().contains("SELECT\n*") {
+                let resolvedCols = Self.extractSelectColumns(from: innerText, catalog: catalog)
+                columns = resolvedCols
+            }
             if !columns.isEmpty {
                 mapping[alias.lowercased()] = columns
             }

@@ -15,7 +15,9 @@ struct ColumnSuggestionProvider: SuggestionProvider {
         var results: [SQLCompletionSuggestion] = []
         var seen = Set<String>()
 
-        let forceQualifier = context.sqlContext.tablesInScope.count > 1
+        // Build a set of ambiguous column names (exist in more than one table)
+        let ambiguousColumns = Self.findAmbiguousColumns(tables: context.sqlContext.tablesInScope, context: context)
+        let multipleTablesInScope = context.sqlContext.tablesInScope.count > 1
 
         for tableRef in context.sqlContext.tablesInScope {
             let match = Self.matchKind(for: tableRef, segments: segments)
@@ -27,7 +29,8 @@ struct ColumnSuggestionProvider: SuggestionProvider {
                               match: match,
                               prefix: prefix,
                               clause: clause,
-                              forceQualifier: forceQualifier,
+                              ambiguousColumns: ambiguousColumns,
+                              multipleTablesInScope: multipleTablesInScope,
                               context: context,
                               results: &results,
                               seen: &seen)
@@ -37,7 +40,8 @@ struct ColumnSuggestionProvider: SuggestionProvider {
                                  match: match,
                                  prefix: prefix,
                                  clause: clause,
-                                 forceQualifier: forceQualifier,
+                                 ambiguousColumns: ambiguousColumns,
+                                 multipleTablesInScope: multipleTablesInScope,
                                  context: context,
                                  results: &results,
                                  seen: &seen)
@@ -101,7 +105,7 @@ struct ColumnSuggestionProvider: SuggestionProvider {
     }
 
     private static let supportedClauses: Set<SQLClause> = [
-        .selectList, .whereClause, .having, .joinCondition, .groupBy, .orderBy, .values, .updateSet
+        .selectList, .whereClause, .having, .joinCondition, .groupBy, .orderBy, .values, .updateSet, .deleteWhere, .insertColumns
     ]
 
     private func appendColumns(from resolution: TableResolution,
@@ -109,12 +113,14 @@ struct ColumnSuggestionProvider: SuggestionProvider {
                                match: ColumnPathMatch,
                                prefix: String,
                                clause: SQLClause,
-                               forceQualifier: Bool,
+                               ambiguousColumns: Set<String>,
+                               multipleTablesInScope: Bool,
                                context: ProviderContext,
                                results: inout [SQLCompletionSuggestion],
                                seen: inout Set<String>) {
-        let includeAlias = match != .table ? tableRef.alias != nil : (tableRef.alias != nil)
-        let includeUnqualified = match != .alias
+        // When user typed an explicit qualifier (alias. or table.), only emit
+        // unqualified column names — the qualifier is already in the editor.
+        let userTypedQualifier = (match == .alias || match == .table) && !context.identifier.precedingSegments.isEmpty
 
         for column in resolution.object.columns {
             let lower = column.name.lowercased()
@@ -128,41 +134,47 @@ struct ColumnSuggestionProvider: SuggestionProvider {
 
             let baseID = "column|\(resolution.schema.name.lowercased())|\(resolution.object.name.lowercased())|\(lower)"
             let priority = Self.priority(for: clause) + ColumnSuggestionProvider.priorityBoost(for: column) + fuzzyPenalty
+            let columnName = context.quotedColumn(column.name)
+            let isAmbiguous = ambiguousColumns.contains(lower)
 
-            if includeAlias, let alias = tableRef.alias {
-                let aliasKey = baseID + "|alias=" + alias.lowercased()
-                if seen.insert(aliasKey).inserted {
-                    let columnName = context.quotedColumn(column.name)
-                    let title = "\(alias).\(columnName)"
-                    results.append(SQLCompletionSuggestion(id: aliasKey,
-                                                           title: title,
+            if userTypedQualifier {
+                // User already typed the qualifier — just the column name
+                let id = baseID + (tableRef.alias.map { "|alias=\($0.lowercased())" } ?? "")
+                if seen.insert(id).inserted {
+                    results.append(SQLCompletionSuggestion(id: id,
+                                                           title: columnName,
                                                            subtitle: "\(resolution.object.name) • \(resolution.schema.name)",
                                                            detail: "Column \(resolution.schema.name).\(resolution.object.name).\(column.name)",
-                                                           insertText: title,
+                                                           insertText: columnName,
                                                            kind: .column,
-                                                           priority: priority + 10))
+                                                           priority: priority))
                 }
-            }
-
-            if includeUnqualified, seen.insert(baseID).inserted {
-                let needsQualifier = qualifierNeeded(match: match, forceQualifier: forceQualifier)
-                let chosenQualifier = tableRef.alias ?? tableRef.name
-                let columnName = context.quotedColumn(column.name)
-                let insert: String
-                if needsQualifier {
-                    let qualifierText = context.qualifier(for: tableRef, candidate: chosenQualifier)
-                    insert = "\(qualifierText).\(columnName)"
-                } else {
-                    insert = columnName
+            } else if multipleTablesInScope && isAmbiguous {
+                // Ambiguous column — must be qualified with alias/table
+                let qualifier = tableRef.alias ?? tableRef.name
+                let qualifierText = context.qualifier(for: tableRef, candidate: qualifier)
+                let qualifiedTitle = "\(qualifierText).\(columnName)"
+                let id = baseID + "|q=\(qualifier.lowercased())"
+                if seen.insert(id).inserted {
+                    results.append(SQLCompletionSuggestion(id: id,
+                                                           title: qualifiedTitle,
+                                                           subtitle: "\(resolution.object.name) • \(resolution.schema.name)",
+                                                           detail: "Column \(resolution.schema.name).\(resolution.object.name).\(column.name)",
+                                                           insertText: qualifiedTitle,
+                                                           kind: .column,
+                                                           priority: priority))
                 }
-                let title = insert
-                results.append(SQLCompletionSuggestion(id: baseID,
-                                                       title: title,
-                                                       subtitle: "\(resolution.object.name) • \(resolution.schema.name)",
-                                                       detail: "Column \(resolution.schema.name).\(resolution.object.name).\(column.name)",
-                                                       insertText: insert,
-                                                       kind: .column,
-                                                       priority: priority))
+            } else {
+                // Unique column or single table — unqualified
+                if seen.insert(baseID).inserted {
+                    results.append(SQLCompletionSuggestion(id: baseID,
+                                                           title: columnName,
+                                                           subtitle: "\(resolution.object.name) • \(resolution.schema.name)",
+                                                           detail: "Column \(resolution.schema.name).\(resolution.object.name).\(column.name)",
+                                                           insertText: columnName,
+                                                           kind: .column,
+                                                           priority: priority))
+                }
             }
         }
     }
@@ -172,12 +184,12 @@ struct ColumnSuggestionProvider: SuggestionProvider {
                                   match: ColumnPathMatch,
                                   prefix: String,
                                   clause: SQLClause,
-                                  forceQualifier: Bool,
+                                  ambiguousColumns: Set<String>,
+                                  multipleTablesInScope: Bool,
                                   context: ProviderContext,
                                   results: inout [SQLCompletionSuggestion],
                                   seen: inout Set<String>) {
-        let includeAlias = match != .table ? tableRef.alias != nil : (tableRef.alias != nil)
-        let includeUnqualified = match != .alias
+        let userTypedQualifier = (match == .alias || match == .table) && !context.identifier.precedingSegments.isEmpty
         let qualifier = tableRef.alias ?? tableRef.name
 
         for column in columns {
@@ -192,41 +204,43 @@ struct ColumnSuggestionProvider: SuggestionProvider {
 
             let baseID = "cte|\(qualifier.lowercased())|\(lower)"
             let priority = Self.priority(for: clause) + fuzzyPenalty
+            let columnName = context.quotedColumn(column)
+            let isAmbiguous = ambiguousColumns.contains(lower)
 
-            if includeAlias, let alias = tableRef.alias {
-                let aliasKey = baseID + "|alias=" + alias.lowercased()
-                if seen.insert(aliasKey).inserted {
-                    let columnName = context.quotedColumn(column)
-                    let title = "\(alias).\(columnName)"
-                    results.append(SQLCompletionSuggestion(id: aliasKey,
-                                                           title: title,
+            if userTypedQualifier {
+                let id = baseID + (tableRef.alias.map { "|alias=\($0.lowercased())" } ?? "")
+                if seen.insert(id).inserted {
+                    results.append(SQLCompletionSuggestion(id: id,
+                                                           title: columnName,
                                                            subtitle: qualifier,
                                                            detail: "CTE Column \(qualifier).\(column)",
-                                                           insertText: title,
+                                                           insertText: columnName,
                                                            kind: .column,
-                                                           priority: priority + 5))
+                                                           priority: priority))
                 }
-            }
-
-            if includeUnqualified, seen.insert(baseID).inserted {
-                let needsQualifier = qualifierNeeded(match: match, forceQualifier: forceQualifier)
-                let chosenQualifier = tableRef.alias ?? tableRef.name
-                let columnName = context.quotedColumn(column)
-                let insert: String
-                if needsQualifier {
-                    let qualifierText = context.qualifier(for: tableRef, candidate: chosenQualifier)
-                    insert = "\(qualifierText).\(columnName)"
-                } else {
-                    insert = columnName
+            } else if multipleTablesInScope && isAmbiguous {
+                let qualifierText = context.qualifier(for: tableRef, candidate: qualifier)
+                let qualifiedTitle = "\(qualifierText).\(columnName)"
+                let id = baseID + "|q=\(qualifier.lowercased())"
+                if seen.insert(id).inserted {
+                    results.append(SQLCompletionSuggestion(id: id,
+                                                           title: qualifiedTitle,
+                                                           subtitle: qualifier,
+                                                           detail: "CTE Column \(qualifier).\(column)",
+                                                           insertText: qualifiedTitle,
+                                                           kind: .column,
+                                                           priority: priority))
                 }
-                let title = insert
-                results.append(SQLCompletionSuggestion(id: baseID,
-                                                       title: title,
-                                                       subtitle: qualifier,
-                                                       detail: "CTE Column \(qualifier).\(column)",
-                                                       insertText: insert,
-                                                       kind: .column,
-                                                       priority: priority))
+            } else {
+                if seen.insert(baseID).inserted {
+                    results.append(SQLCompletionSuggestion(id: baseID,
+                                                           title: columnName,
+                                                           subtitle: qualifier,
+                                                           detail: "CTE Column \(qualifier).\(column)",
+                                                           insertText: columnName,
+                                                           kind: .column,
+                                                           priority: priority))
+                }
             }
         }
     }
@@ -241,17 +255,23 @@ struct ColumnSuggestionProvider: SuggestionProvider {
         return 0
     }
 
-    private func qualifierNeeded(match: ColumnPathMatch, forceQualifier: Bool) -> Bool {
-        switch match {
-        case .alias:
-            return true
-        case .table:
-            return forceQualifier
-        case .any:
-            return forceQualifier
-        case .none:
-            return false
+    /// Returns the set of column names (lowercased) that appear in more than one table in scope.
+    private static func findAmbiguousColumns(tables: [SQLContext.TableReference],
+                                              context: ProviderContext) -> Set<String> {
+        guard tables.count > 1 else { return [] }
+        var columnCounts: [String: Int] = [:]
+        for tableRef in tables {
+            if let resolved = context.resolve(tableRef) {
+                for column in resolved.object.columns {
+                    columnCounts[column.name.lowercased(), default: 0] += 1
+                }
+            } else if let cteColumns = context.cteColumns(for: tableRef) {
+                for column in cteColumns {
+                    columnCounts[column.lowercased(), default: 0] += 1
+                }
+            }
         }
+        return Set(columnCounts.filter { $0.value > 1 }.keys)
     }
 }
 
