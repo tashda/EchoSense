@@ -47,13 +47,13 @@ public final class SQLAutoCompletionEngine {
     let historyStore = SQLAutoCompletionHistoryStore.shared
     public private(set) var isMetadataLimited: Bool = false
     private var metadataProvider: SQLStructureMetadataProvider = .empty
-    private var lastAcceptedClause: SQLClause?
-    private var lastAcceptedCaretLocation: Int?
+    var lastAcceptedClause: SQLClause?
+    var lastAcceptedCaretLocation: Int?
     var includeHistorySuggestions = true
     var preferQualifiedTableInsertions = false
     var aggressiveness: SQLCompletionAggressiveness = .balanced
     private var includeSystemSchemas = false
-    private var manualTriggerInProgress = false
+    var manualTriggerInProgress = false
     private static let emptyMetadata = SQLCompletionMetadata(clause: .unknown,
                                                              currentToken: "",
                                                              precedingKeyword: nil,
