@@ -223,6 +223,8 @@ struct SchemaSuggestionProvider: SuggestionProvider {
             let insertText = context.qualify(components) + "."
             let detail = displayDatabase.map { "\($0).\(schema.name)" }
             let fuzzyAdjustment = score < 0.95 ? Int(-100 * (1.0 - score)) : 0
+            // Built-in schema (synthetic, holds built-in functions) ranks at the bottom
+            let builtInPenalty = schema.name.lowercased() == "built-in" ? -500 : 0
 
             results.append(SQLCompletionSuggestion(id: "schema|\(schema.name.lowercased())",
                                                    title: schema.name,
@@ -230,7 +232,7 @@ struct SchemaSuggestionProvider: SuggestionProvider {
                                                    detail: detail,
                                                    insertText: insertText,
                                                    kind: .schema,
-                                                   priority: basePriority + fuzzyAdjustment))
+                                                   priority: basePriority + fuzzyAdjustment + builtInPenalty))
         }
         return results
     }
