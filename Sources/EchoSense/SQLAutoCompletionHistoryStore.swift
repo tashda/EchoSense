@@ -246,8 +246,7 @@ public final class SQLAutoCompletionHistoryStore: Sendable {
     private func contextKey(for context: SQLEditorCompletionContext?) -> String {
         guard let context else { return "global" }
         let database = context.selectedDatabase ?? "default"
-        let schema = context.defaultSchema ?? "default"
-        return "\(context.databaseType.rawValue)|\(database)|\(schema)"
+        return "\(context.databaseType.rawValue)|\(database)"
     }
 
     public func reset() {
