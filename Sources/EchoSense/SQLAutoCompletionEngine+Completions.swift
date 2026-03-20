@@ -163,20 +163,66 @@ extension SQLAutoCompletionEngine {
             SQLAutoCompletionTableFocus(schema: $0.schema, name: $0.name, alias: $0.alias)
         }
 
-        // Suppress completions in column contexts when no tables are known.
-        // Without tables, columns/functions are meaningless noise.
-        if tablesInScope.isEmpty && pathComponents.isEmpty {
-            let columnClauses: Set<SQLClause> = [
-                .selectList, .whereClause, .groupBy, .orderBy, .having,
-                .joinCondition, .values, .updateSet, .unknown
-            ]
-            if columnClauses.contains(parsed.clause) && !manualTriggerInProgress {
-                return SQLCompletionResponse(suggestions: [],
-                                              replacementRange: replacementRange,
-                                              token: token,
-                                              clause: parsed.clause,
-                                              isMetadataLimited: isMetadataLimited,
-                                              caretLocation: clampedCaret)
+        // ── Suppression rules (per spec) ──────────────────────────────
+
+        let emptyResponse = SQLCompletionResponse(suggestions: [],
+                                                    replacementRange: replacementRange,
+                                                    token: token,
+                                                    clause: parsed.clause,
+                                                    isMetadataLimited: isMetadataLimited,
+                                                    caretLocation: clampedCaret)
+
+        if !manualTriggerInProgress {
+            // 1. Inside string literals → silence
+            if Self.isInsideStringLiteral(in: nsText, at: clampedCaret) {
+                return emptyResponse
+            }
+
+            // 2. Inside comments → silence
+            if Self.isInsideComment(in: nsText, at: clampedCaret) {
+                return emptyResponse
+            }
+
+            // 3. Column contexts without tables → silence
+            if tablesInScope.isEmpty && pathComponents.isEmpty {
+                let columnClauses: Set<SQLClause> = [
+                    .selectList, .whereClause, .groupBy, .orderBy, .having,
+                    .joinCondition, .values, .updateSet, .unknown
+                ]
+                if columnClauses.contains(parsed.clause) {
+                    return emptyResponse
+                }
+            }
+
+            // 4. Alias typing: on same line after a table in FROM, no dot → silence
+            //    e.g., "from ba_tbl ba" — "ba" is an alias
+            if (parsed.clause == .from || parsed.clause == .joinTarget)
+                && !tablesInScope.isEmpty
+                && !token.isEmpty
+                && pathComponents.isEmpty
+                && precedingCharacter != "," {
+                // Check if the token is on the same line as a table name (not after a keyword)
+                if !Self.isImmediatelyAfterObjectKeyword(in: nsText, before: tokenStart) {
+                    return emptyResponse
+                }
+            }
+
+            // 5. Reserved keyword typing → silence (user knows what they're typing)
+            let tokenLower = token.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+            if !tokenLower.isEmpty && pathComponents.isEmpty {
+                let reservedKeywords: Set<String> = [
+                    "select", "from", "where", "join", "inner", "left", "right", "full",
+                    "outer", "cross", "on", "group", "by", "having", "order", "limit",
+                    "offset", "insert", "into", "values", "update", "set", "delete",
+                    "create", "drop", "alter", "and", "or", "not", "in", "between",
+                    "like", "is", "null", "as", "case", "when", "then", "else", "end",
+                    "union", "intersect", "except", "exists", "with", "distinct",
+                    "asc", "desc", "top", "returning", "using", "go", "begin", "end",
+                    "declare", "exec", "execute", "if", "while", "return", "print"
+                ]
+                if reservedKeywords.contains(tokenLower) {
+                    return emptyResponse
+                }
             }
         }
 
@@ -204,6 +250,98 @@ extension SQLAutoCompletionEngine {
                                       clause: parsed.clause,
                                       isMetadataLimited: isMetadataLimited,
                                       caretLocation: clampedCaret)
+    }
+
+    /// Checks if the caret is inside a string literal (single-quoted).
+    private static func isInsideStringLiteral(in text: NSString, at position: Int) -> Bool {
+        guard position > 0 else { return false }
+        var inString = false
+        var i = 0
+        while i < position {
+            let char = text.character(at: i)
+            if char == 0x27 { // single quote '
+                inString.toggle()
+            }
+            i += 1
+        }
+        return inString
+    }
+
+    /// Checks if the caret is inside a SQL comment (line or block).
+    private static func isInsideComment(in text: NSString, at position: Int) -> Bool {
+        guard position > 0 else { return false }
+        var i = 0
+        while i < position {
+            let char = text.character(at: i)
+            // Line comment: --
+            if char == 0x2D && i + 1 < text.length && text.character(at: i + 1) == 0x2D {
+                // Find end of line
+                var j = i + 2
+                while j < text.length && text.character(at: j) != 0x0A { j += 1 }
+                if position <= j { return true }
+                i = j + 1
+                continue
+            }
+            // Block comment: /* ... */
+            if char == 0x2F && i + 1 < text.length && text.character(at: i + 1) == 0x2A {
+                var j = i + 2
+                while j + 1 < text.length {
+                    if text.character(at: j) == 0x2A && text.character(at: j + 1) == 0x2F {
+                        j += 2
+                        break
+                    }
+                    j += 1
+                }
+                if position < j { return true }
+                i = j
+                continue
+            }
+            // Skip string literals
+            if char == 0x27 { // '
+                i += 1
+                while i < text.length && text.character(at: i) != 0x27 { i += 1 }
+            }
+            i += 1
+        }
+        return false
+    }
+
+    /// Checks if the position is immediately after an object keyword (FROM/JOIN/etc.)
+    /// with only whitespace between the keyword and the position.
+    private static func isImmediatelyAfterObjectKeyword(in text: NSString, before position: Int) -> Bool {
+        guard position > 0 else { return false }
+        // Scan backwards skipping whitespace to find the last word
+        var pos = position - 1
+        while pos >= 0 {
+            let char = text.character(at: pos)
+            if char == 0x20 || char == 0x09 || char == 0x0A || char == 0x0D {
+                pos -= 1
+                continue
+            }
+            break
+        }
+        guard pos >= 0 else { return false }
+
+        // Extract the word ending at this position
+        let wordEnd = pos + 1
+        while pos >= 0 {
+            let char = text.character(at: pos)
+            if let scalar = UnicodeScalar(char),
+               CharacterSet.alphanumerics.contains(scalar) || char == 0x5F {
+                pos -= 1
+            } else {
+                break
+            }
+        }
+        let wordStart = pos + 1
+        guard wordStart < wordEnd else { return false }
+        let word = text.substring(with: NSRange(location: wordStart, length: wordEnd - wordStart)).lowercased()
+
+        let objectKeywords: Set<String> = [
+            "from", "join", "inner", "left", "right", "full", "outer", "cross",
+            "update", "into", "delete"
+        ]
+        return objectKeywords.contains(word)
     }
 
     /// Scans backward from `position` in `text` to find the first non-whitespace character.
