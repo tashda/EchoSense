@@ -50,6 +50,62 @@ extension SQLAutoCompletionEngine {
         // generation is configurable at the engine level.
     }
 
+    /// Records table usage from an executed query.
+    ///
+    /// Call this after a query is successfully executed. EchoSense parses the
+    /// FROM/JOIN clauses to extract table references and records them to history.
+    /// This allows history to learn from all queries, not just popover selections.
+    ///
+    /// - Parameter sql: The SQL text that was executed.
+    public func recordQueryExecution(_ sql: String) {
+        guard let context else { return }
+        guard !sql.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else { return }
+
+        let catalogForParser: SQLDatabaseCatalog
+        if let provider = catalog?.metadataProvider {
+            catalogForParser = provider.catalog(for: context.selectedDatabase) ?? SQLDatabaseCatalog(schemas: [])
+        } else {
+            catalogForParser = SQLDatabaseCatalog(schemas: [])
+        }
+
+        let parser = SQLContextParser(text: sql,
+                                       caretLocation: sql.count,
+                                       dialect: context.databaseType.completionDialect,
+                                       catalog: catalogForParser)
+        let parsed = parser.parse()
+
+        for tableRef in parsed.tablesInScope {
+            // Build a minimal suggestion for history recording
+            let schemaName = tableRef.schema ?? context.defaultSchema ?? ""
+            let id = "object|\(schemaName.lowercased())|\(tableRef.name.lowercased())"
+
+            // Look up the table in the catalog for full metadata
+            var tableColumns: [SQLAutoCompletionSuggestion.TableColumn]?
+            for schema in catalogForParser.schemas {
+                if let obj = schema.objects.first(where: { $0.name.caseInsensitiveCompare(tableRef.name) == .orderedSame }) {
+                    tableColumns = obj.columns.map {
+                        SQLAutoCompletionSuggestion.TableColumn(name: $0.name, dataType: $0.dataType,
+                                                                 isNullable: $0.isNullable, isPrimaryKey: $0.isPrimaryKey)
+                    }
+                    break
+                }
+            }
+
+            let suggestion = SQLAutoCompletionSuggestion(
+                id: id,
+                title: tableRef.name,
+                subtitle: schemaName.isEmpty ? nil : schemaName,
+                detail: schemaName.isEmpty ? tableRef.name : "\(schemaName).\(tableRef.name)",
+                insertText: tableRef.name,
+                kind: .table,
+                origin: .init(database: context.selectedDatabase, schema: schemaName, object: tableRef.name),
+                tableColumns: tableColumns
+            )
+
+            historyStore.record(suggestion, context: context)
+        }
+    }
+
     /// Clears post-commit suppression state so completions can appear again
     /// at the current cursor position.
     public func clearSuppression() {
