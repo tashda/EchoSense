@@ -229,10 +229,6 @@ public final class SQLContextParser {
                         let after = nsText.substring(from: remaining).trimmingCharacters(in: .whitespacesAndNewlines).uppercased()
                         if after.hasPrefix("SELECT") || after.hasPrefix("INSERT") ||
                            after.hasPrefix("UPDATE") || after.hasPrefix("DELETE") {
-                            // Found the outer query start
-                            let offset = nsText.substring(from: remaining).distance(
-                                from: nsText.substring(from: remaining).startIndex,
-                                to: nsText.substring(from: remaining).startIndex)
                             return remaining
                         }
                         // Could be a comma followed by another CTE — continue scanning
@@ -444,10 +440,7 @@ public final class SQLContextParser {
             body = String(body.dropFirst(8)).trimmingCharacters(in: .whitespacesAndNewlines)
         }
         if body.uppercased().hasPrefix("TOP") {
-            // Skip TOP N or TOP (N)
-            if let fromIdx = body.uppercased().range(of: "FROM") {
-                // fallback: we can't easily parse TOP, just try
-            }
+            // Skip TOP N or TOP (N) — handled by the FROM search below
         }
 
         // Find FROM to delimit the column list

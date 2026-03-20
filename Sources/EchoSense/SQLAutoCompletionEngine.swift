@@ -406,7 +406,7 @@ public final class SQLAutoCompletionEngine {
         guard pos >= 0 else { return false }
 
         // Extract the word ending at this position
-        var wordEnd = pos + 1
+        let wordEnd = pos + 1
         while pos >= 0 {
             let char = nsText.character(at: pos)
             if let scalar = UnicodeScalar(char),
