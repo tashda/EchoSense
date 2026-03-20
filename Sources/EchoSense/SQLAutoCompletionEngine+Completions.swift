@@ -107,6 +107,23 @@ extension SQLAutoCompletionEngine {
             SQLAutoCompletionTableFocus(schema: $0.schema, name: $0.name, alias: $0.alias)
         }
 
+        // Suppress completions in column contexts when no tables are known.
+        // Without tables, columns/functions are meaningless noise.
+        if tablesInScope.isEmpty && pathComponents.isEmpty {
+            let columnClauses: Set<SQLClause> = [
+                .selectList, .whereClause, .groupBy, .orderBy, .having,
+                .joinCondition, .values, .updateSet, .unknown
+            ]
+            if columnClauses.contains(parsed.clause) && !manualTriggerInProgress {
+                return SQLCompletionResponse(suggestions: [],
+                                              replacementRange: replacementRange,
+                                              token: token,
+                                              clause: parsed.clause,
+                                              isMetadataLimited: isMetadataLimited,
+                                              caretLocation: clampedCaret)
+            }
+        }
+
         // Build the query for the existing pipeline.
         let query = SQLAutoCompletionQuery(token: token,
                                             prefix: prefix,
