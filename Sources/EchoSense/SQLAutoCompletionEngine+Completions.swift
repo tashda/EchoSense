@@ -224,6 +224,31 @@ extension SQLAutoCompletionEngine {
                     return emptyResponse
                 }
             }
+
+            // 6. After a completed expression in WHERE/HAVING — silence until
+            //    continuation keyword (AND, OR, ORDER, GROUP, etc.)
+            //    e.g., "WHERE user = 'John' " → silence
+            //    e.g., "WHERE user = 'John' AND " → show columns (handled by keyword space trigger)
+            //    The preceding character after a completed expression is typically:
+            //    ' (closing string), ) (closing paren), digit, or identifier end
+            if (parsed.clause == .whereClause || parsed.clause == .having)
+                && !token.isEmpty
+                && pathComponents.isEmpty {
+                let precKw = parsed.precedingKeyword?.lowercased()
+                let isAfterContinuation = precKw == "and" || precKw == "or"
+                    || precKw == "where" || precKw == "having" || precKw == "on"
+                    || precKw == "not" || precKw == "between"
+                if !isAfterContinuation {
+                    // Check if the preceding context is a completed expression
+                    // (preceding char is closing quote, paren, digit, or identifier)
+                    if let prevChar = precedingCharacter {
+                        let completedExpressionChars: Set<Character> = ["'", ")", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9"]
+                        if completedExpressionChars.contains(prevChar) {
+                            return emptyResponse
+                        }
+                    }
+                }
+            }
         }
 
         // Build the query for the existing pipeline.
