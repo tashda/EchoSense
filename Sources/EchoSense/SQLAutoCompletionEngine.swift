@@ -293,8 +293,7 @@ public final class SQLAutoCompletionEngine {
         if SQLAutoCompletionEngine.reservedLeadingKeywords.contains(tokenLower) && query.pathComponents.isEmpty {
             return false
         }
-        // In unknown clause with no tables in scope: user is typing SQL structure
-        // (SELECT, FROM, etc.) — no useful completions to offer.
+        // In unknown clause with no tables: user is typing SQL structure.
         if query.clause == .unknown && query.tablesInScope.isEmpty && query.pathComponents.isEmpty {
             return false
         }
