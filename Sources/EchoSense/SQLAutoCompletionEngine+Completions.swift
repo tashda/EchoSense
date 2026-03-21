@@ -252,6 +252,10 @@ extension SQLAutoCompletionEngine {
         }
 
         // Build the query for the existing pipeline.
+        // First, run the pipeline and check if we got meaningful results.
+        // If the result only has keywords (no tables/columns/schemas), and the user
+        // typed a dot-path (e.g., "employees."), suppress — it means the path
+        // couldn't be resolved to known schemas.
         let query = SQLAutoCompletionQuery(token: token,
                                             prefix: prefix,
                                             pathComponents: pathComponents,
@@ -266,7 +270,21 @@ extension SQLAutoCompletionEngine {
         let result = suggestions(for: query, text: text, caretLocation: clampedCaret)
 
         // Flatten sections into a single ranked list, limited to 60 items.
-        let allSuggestions = result.sections.flatMap(\.suggestions)
+        var allSuggestions = result.sections.flatMap(\.suggestions)
+
+        // If the user typed a dot-path (e.g., "employees.") and the results only
+        // contain keywords (no tables/columns/schemas), suppress — the path
+        // couldn't be resolved to known schemas. Show nothing instead of noise.
+        if !pathComponents.isEmpty {
+            let hasObjectSuggestions = allSuggestions.contains {
+                $0.kind == .table || $0.kind == .view || $0.kind == .materializedView
+                || $0.kind == .column || $0.kind == .schema || $0.kind == .function
+            }
+            if !hasObjectSuggestions {
+                allSuggestions = []
+            }
+        }
+
         let limited = allSuggestions.count > 60 ? Array(allSuggestions.prefix(60)) : allSuggestions
 
         return SQLCompletionResponse(suggestions: limited,
