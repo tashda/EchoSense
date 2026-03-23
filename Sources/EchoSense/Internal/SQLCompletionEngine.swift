@@ -1,4 +1,5 @@
 import Foundation
+import Logging
 
 final class SQLCompletionEngine: SQLCompletionProviding {
     private let builderFactory: SQLSuggestionBuilderFactory
@@ -8,6 +9,8 @@ final class SQLCompletionEngine: SQLCompletionProviding {
     }
 
     func completions(for request: SQLCompletionRequest) -> SQLCompletionResult {
+        let startTime = ContinuousClock.now
+
         guard request.caretLocation >= 0, request.caretLocation <= request.text.count else {
             return SQLCompletionResult(suggestions: [], metadata: .init(clause: .unknown,
                                                                         currentToken: "",
@@ -62,6 +65,11 @@ final class SQLCompletionEngine: SQLCompletionProviding {
             },
             cteColumns: context.cteColumns
         )
+
+        let elapsed = ContinuousClock.now - startTime
+        let ms = elapsed.components.seconds * 1000 + elapsed.components.attoseconds / 1_000_000_000_000_000
+        let tokenPrefix = String(context.currentToken.prefix(20))
+        Logger.echosense.debug("Completions: \(suggestions.count) suggestions in \(ms)ms for '\(tokenPrefix)' in \(context.clause)")
 
         return SQLCompletionResult(suggestions: suggestions, metadata: metadata)
     }

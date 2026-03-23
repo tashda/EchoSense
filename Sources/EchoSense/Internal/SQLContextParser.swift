@@ -1,4 +1,5 @@
 import Foundation
+import Logging
 
 public struct SQLContext {
     public struct TableReference: Hashable {
@@ -125,8 +126,15 @@ public final class SQLContextParser {
             if !alreadyInScope {
                 // Check if the name appears anywhere in the text as a word
                 let pattern = "(?i)\\b\(NSRegularExpression.escapedPattern(for: cteName))\\b"
-                if let regex = try? NSRegularExpression(pattern: pattern),
-                   regex.firstMatch(in: text, range: NSRange(text.startIndex..<text.endIndex, in: text)) != nil {
+                guard let regex: NSRegularExpression = {
+                    do {
+                        return try NSRegularExpression(pattern: pattern)
+                    } catch {
+                        Logger.echosense.warning("Regex compilation failed for CTE name lookup pattern")
+                        return nil
+                    }
+                }() else { continue }
+                if regex.firstMatch(in: text, range: NSRange(text.startIndex..<text.endIndex, in: text)) != nil {
                     enrichedTables.append(SQLContext.TableReference(schema: nil,
                                                                      name: cteName,
                                                                      alias: nil,
@@ -185,7 +193,12 @@ public final class SQLContextParser {
 
     private static let tableMatchRegex: NSRegularExpression? = {
         let pattern = "(?ix)\\b(from|join|update|into)\\s+([A-Za-z0-9_.\\\"`\\[\\]]+)(?:\\s+(?:AS\\s+)?([A-Za-z0-9_]+))?"
-        return try? NSRegularExpression(pattern: pattern, options: [])
+        do {
+            return try NSRegularExpression(pattern: pattern, options: [])
+        } catch {
+            Logger.echosense.warning("Regex compilation failed for table match pattern")
+            return nil
+        }
     }()
 
     private static let ctePatternRegexes: [NSRegularExpression] = {
@@ -193,7 +206,14 @@ public final class SQLContextParser {
             "(?is)\\bwith\\s+([A-Za-z0-9_\"`\\[\\]]+)\\s*\\(([^)]+)\\)",
             "(?is)\\)\\s+([A-Za-z0-9_]+)\\s*\\(([^)]+)\\)"
         ]
-        return patterns.compactMap { try? NSRegularExpression(pattern: $0, options: []) }
+        return patterns.compactMap { pattern in
+            do {
+                return try NSRegularExpression(pattern: pattern, options: [])
+            } catch {
+                Logger.echosense.warning("Regex compilation failed for CTE pattern")
+                return nil
+            }
+        }
     }()
 
     /// Finds the start of the outer query after WITH ... AS (...) blocks.
@@ -423,7 +443,12 @@ public final class SQLContextParser {
         // Match: WITH name AS ( followed by the body.
         // Uses (?:[^()]*|\([^()]*\))* to handle one level of nested parens (e.g., SUM(total))
         let pattern = "(?is)\\bwith\\s+([A-Za-z0-9_\"`\\[\\]]+)\\s+AS\\s*\\(\\s*(SELECT\\b(?:[^()]+|\\([^()]*\\))*)"
-        return try? NSRegularExpression(pattern: pattern, options: [])
+        do {
+            return try NSRegularExpression(pattern: pattern, options: [])
+        } catch {
+            Logger.echosense.warning("Regex compilation failed for CTE-without-columns pattern")
+            return nil
+        }
     }()
 
     /// Extracts column names/aliases from a SELECT clause.
@@ -445,8 +470,14 @@ public final class SQLContextParser {
 
         // Find FROM to delimit the column list
         let fromPattern = "(?i)\\bFROM\\b"
-        guard let fromRegex = try? NSRegularExpression(pattern: fromPattern),
-              let fromMatch = fromRegex.firstMatch(in: body, range: NSRange(body.startIndex..<body.endIndex, in: body)),
+        let fromRegex: NSRegularExpression
+        do {
+            fromRegex = try NSRegularExpression(pattern: fromPattern)
+        } catch {
+            Logger.echosense.warning("Regex compilation failed for FROM keyword pattern")
+            return []
+        }
+        guard let fromMatch = fromRegex.firstMatch(in: body, range: NSRange(body.startIndex..<body.endIndex, in: body)),
               let fromSwift = Range(fromMatch.range, in: body) else {
             return []
         }
