@@ -29,3 +29,6 @@ claude.md
 *_FIXTURES.md
 .planning/
 TASKS/
+
+# Generated DocC output (CI regenerates on deploy)
+docs/
