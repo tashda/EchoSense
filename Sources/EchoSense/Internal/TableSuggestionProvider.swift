@@ -38,6 +38,13 @@ struct TableSuggestionProvider: SuggestionProvider {
             targetCatalog.schemas.first(where: { $0.name.lowercased() == filter })
         }
 
+        // When the user typed an explicit "schema." (trailing dot), only show tables
+        // from that exact schema. If the schema doesn't exist, return nothing — suggesting
+        // tables from other schemas would produce invalid qualified references.
+        if identifier.isTrailingDot, schemaFilterLower != nil, exactSchema == nil {
+            return []
+        }
+
         var candidateSchemas: [SQLSchema]
         if let exactSchema {
             candidateSchemas = [exactSchema]
@@ -270,7 +277,7 @@ struct DatabaseSuggestionProvider: SuggestionProvider {
                                                    subtitle: "Database",
                                                    detail: dbName,
                                                    insertText: insertText,
-                                                   kind: .schema,
+                                                   kind: .database,
                                                    priority: priority))
         }
         return results

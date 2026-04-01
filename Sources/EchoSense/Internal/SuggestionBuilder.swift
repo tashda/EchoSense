@@ -105,13 +105,22 @@ struct ProviderContext {
     }
 
     func resolve(_ reference: SQLContext.TableReference) -> TableResolution? {
+        // When the reference has an explicit database, look up that database's catalog.
+        let targetCatalog: SQLDatabaseCatalog
+        if let db = reference.database,
+           let dbCatalog = metadata.catalog(for: db) {
+            targetCatalog = dbCatalog
+        } else {
+            targetCatalog = catalog
+        }
+
         if let schemaName = reference.schema {
-            if let schema = catalog.schemas.first(where: { $0.name.caseInsensitiveCompare(schemaName) == .orderedSame }),
+            if let schema = targetCatalog.schemas.first(where: { $0.name.caseInsensitiveCompare(schemaName) == .orderedSame }),
                let object = schema.objects.first(where: { $0.name.caseInsensitiveCompare(reference.name) == .orderedSame }) {
                 return TableResolution(schema: schema, object: object)
             }
         } else {
-            for schema in catalog.schemas {
+            for schema in targetCatalog.schemas {
                 if let object = schema.objects.first(where: { $0.name.caseInsensitiveCompare(reference.name) == .orderedSame }) {
                     return TableResolution(schema: schema, object: object)
                 }

@@ -172,10 +172,8 @@ extension SQLAutoCompletionEngine {
             return (.secondary, 260)
         case .keyword:
             return (.peripheral, -220)
-        case .table, .view, .materializedView, .schema, .join:
+        case .table, .view, .materializedView, .schema, .database, .join:
             return (.peripheral, -260)
-        @unknown default:
-            return (.peripheral, -200)
         }
     }
 
@@ -189,7 +187,7 @@ extension SQLAutoCompletionEngine {
             return (.secondary, 220)
         case .keyword:
             return (.peripheral, -260)
-        case .table, .view, .materializedView, .schema:
+        case .table, .view, .materializedView, .schema, .database:
             return (.peripheral, -280)
         }
     }
@@ -199,6 +197,9 @@ extension SQLAutoCompletionEngine {
         case .schema:
             // Schemas rank highest in FROM — enables schema.table drilling
             return (.primary, 540)
+        case .database:
+            // Databases rank just below schemas — enables db.schema.table drilling
+            return (.primary, 530)
         case .table, .view, .materializedView:
             return (.primary, 520)
         case .join:
@@ -218,7 +219,7 @@ extension SQLAutoCompletionEngine {
             return (.primary, 420)
         case .parameter, .snippet:
             return (.secondary, 160)
-        case .column, .table, .view, .materializedView, .function, .schema, .join:
+        case .column, .table, .view, .materializedView, .function, .schema, .database, .join:
             return (.peripheral, -200)
         }
     }
@@ -227,7 +228,7 @@ extension SQLAutoCompletionEngine {
         switch kind {
         case .column, .table, .view, .materializedView, .function:
             return (.secondary, 140)
-        case .keyword, .snippet, .parameter, .schema:
+        case .keyword, .snippet, .parameter, .schema, .database:
             return (.peripheral, -120)
         case .join:
             return (.peripheral, -180)

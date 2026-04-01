@@ -241,4 +241,84 @@ struct CrossDatabaseCompletionTests {
         let dbSuggestion = suggestions.first { $0.id.hasPrefix("database|") }
         #expect(dbSuggestion == nil, "Database names should not appear after db.schema.")
     }
+
+    // MARK: - Database suggestion kind
+
+    @Test func databaseSuggestionsUseDatabaseKind() {
+        let engine = makeCrossDBEngine(selectedDatabase: "db1")
+        let text = "SELECT * FROM "
+        let query = SQLAutoCompletionQuery(
+            token: "", prefix: "", pathComponents: [],
+            replacementRange: NSRange(location: text.count, length: 0),
+            precedingKeyword: "from", precedingCharacter: nil,
+            focusTable: nil, tablesInScope: [], clause: .from
+        )
+        let suggestions = allSuggestions(from: engine.suggestions(for: query, text: text, caretLocation: text.count))
+        let db2Suggestion = suggestions.first { $0.title == "db2" }
+        #expect(db2Suggestion?.kind == .database, "Database suggestions should use .database kind, not .schema")
+    }
+
+    // MARK: - 3-part name parsing
+
+    @Test func parserExtracts3PartTableReference() {
+        let engine = makeCrossDBEngine(selectedDatabase: "db1")
+        // The engine re-parses text — tablesInScope come from the parser.
+        let text = "SELECT * FROM db2.dbo.fable2 "
+        let query = SQLAutoCompletionQuery(
+            token: "", prefix: "", pathComponents: [],
+            replacementRange: NSRange(location: text.count, length: 0),
+            precedingKeyword: nil, precedingCharacter: " ",
+            focusTable: nil,
+            tablesInScope: [
+                SQLAutoCompletionTableFocus(database: "db2", schema: "dbo", name: "fable2", alias: nil)
+            ],
+            clause: .selectList
+        )
+        let result = engine.suggestions(for: query, text: text, caretLocation: text.count)
+        // The metadata should contain db2 as the database for fable2
+        let tableRef = result.metadata.tablesInScope.first { $0.name == "fable2" }
+        #expect(tableRef != nil, "fable2 should be in tablesInScope")
+        #expect(tableRef?.database == "db2", "database should be 'db2'")
+        #expect(tableRef?.schema == "dbo", "schema should be 'dbo'")
+    }
+
+    // MARK: - Cross-database column resolution
+
+    @Test func suggestsColumnsFromCrossDatabaseTable() {
+        let engine = makeCrossDBEngine(selectedDatabase: "db1")
+        // User wrote: SELECT db2.dbo.fable2. (wanting columns from fable2 in db2)
+        // The engine will parse the FROM clause and find fable2 in db2.
+        // We need a FROM clause so fable2 is in tablesInScope.
+        let text = "SELECT db2.dbo.fable2. FROM db2.dbo.fable2"
+        let caretLocation = "SELECT db2.dbo.fable2.".count
+        let query = SQLAutoCompletionQuery(
+            token: "db2.dbo.fable2.", prefix: "", pathComponents: ["db2", "dbo", "fable2"],
+            replacementRange: NSRange(location: caretLocation, length: 0),
+            precedingKeyword: nil, precedingCharacter: ".",
+            focusTable: nil, tablesInScope: [], clause: .selectList
+        )
+        let suggestions = allSuggestions(from: engine.suggestions(for: query, text: text, caretLocation: caretLocation))
+        let columnNames = suggestions.filter { $0.kind == .column }.map(\.title)
+        #expect(columnNames.contains("id"), "Should suggest columns from fable2 in db2")
+    }
+
+    // MARK: - Join target in cross-database context
+
+    @Test func joinTargetShowsSchemasFromOtherDatabase() {
+        let engine = makeCrossDBEngine(selectedDatabase: "db1")
+        let text = "SELECT * FROM table1 INNER JOIN db2."
+        let query = SQLAutoCompletionQuery(
+            token: "db2.", prefix: "", pathComponents: ["db2"],
+            replacementRange: NSRange(location: text.count, length: 0),
+            precedingKeyword: "join", precedingCharacter: ".",
+            focusTable: nil,
+            tablesInScope: [
+                SQLAutoCompletionTableFocus(schema: "dbo", name: "table1", alias: nil)
+            ],
+            clause: .joinTarget
+        )
+        let suggestions = allSuggestions(from: engine.suggestions(for: query, text: text, caretLocation: text.count))
+        let schemaNames = suggestions.filter { $0.kind == .schema }.map(\.title)
+        #expect(schemaNames.contains("dbo"), "Should suggest schemas from db2 after INNER JOIN db2.")
+    }
 }

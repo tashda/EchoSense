@@ -3,12 +3,14 @@ import Logging
 
 public struct SQLContext {
     public struct TableReference: Hashable {
+        public let database: String?
         public let schema: String?
         public let name: String
         public let alias: String?
         public let matchLocation: Int
 
-        public init(schema: String?, name: String, alias: String?, matchLocation: Int) {
+        public init(database: String? = nil, schema: String?, name: String, alias: String?, matchLocation: Int) {
+            self.database = database
             self.schema = schema
             self.name = name
             self.alias = alias
@@ -34,6 +36,7 @@ public struct SQLContext {
         }
 
         public func hash(into hasher: inout Hasher) {
+            hasher.combine(database?.lowercased())
             hasher.combine(schema?.lowercased())
             hasher.combine(name.lowercased())
             hasher.combine(alias?.lowercased())
@@ -70,6 +73,7 @@ public struct SQLContext {
 
 public final class SQLContextParser {
     private struct TableMatch {
+        let database: String?
         let schema: String?
         let name: String
         let alias: String?
@@ -304,8 +308,18 @@ public final class SQLContextParser {
 
             let components = normalized.split(separator: ".", omittingEmptySubsequences: true).map(String.init)
             guard let name = components.last else { return }
-            let schema = components.dropLast().last
-            matches.append(TableMatch(schema: schema,
+            let database: String?
+            let schema: String?
+            if components.count >= 3 {
+                // 3-part name: database.schema.table (MSSQL)
+                database = components[components.count - 3]
+                schema = components[components.count - 2]
+            } else {
+                database = nil
+                schema = components.dropLast().last
+            }
+            matches.append(TableMatch(database: database,
+                                       schema: schema,
                                        name: name,
                                        alias: alias,
                                        range: match.range))
@@ -317,7 +331,8 @@ public final class SQLContextParser {
     private func deduplicatedReferences(from matches: [TableMatch]) -> [SQLContext.TableReference] {
         var unique: [SQLContext.TableReference] = []
         for match in matches {
-            let reference = SQLContext.TableReference(schema: match.schema,
+            let reference = SQLContext.TableReference(database: match.database,
+                                                      schema: match.schema,
                                                       name: match.name,
                                                       alias: match.alias,
                                                       matchLocation: match.range.location)
@@ -331,7 +346,8 @@ public final class SQLContextParser {
     private func inferFocusTable(matches: [TableMatch], caretLocation: Int) -> SQLContext.TableReference? {
         guard !matches.isEmpty else { return nil }
         let candidate = matches.last { NSMaxRange($0.range) <= caretLocation } ?? matches.last!
-        return SQLContext.TableReference(schema: candidate.schema,
+        return SQLContext.TableReference(database: candidate.database,
+                                         schema: candidate.schema,
                                          name: candidate.name,
                                          alias: candidate.alias,
                                          matchLocation: candidate.range.location)

@@ -54,12 +54,14 @@ final class SQLCompletionEngine: SQLCompletionProviding {
             precedingKeyword: context.precedingKeyword,
             pathComponents: context.pathComponents,
             tablesInScope: context.tablesInScope.map { ref in
-                SQLCompletionMetadata.TableReference(schema: ref.schema,
+                SQLCompletionMetadata.TableReference(database: ref.database,
+                                                     schema: ref.schema,
                                                      name: ref.name,
                                                      alias: ref.alias)
             },
             focusTable: context.focusTable.map { ref in
-                SQLCompletionMetadata.TableReference(schema: ref.schema,
+                SQLCompletionMetadata.TableReference(database: ref.database,
+                                                     schema: ref.schema,
                                                      name: ref.name,
                                                      alias: ref.alias)
             },

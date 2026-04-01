@@ -128,6 +128,7 @@ extension SQLAutoCompletionEngine {
         case .snippet: return .snippet
         case .parameter: return .parameter
         case .join: return .join
+        case .database: return .database
         }
     }
 
@@ -143,6 +144,7 @@ extension SQLAutoCompletionEngine {
         case .snippet: return .snippet
         case .parameter: return .parameter
         case .join: return .join
+        case .database: return .database
         }
     }
 

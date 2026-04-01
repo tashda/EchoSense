@@ -157,10 +157,10 @@ extension SQLAutoCompletionEngine {
 
         // Convert parsed tables to the query model.
         let tablesInScope = parsed.tablesInScope.map {
-            SQLAutoCompletionTableFocus(schema: $0.schema, name: $0.name, alias: $0.alias)
+            SQLAutoCompletionTableFocus(database: $0.database, schema: $0.schema, name: $0.name, alias: $0.alias)
         }
         let focusTable = parsed.focusTable.map {
-            SQLAutoCompletionTableFocus(schema: $0.schema, name: $0.name, alias: $0.alias)
+            SQLAutoCompletionTableFocus(database: $0.database, schema: $0.schema, name: $0.name, alias: $0.alias)
         }
 
         // ── Suppression rules (per spec) ──────────────────────────────

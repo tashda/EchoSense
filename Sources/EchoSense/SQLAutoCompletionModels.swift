@@ -36,10 +36,12 @@ public enum SQLAutoCompletionKind: String, Equatable, Codable, Sendable {
     case snippet
     case parameter
     case join
+    case database
 
     public var iconSystemName: String {
         switch self {
         case .schema: return "square.grid.2x2"
+        case .database: return "cylinder"
         case .table: return "tablecells"
         case .view: return "rectangle.stack"
         case .materializedView: return "rectangle.stack.fill"
@@ -158,6 +160,7 @@ extension SQLAutoCompletionSuggestion {
         case .snippet: return "Snippet"
         case .parameter: return "Parameter"
         case .join: return "Join"
+        case .database: return "Database"
         }
     }
 
@@ -183,6 +186,8 @@ extension SQLAutoCompletionSuggestion {
         switch kind {
         case .schema:
             return joined([origin.schema])
+        case .database:
+            return joined([origin.database])
         case .table, .view, .materializedView:
             return joined([origin.schema, origin.object])
         case .column:
@@ -243,11 +248,13 @@ public struct SQLAutoCompletionResult: Sendable {
 }
 
 public struct SQLAutoCompletionTableFocus: Equatable, Sendable {
+    public let database: String?
     public let schema: String?
     public let name: String
     public let alias: String?
 
-    public init(schema: String?, name: String, alias: String?) {
+    public init(database: String? = nil, schema: String?, name: String, alias: String?) {
+        self.database = database
         self.schema = schema
         self.name = name
         self.alias = alias
