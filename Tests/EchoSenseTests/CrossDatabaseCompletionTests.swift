@@ -96,10 +96,11 @@ struct CrossDatabaseCompletionTests {
 
     @Test func suggestsDatabaseNamesInFromClause() {
         let engine = makeCrossDBEngine(selectedDatabase: "db1")
-        let text = "SELECT * FROM "
+        // Database suggestions require at least one typed character
+        let text = "SELECT * FROM d"
         let query = SQLAutoCompletionQuery(
-            token: "", prefix: "", pathComponents: [],
-            replacementRange: NSRange(location: text.count, length: 0),
+            token: "d", prefix: "d", pathComponents: [],
+            replacementRange: NSRange(location: text.count - 1, length: 1),
             precedingKeyword: "from", precedingCharacter: nil,
             focusTable: nil, tablesInScope: [], clause: .from
         )
@@ -111,10 +112,10 @@ struct CrossDatabaseCompletionTests {
 
     @Test func databaseSuggestionsInsertTrailingDot() {
         let engine = makeCrossDBEngine(selectedDatabase: "db1")
-        let text = "SELECT * FROM "
+        let text = "SELECT * FROM d"
         let query = SQLAutoCompletionQuery(
-            token: "", prefix: "", pathComponents: [],
-            replacementRange: NSRange(location: text.count, length: 0),
+            token: "d", prefix: "d", pathComponents: [],
+            replacementRange: NSRange(location: text.count - 1, length: 1),
             precedingKeyword: "from", precedingCharacter: nil,
             focusTable: nil, tablesInScope: [], clause: .from
         )
@@ -246,10 +247,10 @@ struct CrossDatabaseCompletionTests {
 
     @Test func databaseSuggestionsUseDatabaseKind() {
         let engine = makeCrossDBEngine(selectedDatabase: "db1")
-        let text = "SELECT * FROM "
+        let text = "SELECT * FROM d"
         let query = SQLAutoCompletionQuery(
-            token: "", prefix: "", pathComponents: [],
-            replacementRange: NSRange(location: text.count, length: 0),
+            token: "d", prefix: "d", pathComponents: [],
+            replacementRange: NSRange(location: text.count - 1, length: 1),
             precedingKeyword: "from", precedingCharacter: nil,
             focusTable: nil, tablesInScope: [], clause: .from
         )

@@ -80,6 +80,8 @@ extension SQLAutoCompletionEngine {
         case .schema:
             origin = SQLAutoCompletionSuggestion.Origin(database: context.selectedDatabase,
                                                         schema: suggestion.title)
+        case .database:
+            origin = SQLAutoCompletionSuggestion.Origin(database: suggestion.title)
         case .column:
             let details = mapColumnSuggestion(suggestion, context: context)
             origin = details.origin

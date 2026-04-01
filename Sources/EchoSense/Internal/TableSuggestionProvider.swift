@@ -262,6 +262,11 @@ struct DatabaseSuggestionProvider: SuggestionProvider {
         // Only suggest databases when at the very first segment (no preceding path components).
         guard context.identifier.precedingSegments.isEmpty else { return [] }
 
+        // Require at least one typed character before showing database suggestions.
+        // Without this, 40+ databases would flood the completion list on every empty
+        // FROM/JOIN trigger, pushing local tables out of view.
+        guard !context.identifier.lowercasePrefix.isEmpty else { return [] }
+
         let databaseNames = context.metadata.databaseNames
         guard !databaseNames.isEmpty else { return [] }
 
