@@ -287,6 +287,12 @@ extension SQLAutoCompletionEngine {
             return true
         }
 
+        // When path components are present (e.g. "db." or "schema."), enforce path matching
+        // even when prefix is empty — only show suggestions that belong to the referenced path.
+        if !pathLower.isEmpty {
+            return pathMatches()
+        }
+
         if !tokenLower.isEmpty {
             // Exact prefix match first, then fall back to fuzzy matching
             if suggestion.title.lowercased().hasPrefix(tokenLower) {
