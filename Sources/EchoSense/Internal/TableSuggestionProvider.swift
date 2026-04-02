@@ -95,6 +95,9 @@ struct TableSuggestionProvider: SuggestionProvider {
                     } else {
                         components = [schema.name]
                     }
+                } else if isCrossDB && schemaFilterLower == nil {
+                    // Cross-DB without explicit schema: insert db.schema.table
+                    components.append(schema.name)
                 } else if let lastIndex = components.indices.last,
                           schema.name.lowercased().hasPrefix(components[lastIndex].lowercased()) {
                     components[lastIndex] = schema.name
