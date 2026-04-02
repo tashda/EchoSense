@@ -233,11 +233,14 @@ extension SQLAutoCompletionEngine {
         }
 
         // When the user has finished typing a dotted path qualifier (token ends with ".")
-        // and no additional prefix has been typed yet, any single-component adjusted
-        // insert text is a valid completion at this depth — providers already filtered
-        // for the correct catalog/schema level.
+        // and no additional prefix has been typed yet, single-component adjusted insert
+        // text may be valid — but only for schemas/keywords, not tables/views. For tables,
+        // the path check below handles cross-DB filtering correctly.
         if tokenLower.hasSuffix(".") && prefixLower.isEmpty && !suggestion.insertText.contains(".") {
-            return true
+            if suggestion.kind == .schema || suggestion.kind == .keyword || suggestion.kind == .function {
+                return true
+            }
+            // For tables/views, fall through to the path-aware check below.
         }
 
         if tokenLower.isEmpty && prefixLower.isEmpty && pathMatches() {
@@ -290,7 +293,16 @@ extension SQLAutoCompletionEngine {
         // When path components are present (e.g. "db." or "schema."), enforce path matching
         // even when prefix is empty — only show suggestions that belong to the referenced path.
         if !pathLower.isEmpty {
-            return pathMatches()
+            if pathMatches() { return true }
+            // For cross-DB results, adjustedInsertText strips the database prefix from the
+            // insert text (e.g. "db.schema.table" → "schema.table"), which breaks pathMatches.
+            // Fall back to checking if the suggestion's origin database matches the typed path.
+            if let db = suggestion.origin?.database?.lowercased(),
+               pathLower.count == 1,
+               pathLower[0] == db {
+                return true
+            }
+            return false
         }
 
         if !tokenLower.isEmpty {
@@ -469,9 +481,9 @@ extension SQLAutoCompletionEngine {
         guard !query.pathComponents.isEmpty else { return original }
 
         let originalComponents = original.split(separator: ".").map(String.init)
-        var remaining = originalComponents
         let typedComponents = query.pathComponents.map { $0.lowercased() }
 
+        var remaining = originalComponents
         var index = 0
         while index < min(typedComponents.count, remaining.count),
               remaining[index].lowercased() == typedComponents[index] {
