@@ -21,11 +21,13 @@ struct TableSuggestionProvider: SuggestionProvider {
                 targetCatalog = context.catalog
             }
         } else if preceding.count == 1 {
-            // If the single preceding component is a database name, show tables from
-            // that database (alongside schema suggestions from SchemaSuggestionProvider).
-            let potentialDB = preceding[0]
-            if context.metadata.databaseNames.contains(where: { $0.lowercased() == potentialDB }),
-               let dbCatalog = context.metadata.catalog(for: potentialDB) {
+            // Disambiguate: local schema takes priority over database name.
+            let component = preceding[0]
+            let matchesLocalSchema = context.catalog.schemas.contains(where: { $0.name.lowercased() == component })
+            let matchesDatabase = !matchesLocalSchema
+                && context.metadata.databaseNames.contains(where: { $0.lowercased() == component })
+            if matchesDatabase,
+               let dbCatalog = context.metadata.catalog(for: component) {
                 targetCatalog = dbCatalog
             } else {
                 targetCatalog = context.catalog
@@ -36,11 +38,18 @@ struct TableSuggestionProvider: SuggestionProvider {
             targetCatalog = context.catalog
         }
 
-        // Determine the schema filter from the preceding segments.
-        // For "db.schema." → schemaFilter is "schema" (the last segment after the DB).
-        // For "db." → no schema filter (show all tables from the database).
-        // For "schema." → schemaFilter is "schema".
-        let isCrossDB = preceding.count >= 1 && context.metadata.databaseNames.contains(where: { $0.lowercased() == preceding[0] })
+        // Determine if this is a cross-database reference.
+        // Disambiguation: if a name matches BOTH a local schema AND a database,
+        // prefer local schema (the common case). Only treat as cross-DB when the
+        // name matches a database but NOT a local schema.
+        let isCrossDB: Bool
+        if preceding.count >= 1 {
+            let matchesLocalSchema = context.catalog.schemas.contains(where: { $0.name.lowercased() == preceding[0] })
+            let matchesDatabase = context.metadata.databaseNames.contains(where: { $0.lowercased() == preceding[0] })
+            isCrossDB = matchesDatabase && !matchesLocalSchema
+        } else {
+            isCrossDB = false
+        }
         let schemaFilterLower: String?
         if isCrossDB {
             schemaFilterLower = preceding.count >= 2 ? preceding.last : nil
@@ -190,10 +199,12 @@ struct SchemaSuggestionProvider: SuggestionProvider {
                                  context: context)
         } else if preceding.count == 1 {
             let component = preceding[0]
-            if context.metadata.databaseNames.contains(where: { $0.lowercased() == component }),
+            // Disambiguate: local schema takes priority over database name.
+            let matchesLocalSchema = context.catalog.schemas.contains(where: { $0.name.lowercased() == component })
+            if !matchesLocalSchema,
+               context.metadata.databaseNames.contains(where: { $0.lowercased() == component }),
                let dbCatalog = context.metadata.catalog(for: component) {
                 // The preceding component is a database name — suggest its schemas.
-                // If it's a trailing dot after a schema name inside that catalog, let table suggestions handle it.
                 if identifier.isTrailingDot,
                    dbCatalog.schemas.contains(where: { $0.name.lowercased() == component }) {
                     return []
