@@ -78,7 +78,7 @@ extension SQLAutoCompletionEngine {
                                                             object: suggestion.title)
             }
         case .schema:
-            origin = SQLAutoCompletionSuggestion.Origin(database: context.selectedDatabase,
+            origin = SQLAutoCompletionSuggestion.Origin(database: suggestion.subtitle ?? context.selectedDatabase,
                                                         schema: suggestion.title)
         case .database:
             origin = SQLAutoCompletionSuggestion.Origin(database: suggestion.title)
