@@ -21,19 +21,32 @@ struct TableSuggestionProvider: SuggestionProvider {
                 targetCatalog = context.catalog
             }
         } else if preceding.count == 1 {
-            // If the single preceding component is a database name, schema suggestions handle this step.
+            // If the single preceding component is a database name, show tables from
+            // that database (alongside schema suggestions from SchemaSuggestionProvider).
             let potentialDB = preceding[0]
-            if context.metadata.databaseNames.contains(where: { $0.lowercased() == potentialDB }) {
-                return []
+            if context.metadata.databaseNames.contains(where: { $0.lowercased() == potentialDB }),
+               let dbCatalog = context.metadata.catalog(for: potentialDB) {
+                targetCatalog = dbCatalog
+            } else {
+                targetCatalog = context.catalog
             }
-            targetCatalog = context.catalog
         } else if preceding.count > 2 {
             return []
         } else {
             targetCatalog = context.catalog
         }
 
-        let schemaFilterLower = preceding.last
+        // Determine the schema filter from the preceding segments.
+        // For "db.schema." → schemaFilter is "schema" (the last segment after the DB).
+        // For "db." → no schema filter (show all tables from the database).
+        // For "schema." → schemaFilter is "schema".
+        let isCrossDB = preceding.count >= 1 && context.metadata.databaseNames.contains(where: { $0.lowercased() == preceding[0] })
+        let schemaFilterLower: String?
+        if isCrossDB {
+            schemaFilterLower = preceding.count >= 2 ? preceding.last : nil
+        } else {
+            schemaFilterLower = preceding.last
+        }
         let exactSchema = schemaFilterLower.flatMap { filter in
             targetCatalog.schemas.first(where: { $0.name.lowercased() == filter })
         }
