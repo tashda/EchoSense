@@ -234,13 +234,12 @@ extension SQLAutoCompletionEngine {
 
         // When the user has finished typing a dotted path qualifier (token ends with ".")
         // and no additional prefix has been typed yet, single-component adjusted insert
-        // text may be valid — but only for schemas/keywords, not tables/views. For tables,
-        // the path check below handles cross-DB filtering correctly.
+        // text may be valid for columns (alias.col → col), schemas, keywords, and functions.
+        // Tables/views fall through to the path-aware cross-DB check below.
         if tokenLower.hasSuffix(".") && prefixLower.isEmpty && !suggestion.insertText.contains(".") {
-            if suggestion.kind == .schema || suggestion.kind == .keyword || suggestion.kind == .function {
+            if suggestion.kind == .column || suggestion.kind == .schema || suggestion.kind == .keyword || suggestion.kind == .function {
                 return true
             }
-            // For tables/views, fall through to the path-aware check below.
         }
 
         if tokenLower.isEmpty && prefixLower.isEmpty && pathMatches() {
