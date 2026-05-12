@@ -97,8 +97,14 @@ public final class SQLContextParser {
         let trimmedLocation = max(0, min(caretLocation, nsText.length))
         let tokens = SQLTokenizer.tokenize(nsText)
 
-        // Find the start of the current statement (after the last ';' before cursor)
-        let statementStart = findCurrentStatementStart(in: nsText, before: trimmedLocation)
+        // Determine the active statement range using the keyword-anchored segmenter.
+        // This scopes table/alias/CTE resolution to the statement containing the cursor
+        // so tables in sibling statements do not leak into completion.
+        let statementRange = SQLStatementSegmenter.statementRange(in: nsText,
+                                                                   caret: trimmedLocation,
+                                                                   dialect: dialect)
+        let statementStart = statementRange.location
+        let statementEnd = NSMaxRange(statementRange)
 
         let tokenRange = tokenRange(at: trimmedLocation, in: nsText)
         let token = tokenRange.length > 0 ? nsText.substring(with: tokenRange) : ""
@@ -110,12 +116,13 @@ public final class SQLContextParser {
         let clause = inferClause(tokens: tokens, caretLocation: trimmedLocation)
 
         // If there's a WITH clause, skip CTE bodies when scanning for table references
-        // so inner FROM tables don't leak into the outer scope
+        // so inner FROM tables don't leak into the outer scope.
         let tableSearchStart = findOuterQueryStart(from: statementStart, in: nsText) ?? statementStart
-        let tableMatches = parseTableMatches(from: tableSearchStart)
+        let tableMatches = parseTableMatches(from: tableSearchStart, upTo: statementEnd)
         let tables = deduplicatedReferences(from: tableMatches)
         let focusTable = inferFocusTable(matches: tableMatches, caretLocation: trimmedLocation)
-        var cteColumns = parseCTEColumns()
+        var cteColumns = parseCTEColumns(in: NSRange(location: statementStart,
+                                                     length: max(0, statementEnd - statementStart)))
         let derivedColumns = parseDerivedTableColumns(catalog: catalog)
         for (key, columns) in derivedColumns where cteColumns[key] == nil {
             cteColumns[key] = columns
@@ -123,12 +130,12 @@ public final class SQLContextParser {
 
         // Add CTE/derived table names to tablesInScope if they have columns
         // but weren't captured by the FROM/JOIN regex.
-        // This handles: CTEs (cursor before FROM), derived tables (alias after subquery)
         var enrichedTables = tables
+        let statementText = nsText.substring(with: NSRange(location: statementStart,
+                                                            length: max(0, statementEnd - statementStart)))
         for cteName in cteColumns.keys {
             let alreadyInScope = enrichedTables.contains { $0.name.lowercased() == cteName }
             if !alreadyInScope {
-                // Check if the name appears anywhere in the text as a word
                 let pattern = "(?i)\\b\(NSRegularExpression.escapedPattern(for: cteName))\\b"
                 guard let regex: NSRegularExpression = {
                     do {
@@ -138,7 +145,8 @@ public final class SQLContextParser {
                         return nil
                     }
                 }() else { continue }
-                if regex.firstMatch(in: text, range: NSRange(text.startIndex..<text.endIndex, in: text)) != nil {
+                let searchRange = NSRange(statementText.startIndex..<statementText.endIndex, in: statementText)
+                if regex.firstMatch(in: statementText, range: searchRange) != nil {
                     enrichedTables.append(SQLContext.TableReference(schema: nil,
                                                                      name: cteName,
                                                                      alias: nil,
@@ -277,13 +285,15 @@ public final class SQLContextParser {
         return 0
     }
 
-    private func parseTableMatches(from statementStart: Int = 0) -> [TableMatch] {
+    private func parseTableMatches(from statementStart: Int = 0,
+                                    upTo statementEnd: Int? = nil) -> [TableMatch] {
         guard !text.isEmpty else { return [] }
 
         guard let regex = SQLContextParser.tableMatchRegex else { return [] }
         let nsText = text as NSString
         let clampedStart = max(0, min(statementStart, nsText.length))
-        let nsRange = NSRange(location: clampedStart, length: nsText.length - clampedStart)
+        let clampedEnd = max(clampedStart, min(statementEnd ?? nsText.length, nsText.length))
+        let nsRange = NSRange(location: clampedStart, length: clampedEnd - clampedStart)
         var matches: [TableMatch] = []
 
         regex.enumerateMatches(in: text, options: [], range: nsRange) { match, _, _ in
@@ -396,12 +406,20 @@ public final class SQLContextParser {
         "select", "where", "on", "and", "or", "having", "group", "order", "by", "set", "values", "case", "when", "then", "else", "returning", "using"
     ]
 
-    private func parseCTEColumns() -> [String: [String]] {
+    private func parseCTEColumns(in scope: NSRange? = nil) -> [String: [String]] {
         var mapping: [String: [String]] = [:]
+        let fullRange = NSRange(text.startIndex..<text.endIndex, in: text)
+        let scopeRange: NSRange = {
+            guard let scope else { return fullRange }
+            let nsText = text as NSString
+            let loc = max(0, min(scope.location, nsText.length))
+            let len = max(0, min(scope.length, nsText.length - loc))
+            return NSRange(location: loc, length: len)
+        }()
 
         // Pass 1: CTEs with explicit column lists — WITH name(col1, col2) AS (...)
         for regex in SQLContextParser.ctePatternRegexes {
-            let nsRange = NSRange(text.startIndex..<text.endIndex, in: text)
+            let nsRange = scopeRange
 
             regex.enumerateMatches(in: text, options: [], range: nsRange) { match, _, _ in
                 guard let match, match.numberOfRanges >= 3 else { return }
@@ -431,7 +449,7 @@ public final class SQLContextParser {
         // Pass 2: CTEs without explicit column lists — WITH name AS (SELECT ...)
         // Infer columns from the inner SELECT statement
         if let regex = SQLContextParser.cteWithoutColumnsRegex {
-            let nsRange = NSRange(text.startIndex..<text.endIndex, in: text)
+            let nsRange = scopeRange
             regex.enumerateMatches(in: text, options: [], range: nsRange) { match, _, _ in
                 guard let match, match.numberOfRanges >= 3 else { return }
 
