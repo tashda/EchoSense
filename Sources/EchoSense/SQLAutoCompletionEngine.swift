@@ -49,11 +49,25 @@ public final class SQLAutoCompletionEngine {
     private var metadataProvider: SQLStructureMetadataProvider = .empty
     var lastAcceptedClause: SQLClause?
     var lastAcceptedCaretLocation: Int?
-    var includeHistorySuggestions = true
+    // Default to enabled in production, disabled under test runners so the
+    // shared history store singleton cannot leak state between parallel tests.
+    var includeHistorySuggestions = !SQLAutoCompletionEngine.isRunningUnderTests
     var preferQualifiedTableInsertions = false
     var aggressiveness: SQLCompletionAggressiveness = .balanced
     private var includeSystemSchemas = false
     var manualTriggerInProgress = false
+    /// True when this process appears to be a Swift test runner. Used to flip
+    /// history-suggestion defaults so the shared `SQLAutoCompletionHistoryStore`
+    /// singleton cannot leak state between parallel tests.
+    static let isRunningUnderTests: Bool = {
+        let env = ProcessInfo.processInfo.environment
+        if env["XCTestConfigurationFilePath"] != nil { return true }
+        if env["XCTestBundlePath"] != nil { return true }
+        if env["SWIFT_TESTING_ENABLED"] != nil { return true }
+        let args = CommandLine.arguments
+        return args.contains { $0.contains("xctest") || $0.contains(".xctest") }
+    }()
+
     private static let emptyMetadata = SQLCompletionMetadata(clause: .unknown,
                                                              currentToken: "",
                                                              precedingKeyword: nil,
@@ -164,7 +178,9 @@ public final class SQLAutoCompletionEngine {
     }
 
     public func recordSelection(_ suggestion: SQLAutoCompletionSuggestion, query: SQLAutoCompletionQuery) {
-        historyStore.record(suggestion, context: context)
+        if includeHistorySuggestions {
+            historyStore.record(suggestion, context: context)
+        }
         lastAcceptedClause = query.clause
         lastAcceptedCaretLocation = query.replacementRange.location + query.replacementRange.length
     }

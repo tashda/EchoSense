@@ -293,13 +293,30 @@ extension SQLAutoCompletionEngine {
         // even when prefix is empty — only show suggestions that belong to the referenced path.
         if !pathLower.isEmpty {
             if pathMatches() { return true }
-            // For cross-DB results, adjustedInsertText strips the database prefix from the
-            // insert text (e.g. "db.schema.table" → "schema.table"), which breaks pathMatches.
-            // Fall back to checking if the suggestion's origin database matches the typed path.
-            if let db = suggestion.origin?.database?.lowercased(),
-               pathLower.count == 1,
-               pathLower[0] == db {
-                return true
+            // adjustedInsertText strips already-typed path segments from insertText
+            // (e.g. "analytics.events" → "events", "db.schema.table" → "schema.table"),
+            // which breaks pathMatches. Fall back to checking the suggestion's origin.
+            if let origin = suggestion.origin {
+                var originComponents: [String] = []
+                if let db = origin.database?.lowercased() { originComponents.append(db) }
+                if let schema = origin.schema?.lowercased() { originComponents.append(schema) }
+                if let object = origin.object?.lowercased() { originComponents.append(object) }
+                // Match pathLower as a contiguous prefix subsequence of origin components,
+                // starting at any position (db, schema, or object).
+                if !originComponents.isEmpty {
+                    for start in originComponents.indices {
+                        if start + pathLower.count > originComponents.count { break }
+                        var matched = true
+                        for (offset, typed) in pathLower.enumerated() {
+                            let candidate = originComponents[start + offset]
+                            if !candidate.hasPrefix(typed) {
+                                matched = false
+                                break
+                            }
+                        }
+                        if matched { return true }
+                    }
+                }
             }
             return false
         }

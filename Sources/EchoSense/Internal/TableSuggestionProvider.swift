@@ -26,12 +26,13 @@ struct TableSuggestionProvider: SuggestionProvider {
             let matchesLocalSchema = context.catalog.schemas.contains(where: { $0.name.lowercased() == component })
             let matchesDatabase = !matchesLocalSchema
                 && context.metadata.databaseNames.contains(where: { $0.lowercased() == component })
-            if matchesDatabase,
-               let dbCatalog = context.metadata.catalog(for: component) {
-                targetCatalog = dbCatalog
-            } else {
-                targetCatalog = context.catalog
+            if matchesDatabase {
+                // Pure `db.` reference — the user has not chosen a schema yet, so showing
+                // tables would produce invalid `db.table` insertions. Defer entirely to
+                // SchemaSuggestionProvider.
+                return []
             }
+            targetCatalog = context.catalog
         } else if preceding.count > 2 {
             return []
         } else {

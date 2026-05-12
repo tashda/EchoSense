@@ -41,9 +41,14 @@ extension SQLAutoCompletionEngine {
 
             // Apply history boost to ALL suggestions, not just history-sourced ones.
             // This makes frequently-picked items float to the top regardless of source.
-            let historyBoost = historyStore.weight(for: suggestion, context: context)
-            if historyBoost > 0 {
-                score += historyBoost * (suggestion.source == .history ? 1.0 : 0.5)
+            // Gated by `includeHistorySuggestions` so engines with history disabled
+            // are not affected by entries recorded by other engine instances
+            // (the store is a shared singleton).
+            if includeHistorySuggestions {
+                let historyBoost = historyStore.weight(for: suggestion, context: context)
+                if historyBoost > 0 {
+                    score += historyBoost * (suggestion.source == .history ? 1.0 : 0.5)
+                }
             }
 
             if suggestion.source == .fallback {
