@@ -60,6 +60,7 @@ extension SQLAutoCompletionEngine {
 
         var origin: SQLAutoCompletionSuggestion.Origin?
         var dataType: String?
+        var columnFacts: SQLAutoCompletionSuggestion.ColumnFacts?
         var tableColumns: [SQLAutoCompletionSuggestion.TableColumn]?
 
         switch suggestion.kind {
@@ -86,6 +87,7 @@ extension SQLAutoCompletionEngine {
             let details = mapColumnSuggestion(suggestion, context: context)
             origin = details.origin
             dataType = details.dataType
+            columnFacts = details.facts
         case .function, .procedure:
             origin = mapFunctionOrigin(suggestion, context: context)
         default:
@@ -113,6 +115,7 @@ extension SQLAutoCompletionEngine {
                                            kind: mappedKind,
                                            origin: origin,
                                            dataType: dataType,
+                                           columnFacts: columnFacts,
                                            tableColumns: tableColumns,
                                            snippetText: snippetText,
                                            priority: suggestion.priority)
@@ -378,9 +381,9 @@ extension SQLAutoCompletionEngine {
     }
 
     private func mapColumnSuggestion(_ suggestion: SQLCompletionSuggestion,
-                                     context: SQLEditorCompletionContext) -> (origin: SQLAutoCompletionSuggestion.Origin?, dataType: String?) {
+                                     context: SQLEditorCompletionContext) -> (origin: SQLAutoCompletionSuggestion.Origin?, dataType: String?, facts: SQLAutoCompletionSuggestion.ColumnFacts?) {
         guard let components = parseColumnIdentifier(from: suggestion.id) else {
-            return (nil, nil)
+            return (nil, nil, nil)
         }
 
         if components.isCTE {
@@ -389,7 +392,7 @@ extension SQLAutoCompletionEngine {
                                                             schema: nil,
                                                             object: qualifier,
                                                             column: components.column)
-            return (origin, nil)
+            return (origin, nil, nil)
         }
 
         guard let tableName = components.table else {
@@ -397,7 +400,7 @@ extension SQLAutoCompletionEngine {
                                                             schema: components.schema,
                                                             object: nil,
                                                             column: components.column)
-            return (origin, nil)
+            return (origin, nil, nil)
         }
 
         if let entry = lookupObject(schema: components.schema,
@@ -408,16 +411,20 @@ extension SQLAutoCompletionEngine {
                                                             object: entry.object.name,
                                                             column: components.column)
             if let columnInfo = entry.object.columns.first(where: { $0.name.caseInsensitiveCompare(components.column) == .orderedSame }) {
-                return (origin, columnInfo.dataType)
+                let target = columnInfo.foreignKey.map { "\($0.referencedSchema).\($0.referencedTable).\($0.referencedColumn)" }
+                let facts = SQLAutoCompletionSuggestion.ColumnFacts(isNullable: columnInfo.isNullable,
+                                                                    isPrimaryKey: columnInfo.isPrimaryKey,
+                                                                    foreignKeyTarget: target)
+                return (origin, columnInfo.dataType, facts)
             }
-            return (origin, nil)
+            return (origin, nil, nil)
         }
 
         let origin = SQLAutoCompletionSuggestion.Origin(database: context.selectedDatabase,
                                                         schema: components.schema,
                                                         object: tableName,
                                                         column: components.column)
-        return (origin, nil)
+        return (origin, nil, nil)
     }
 
     private func parseColumnIdentifier(from identifier: String) -> (schema: String?, table: String?, column: String, isCTE: Bool)? {

@@ -97,6 +97,21 @@ public struct SQLAutoCompletionSuggestion: Identifiable, Equatable, Codable, Sen
         }
     }
 
+    /// What the schema knows about a column suggestion: nullability and keys. Lets an editor
+    /// describe the column without another metadata lookup.
+    public struct ColumnFacts: Equatable, Codable, Sendable {
+        public let isNullable: Bool
+        public let isPrimaryKey: Bool
+        /// The referenced column as `schema.table.column`, when the column is a foreign key.
+        public let foreignKeyTarget: String?
+
+        public init(isNullable: Bool, isPrimaryKey: Bool, foreignKeyTarget: String? = nil) {
+            self.isNullable = isNullable
+            self.isPrimaryKey = isPrimaryKey
+            self.foreignKeyTarget = foreignKeyTarget
+        }
+    }
+
     public enum Source: Equatable, Codable, Sendable {
         case engine
         case history
@@ -111,6 +126,7 @@ public struct SQLAutoCompletionSuggestion: Identifiable, Equatable, Codable, Sen
     public let kind: SQLAutoCompletionKind
     public let origin: Origin?
     public let dataType: String?
+    public let columnFacts: ColumnFacts?
     public let tableColumns: [TableColumn]?
     public let snippetText: String?
     public let priority: Int
@@ -124,6 +140,7 @@ public struct SQLAutoCompletionSuggestion: Identifiable, Equatable, Codable, Sen
                 kind: SQLAutoCompletionKind,
                 origin: Origin? = nil,
                 dataType: String? = nil,
+                columnFacts: ColumnFacts? = nil,
                 tableColumns: [TableColumn]? = nil,
                 snippetText: String? = nil,
                 priority: Int = 1000,
@@ -140,6 +157,7 @@ public struct SQLAutoCompletionSuggestion: Identifiable, Equatable, Codable, Sen
             self.origin = nil
         }
         self.dataType = dataType
+        self.columnFacts = columnFacts
         self.tableColumns = tableColumns?.isEmpty == true ? nil : tableColumns
         self.snippetText = snippetText
         self.priority = priority
