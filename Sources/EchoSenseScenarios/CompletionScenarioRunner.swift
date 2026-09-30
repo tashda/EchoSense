@@ -23,6 +23,8 @@ public struct ScenarioActual: Codable, Sendable, Hashable {
     public var triggerNote: String
     /// The text after accepting the first suggestion, with the caret written as the scenario's marker.
     public var textAfterAccepting: String?
+    /// The same for every suggestion, by title, so an expectation can name which one is accepted.
+    public var textAfterAcceptingByTitle: [String: String] = [:]
 
     public var isEmpty: Bool { titles.isEmpty }
 }
@@ -137,10 +139,13 @@ public struct CompletionScenarioRunner: Sendable {
         let response = scenario.trigger == .manual ? manual : automatic
         let asked = policy.opens ? response.suggestions : []
         var accepted: String?
-        if let first = asked.first {
-            let result = SQLEditorAcceptance.accept(first, from: response, in: text)
+        var acceptedByTitle: [String: String] = [:]
+        for (index, suggestion) in asked.prefix(200).enumerated() {
+            let result = SQLEditorAcceptance.accept(suggestion, from: response, in: text)
             let ns = result.text as NSString
-            accepted = ns.substring(to: result.caret) + scenario.caretMarker + ns.substring(from: result.caret)
+            let marked = ns.substring(to: result.caret) + scenario.caretMarker + ns.substring(from: result.caret)
+            if index == 0 { accepted = marked }
+            acceptedByTitle[Self.unquoted(suggestion.title)] = acceptedByTitle[Self.unquoted(suggestion.title)] ?? marked
         }
         return ScenarioActual(
             titles: asked.map(\.title),
@@ -149,7 +154,7 @@ public struct CompletionScenarioRunner: Sendable {
             clause: "\(response.clause)", token: response.token,
             manualTitles: manual.suggestions.map(\.title), isMetadataLimited: response.isMetadataLimited,
             engineTitles: response.suggestions.map(\.title), popupShown: !asked.isEmpty, triggerNote: policy.reason,
-            textAfterAccepting: accepted)
+            textAfterAccepting: accepted, textAfterAcceptingByTitle: acceptedByTitle)
     }
 
     public static func databaseType(_ dialect: ScenarioDialect) -> EchoSenseDatabaseType {
@@ -212,8 +217,11 @@ public struct CompletionScenarioRunner: Sendable {
             let first = actual.titles.first.map(unquoted)
             if first != unquoted(selected) { reasons.append("Expected “\(selected)” to be selected, but \(first.map { "“\($0)” is" } ?? "nothing is").") }
         }
-        if let after = expected.textAfterAccepting, after != actual.textAfterAccepting {
-            reasons.append("Expected the text after accepting to be “\(after.replacingOccurrences(of: "\n", with: "⏎"))”, but it is “\((actual.textAfterAccepting ?? "no popup").replacingOccurrences(of: "\n", with: "⏎"))”.")
+        if let after = expected.textAfterAccepting {
+            let got = expected.accept.flatMap { $0.isEmpty ? nil : actual.textAfterAcceptingByTitle[unquoted($0)] } ?? actual.textAfterAccepting
+            if after != got {
+                reasons.append("Expected the text after accepting\(expected.accept.map { $0.isEmpty ? "" : " “\($0)”" } ?? "") to be “\(after.replacingOccurrences(of: "\n", with: "⏎"))”, but it is “\((got ?? "not offered").replacingOccurrences(of: "\n", with: "⏎"))”.")
+            }
         }
         return reasons.isEmpty ? .pass : .fail(reasons)
     }

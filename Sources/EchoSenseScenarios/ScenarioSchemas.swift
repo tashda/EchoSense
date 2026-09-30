@@ -5,12 +5,15 @@ import Foundation
 public enum ScenarioSchemas {
     public static let specID = "spec"
     public static let shopID = "shop"
-    public static let ids = [specID, shopID]
+    /// Names that need quoting: order, UserData, "my table", next to plain ones.
+    public static let quotingID = "quoting"
+    public static let ids = [specID, shopID, quotingID]
 
     public static func structure(id: String, dialect: ScenarioDialect) -> EchoSenseDatabaseStructure? {
         switch id {
         case specID: spec(dialect: dialect)
         case shopID: shop(dialect: dialect)
+        case quotingID: quoting(dialect: dialect)
         default: nil
         }
     }
@@ -19,7 +22,7 @@ public enum ScenarioSchemas {
         switch dialect { case .postgresql: "public"; case .mssql: "dbo"; case .mysql, .sqlite: nil }
     }
 
-    public static func databaseName(id: String) -> String { id == shopID ? "shop" : "mydb" }
+    public static func databaseName(id: String) -> String { id == shopID ? "shop" : id == quotingID ? "quotes" : "mydb" }
 
     private static func column(_ name: String, _ type: String, pk: Bool = false, nullable: Bool = true,
                                references: (String, String, String)? = nil) -> EchoSenseColumnInfo {
@@ -64,6 +67,15 @@ public enum ScenarioSchemas {
         var schemas = [EchoSenseSchemaInfo(name: main, objects: objects)]
         if dialect == .postgresql || dialect == .mssql { schemas.append(EchoSenseSchemaInfo(name: "analytics", objects: [events, metrics])) }
         return EchoSenseDatabaseStructure(serverVersion: "scenario", databases: [EchoSenseDatabaseInfo(name: "mydb", schemas: schemas)])
+    }
+
+    static func quoting(dialect: ScenarioDialect) -> EchoSenseDatabaseStructure {
+        let main = defaultSchema(for: dialect) ?? "main"
+        func table(_ name: String) -> EchoSenseSchemaObjectInfo {
+            EchoSenseSchemaObjectInfo(name: name, schema: main, type: .table, columns: [column("id", "int", pk: true), column("value", "text")])
+        }
+        return EchoSenseDatabaseStructure(serverVersion: "scenario", databases: [EchoSenseDatabaseInfo(
+            name: "quotes", schemas: [EchoSenseSchemaInfo(name: main, objects: ["order", "UserData", "my table", "users", "my_table", "order_items"].map(table))])])
     }
 
     /// The small sales database Echo Labs used for its first completion page.

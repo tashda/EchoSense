@@ -115,6 +115,13 @@ public struct ScenarioOptions: Codable, Sendable, Hashable {
         self.includeSystemSchemas = includeSystemSchemas
         self.qualifyTableInsertions = qualifyTableInsertions
     }
+
+    private enum CodingKeys: String, CodingKey { case includeSystemSchemas, qualifyTableInsertions }
+    public init(from decoder: Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        includeSystemSchemas = try c.decodeIfPresent(Bool.self, forKey: .includeSystemSchemas) ?? false
+        qualifyTableInsertions = try c.decodeIfPresent(Bool.self, forKey: .qualifyTableInsertions) ?? false
+    }
 }
 
 public enum ScenarioReview: String, Codable, Sendable, Hashable, CaseIterable {
@@ -172,12 +179,14 @@ public struct EchoExpectation: Codable, Sendable, Hashable {
     public var popup: Popup?
     /// The suggestion that is selected when the popup opens.
     public var selected: String?
+    /// The suggestion accepted for `textAfterAccepting` (by title); the first when empty.
+    public var accept: String?
     /// The text after accepting the selected suggestion, with the caret as the scenario's marker.
     public var textAfterAccepting: String?
     /// The grey ghost text, when that setting is on.
     public var ghostText: String?
 
-    public init(popup: Popup? = nil, selected: String? = nil, textAfterAccepting: String? = nil, ghostText: String? = nil) {
-        self.popup = popup; self.selected = selected; self.textAfterAccepting = textAfterAccepting; self.ghostText = ghostText
+    public init(popup: Popup? = nil, selected: String? = nil, accept: String? = nil, textAfterAccepting: String? = nil, ghostText: String? = nil) {
+        self.popup = popup; self.selected = selected; self.accept = accept; self.textAfterAccepting = textAfterAccepting; self.ghostText = ghostText
     }
 }

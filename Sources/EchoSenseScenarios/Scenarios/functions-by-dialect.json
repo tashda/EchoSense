@@ -1,0 +1,63 @@
+[
+  {
+    "dialect": "postgresql",
+    "echoSense": {
+      "excludes": [
+        "STUFF",
+        "ISNULL"
+      ],
+      "items": [
+        "STRING_AGG"
+      ],
+      "order": "includes",
+      "outcome": "suggests"
+    },
+    "group": "Functions by Dialect",
+    "id": "FN-001",
+    "review": "imported",
+    "schema": "spec",
+    "should": "PostgreSQL offers `STRING_AGG`, `ARRAY_AGG`, `UNNEST`; not `STUFF` or `ISNULL` (11.5).",
+    "source": "AUTOCOMPLETE_SPEC.md",
+    "sql": "SELECT STR| FROM users",
+    "title": "PostgreSQL has STRING_AGG, not STUFF",
+    "trigger": "typing"
+  },
+  {
+    "dialect": "mssql",
+    "echoSense": {
+      "excludes": [
+        "IFNULL",
+        "UNNEST"
+      ],
+      "items": [
+        "ISNULL"
+      ],
+      "order": "includes",
+      "outcome": "suggests"
+    },
+    "group": "Functions by Dialect",
+    "id": "FN-002",
+    "review": "imported",
+    "schema": "spec",
+    "should": "SQL Server offers `ISNULL`, `STUFF`, `CONVERT`; not `IFNULL` or `UNNEST` (11.5).",
+    "source": "AUTOCOMPLETE_SPEC.md",
+    "sql": "SELECT ISN| FROM users",
+    "title": "SQL Server has ISNULL and STUFF, not IFNULL",
+    "trigger": "typing"
+  },
+  {
+    "dialect": "mssql",
+    "echoSense": {
+      "outcome": "nothing"
+    },
+    "group": "Functions by Dialect",
+    "id": "FN-003",
+    "review": "imported",
+    "schema": "spec",
+    "should": "`ARRAY_AGG` is PostgreSQL only: SQL Server does not offer it (11.5).",
+    "source": "AUTOCOMPLETE_SPEC.md",
+    "sql": "SELECT ARRAY| FROM users",
+    "title": "SQL Server has no ARRAY_AGG",
+    "trigger": "typing"
+  }
+]
