@@ -107,7 +107,7 @@ public struct CompletionScenarioRunner: Sendable {
     public static func compare(_ expected: EchoSenseExpectation, actual: ScenarioActual, trigger: ScenarioTrigger) -> ScenarioVerdict {
         var reasons: [String] = []
         switch expected.outcome {
-        case .none:
+        case .nothing:
             if !actual.titles.isEmpty { reasons.append("Expected nothing, but it offered \(list(actual.titles)).") }
             if !actual.manualTitles.isEmpty { reasons.append("Expected nothing even when triggered by hand, but that offered \(list(actual.manualTitles)).") }
         case .silent:
@@ -157,7 +157,7 @@ public extension CompletionScenario {
     /// An expectation that describes exactly what the engine returned now: "accept actual as expected".
     func expectation(matching actual: ScenarioActual) -> EchoSenseExpectation {
         actual.titles.isEmpty
-            ? EchoSenseExpectation(outcome: trigger == .manual ? .none : (actual.manualTitles.isEmpty ? .none : .silent))
+            ? EchoSenseExpectation(outcome: trigger == .manual ? .nothing : (actual.manualTitles.isEmpty ? .nothing : .silent))
             : EchoSenseExpectation(outcome: .suggests, items: actual.titles, order: .exact)
     }
 }

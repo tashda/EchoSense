@@ -91,7 +91,7 @@
     "schema" : "spec",
     "should" : "=> [name, email, created_at, department_id, functions]\n- `id` is excluded — already in the SELECT list\n- Deduplication applies to top-level column references only",
     "source" : "AUTOCOMPLETE_SPEC.md 1.4",
-    "sql" : "SELECT id, | FROM users",
+    "sql" : "SELECT id,  FROM users|",
     "title" : "SELECT after comma — deduplication",
     "trigger" : "typing"
   },

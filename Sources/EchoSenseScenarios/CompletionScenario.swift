@@ -117,7 +117,7 @@ public struct EchoSenseExpectation: Codable, Sendable, Hashable {
         /// Suggestions appear; `items` says which.
         case suggests
         /// Nothing at all, even when triggered by hand (`=> NONE`).
-        case none
+        case nothing = "none"
         /// Nothing while typing; a manual trigger may show something (`=> SILENT`).
         case silent
     }
