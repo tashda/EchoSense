@@ -64,6 +64,12 @@ public struct TSQLStatementSplitter: Sendable {
                 continue
             }
 
+            // Skip bracketed and double-quoted identifiers (a doubled closing character is an escape)
+            if ch == "[" || ch == "\"" {
+                i = skipQuotedIdentifier(in: sql, from: i, close: ch == "[" ? "]" : "\"")
+                continue
+            }
+
             // Skip block comments
             if ch == "/" && sql.index(after: i) < sql.endIndex && sql[sql.index(after: i)] == "*" {
                 i = skipBlockComment(in: sql, from: i)
@@ -78,9 +84,10 @@ public struct TSQLStatementSplitter: Sendable {
 
             // Check for GO at the start of a line (case-insensitive, standalone)
             if isLineStart(in: sql, at: i) && matchesGO(in: sql, at: i) {
-                let batchText = String(sql[currentStart..<i]).trimmingCharacters(in: .whitespacesAndNewlines)
+                let rawText = String(sql[currentStart..<i])
+                let batchText = rawText.trimmingCharacters(in: .whitespacesAndNewlines)
                 if !batchText.isEmpty {
-                    batches.append(Statement(text: batchText, range: currentStart..<i, lineNumber: currentLine))
+                    batches.append(Statement(text: batchText, range: currentStart..<i, lineNumber: currentLine + leadingNewlines(in: rawText)))
                 }
                 // Skip past GO and any trailing whitespace/newline
                 let goEnd = skipGO(in: sql, from: i)
@@ -98,9 +105,10 @@ public struct TSQLStatementSplitter: Sendable {
         }
 
         // Remaining batch
-        let remaining = String(sql[currentStart...]).trimmingCharacters(in: .whitespacesAndNewlines)
+        let rawRemaining = String(sql[currentStart...])
+        let remaining = rawRemaining.trimmingCharacters(in: .whitespacesAndNewlines)
         if !remaining.isEmpty {
-            batches.append(Statement(text: remaining, range: currentStart..<sql.endIndex, lineNumber: currentLine))
+            batches.append(Statement(text: remaining, range: currentStart..<sql.endIndex, lineNumber: currentLine + leadingNewlines(in: rawRemaining)))
         }
         return batches
     }
@@ -114,6 +122,7 @@ public struct TSQLStatementSplitter: Sendable {
         var currentLine = baseLineNumber
         var i = batch.startIndex
         var blockDepth = 0
+        var caseDepth = 0
         var needsLineUpdate = false
 
         while i < batch.endIndex {
@@ -122,10 +131,6 @@ public struct TSQLStatementSplitter: Sendable {
             // Track newlines for accurate line counting
             if ch == "\n" {
                 currentLine += 1
-                if needsLineUpdate {
-                    stmtStartLine = currentLine
-                    needsLineUpdate = false
-                }
             } else if needsLineUpdate && !ch.isWhitespace {
                 stmtStartLine = currentLine
                 needsLineUpdate = false
@@ -136,6 +141,14 @@ public struct TSQLStatementSplitter: Sendable {
                 let before = i
                 i = skipStringLiteral(in: batch, from: i)
                 // Count newlines inside the literal
+                currentLine += batch[before..<i].filter({ $0 == "\n" }).count
+                continue
+            }
+
+            // Skip bracketed and double-quoted identifiers (a doubled closing character is an escape)
+            if ch == "[" || ch == "\"" {
+                let before = i
+                i = skipQuotedIdentifier(in: batch, from: i, close: ch == "[" ? "]" : "\"")
                 currentLine += batch[before..<i].filter({ $0 == "\n" }).count
                 continue
             }
@@ -157,19 +170,27 @@ public struct TSQLStatementSplitter: Sendable {
             }
 
             // Track BEGIN/END block depth
+            if matchesKeyword("CASE", in: batch, at: i) {
+                caseDepth += 1
+                i = batch.index(i, offsetBy: 4, limitedBy: batch.endIndex) ?? batch.endIndex
+                continue
+            }
             if matchesKeyword("BEGIN", in: batch, at: i) {
-                blockDepth += 1
-                i = batch.index(i, offsetBy: 5, limitedBy: batch.endIndex) ?? batch.endIndex
+                let after = batch.index(i, offsetBy: 5, limitedBy: batch.endIndex) ?? batch.endIndex
+                // BEGIN TRANSACTION and friends start a transaction, not a block.
+                if !startsTransaction(in: batch, after: after) { blockDepth += 1 }
+                i = after
                 continue
             }
             if matchesKeyword("END", in: batch, at: i) {
-                blockDepth = max(0, blockDepth - 1)
+                // The END of a CASE expression is not the end of a block.
+                if caseDepth > 0 { caseDepth -= 1 } else { blockDepth = max(0, blockDepth - 1) }
                 i = batch.index(i, offsetBy: 3, limitedBy: batch.endIndex) ?? batch.endIndex
                 continue
             }
 
             // Semicolons split statements only at top level
-            if ch == ";" && blockDepth == 0 {
+            if ch == ";" && blockDepth == 0 && !continuesWithElse(in: batch, after: batch.index(after: i)) {
                 let stmtText = String(batch[currentStart...i]).trimmingCharacters(in: .whitespacesAndNewlines)
                 if !stmtText.isEmpty && stmtText != ";" {
                     let offsetStart = fullSQL.index(batchStart, offsetBy: batch.distance(from: batch.startIndex, to: currentStart))
@@ -221,6 +242,39 @@ public struct TSQLStatementSplitter: Sendable {
             i = sql.index(after: i)
         }
         return sql.endIndex
+    }
+
+    /// How many line breaks come before the first visible character.
+    private static func leadingNewlines(in text: String) -> Int {
+        text.prefix { $0.isWhitespace }.filter { $0 == "\n" }.count
+    }
+
+    private static func skipQuotedIdentifier(in sql: String, from start: String.Index, close: Character) -> String.Index {
+        var i = sql.index(after: start)
+        while i < sql.endIndex {
+            if sql[i] == close {
+                let next = sql.index(after: i)
+                if next < sql.endIndex && sql[next] == close { i = sql.index(after: next); continue }
+                return next
+            }
+            i = sql.index(after: i)
+        }
+        return sql.endIndex
+    }
+
+    /// True when the next word after BEGIN starts a transaction (TRAN, TRANSACTION, DISTRIBUTED, DIALOG).
+    private static func startsTransaction(in sql: String, after index: String.Index) -> Bool {
+        var i = index
+        while i < sql.endIndex, sql[i].isWhitespace { i = sql.index(after: i) }
+        let word = sql[i...].prefix { $0.isLetter || $0.isNumber || $0 == "_" }.uppercased()
+        return ["TRAN", "TRANSACTION", "DISTRIBUTED", "DIALOG"].contains(word)
+    }
+
+    /// True when the next word after a semicolon is ELSE: IF … ELSE is one statement.
+    private static func continuesWithElse(in sql: String, after index: String.Index) -> Bool {
+        var i = index
+        while i < sql.endIndex, sql[i].isWhitespace { i = sql.index(after: i) }
+        return i < sql.endIndex && matchesKeyword("ELSE", in: sql, at: i)
     }
 
     private static func skipBlockComment(in sql: String, from start: String.Index) -> String.Index {

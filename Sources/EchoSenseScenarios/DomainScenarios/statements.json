@@ -1,0 +1,498 @@
+[
+  {
+    "caretMarker": "|",
+    "domain": "statements",
+    "expected": [
+      "L1: SELECT 1"
+    ],
+    "group": "Semicolons",
+    "id": "STM-001",
+    "input": "SELECT 1",
+    "options": {},
+    "should": "One statement without a semicolon",
+    "title": "One statement without a semicolon"
+  },
+  {
+    "caretMarker": "|",
+    "domain": "statements",
+    "expected": [
+      "L1: SELECT 1;",
+      "L2: SELECT 2;"
+    ],
+    "group": "Semicolons",
+    "id": "STM-002",
+    "input": "SELECT 1;\nSELECT 2;",
+    "options": {},
+    "should": "Two statements on two lines",
+    "title": "Two statements on two lines"
+  },
+  {
+    "caretMarker": "|",
+    "domain": "statements",
+    "expected": [
+      "L1: SELECT 1;",
+      "L1: SELECT 2"
+    ],
+    "group": "Semicolons",
+    "id": "STM-003",
+    "input": "SELECT 1; SELECT 2",
+    "options": {},
+    "should": "Two statements on one line",
+    "title": "Two statements on one line"
+  },
+  {
+    "caretMarker": "|",
+    "domain": "statements",
+    "expected": [
+      "L1: SELECT 1;",
+      "L2: SELECT 2"
+    ],
+    "group": "Semicolons",
+    "id": "STM-004",
+    "input": "SELECT 1;;\nSELECT 2",
+    "options": {},
+    "should": "A lone semicolon is not a statement",
+    "title": "A lone semicolon is not a statement"
+  },
+  {
+    "caretMarker": "|",
+    "domain": "statements",
+    "expected": [
+      "L1: SELECT 1;",
+      "L4: SELECT 2;"
+    ],
+    "group": "Semicolons",
+    "id": "STM-005",
+    "input": "SELECT 1;\n\n\nSELECT 2;",
+    "options": {},
+    "should": "Line numbers skip blank lines",
+    "title": "Line numbers skip blank lines"
+  },
+  {
+    "caretMarker": "|",
+    "domain": "statements",
+    "expected": [],
+    "group": "Semicolons",
+    "id": "STM-006",
+    "input": "",
+    "options": {},
+    "should": "Empty script has no statements",
+    "title": "Empty script has no statements"
+  },
+  {
+    "caretMarker": "|",
+    "domain": "statements",
+    "expected": [],
+    "group": "Semicolons",
+    "id": "STM-007",
+    "input": "  \n\t\n",
+    "options": {},
+    "should": "Only whitespace has no statements",
+    "title": "Only whitespace has no statements"
+  },
+  {
+    "caretMarker": "|",
+    "domain": "statements",
+    "expected": [
+      "L1: SELECT 'a;b';",
+      "L1: SELECT 2"
+    ],
+    "group": "Strings and comments",
+    "id": "STM-008",
+    "input": "SELECT 'a;b'; SELECT 2",
+    "options": {},
+    "should": "Semicolon inside a string",
+    "title": "Semicolon inside a string"
+  },
+  {
+    "caretMarker": "|",
+    "domain": "statements",
+    "expected": [
+      "L1: SELECT 'it''s; fine';",
+      "L1: SELECT 2"
+    ],
+    "group": "Strings and comments",
+    "id": "STM-009",
+    "input": "SELECT 'it''s; fine'; SELECT 2",
+    "options": {},
+    "should": "Escaped quote inside a string",
+    "title": "Escaped quote inside a string"
+  },
+  {
+    "caretMarker": "|",
+    "domain": "statements",
+    "expected": [
+      "L1: SELECT 1 -- a; b\n;",
+      "L2: SELECT 2"
+    ],
+    "group": "Strings and comments",
+    "id": "STM-010",
+    "input": "SELECT 1 -- a; b\n; SELECT 2",
+    "options": {},
+    "should": "Semicolon in a line comment",
+    "title": "Semicolon in a line comment"
+  },
+  {
+    "caretMarker": "|",
+    "domain": "statements",
+    "expected": [
+      "L1: SELECT 1 /* a; b */;",
+      "L1: SELECT 2"
+    ],
+    "group": "Strings and comments",
+    "id": "STM-011",
+    "input": "SELECT 1 /* a; b */; SELECT 2",
+    "options": {},
+    "should": "Semicolon in a block comment",
+    "title": "Semicolon in a block comment"
+  },
+  {
+    "caretMarker": "|",
+    "domain": "statements",
+    "expected": [
+      "L1: SELECT 1 /* a /* b; */ c; */;",
+      "L1: SELECT 2"
+    ],
+    "group": "Strings and comments",
+    "id": "STM-012",
+    "input": "SELECT 1 /* a /* b; */ c; */; SELECT 2",
+    "options": {},
+    "should": "Nested block comment",
+    "title": "Nested block comment"
+  },
+  {
+    "caretMarker": "|",
+    "domain": "statements",
+    "expected": [
+      "L1: SELECT 'a\nb';",
+      "L3: SELECT 2"
+    ],
+    "group": "Strings and comments",
+    "id": "STM-013",
+    "input": "SELECT 'a\nb';\nSELECT 2",
+    "options": {},
+    "should": "String with a newline keeps its lines",
+    "title": "String with a newline keeps its lines"
+  },
+  {
+    "caretMarker": "|",
+    "domain": "statements",
+    "expected": [
+      "L1: SELECT [a;b] FROM t;",
+      "L1: SELECT 2"
+    ],
+    "group": "Strings and comments",
+    "id": "STM-014",
+    "input": "SELECT [a;b] FROM t; SELECT 2",
+    "options": {},
+    "should": "Semicolon in a bracketed name",
+    "title": "Semicolon in a bracketed name"
+  },
+  {
+    "caretMarker": "|",
+    "domain": "statements",
+    "expected": [
+      "L1: SELECT \"a;b\" FROM t;",
+      "L1: SELECT 2"
+    ],
+    "group": "Strings and comments",
+    "id": "STM-015",
+    "input": "SELECT \"a;b\" FROM t; SELECT 2",
+    "options": {},
+    "should": "Semicolon in a double-quoted name",
+    "title": "Semicolon in a double-quoted name"
+  },
+  {
+    "caretMarker": "|",
+    "domain": "statements",
+    "expected": [
+      "L1: BEGIN\n  SELECT 1;\n  SELECT 2;\nEND"
+    ],
+    "group": "Blocks",
+    "id": "STM-016",
+    "input": "BEGIN\n  SELECT 1;\n  SELECT 2;\nEND",
+    "options": {},
+    "should": "BEGIN…END stays one statement",
+    "title": "BEGIN…END stays one statement"
+  },
+  {
+    "caretMarker": "|",
+    "domain": "statements",
+    "expected": [
+      "L1: BEGIN SELECT 1; END;",
+      "L1: SELECT 2;"
+    ],
+    "group": "Blocks",
+    "id": "STM-017",
+    "input": "BEGIN SELECT 1; END; SELECT 2;",
+    "options": {},
+    "should": "Statement after a block",
+    "title": "Statement after a block"
+  },
+  {
+    "caretMarker": "|",
+    "domain": "statements",
+    "expected": [
+      "L1: BEGIN BEGIN SELECT 1; END; SELECT 2; END;",
+      "L1: SELECT 3;"
+    ],
+    "group": "Blocks",
+    "id": "STM-018",
+    "input": "BEGIN BEGIN SELECT 1; END; SELECT 2; END; SELECT 3;",
+    "options": {},
+    "should": "Nested blocks",
+    "title": "Nested blocks"
+  },
+  {
+    "caretMarker": "|",
+    "domain": "statements",
+    "expected": [
+      "L1: BEGIN SELECT CASE WHEN 1 = 1 THEN 1 END; SELECT 2; END;",
+      "L1: SELECT 3;"
+    ],
+    "group": "Blocks",
+    "id": "STM-019",
+    "input": "BEGIN SELECT CASE WHEN 1 = 1 THEN 1 END; SELECT 2; END; SELECT 3;",
+    "options": {},
+    "should": "CASE … END inside a block",
+    "title": "CASE … END inside a block"
+  },
+  {
+    "caretMarker": "|",
+    "domain": "statements",
+    "expected": [
+      "L1: BEGIN TRANSACTION;",
+      "L2: SELECT 1;",
+      "L3: COMMIT;",
+      "L4: SELECT 2;"
+    ],
+    "group": "Blocks",
+    "id": "STM-020",
+    "input": "BEGIN TRANSACTION;\nSELECT 1;\nCOMMIT;\nSELECT 2;",
+    "options": {},
+    "should": "BEGIN TRANSACTION does not open a block",
+    "title": "BEGIN TRANSACTION does not open a block"
+  },
+  {
+    "caretMarker": "|",
+    "domain": "statements",
+    "expected": [
+      "L1: BEGIN TRY SELECT 1; END TRY BEGIN CATCH SELECT 2; END CATCH;",
+      "L1: SELECT 3;"
+    ],
+    "group": "Blocks",
+    "id": "STM-021",
+    "input": "BEGIN TRY SELECT 1; END TRY BEGIN CATCH SELECT 2; END CATCH; SELECT 3;",
+    "options": {},
+    "should": "BEGIN TRY … END CATCH",
+    "title": "BEGIN TRY … END CATCH"
+  },
+  {
+    "caretMarker": "|",
+    "domain": "statements",
+    "expected": [
+      "L1: IF 1 = 1 SELECT 1; ELSE SELECT 2;"
+    ],
+    "group": "Blocks",
+    "id": "STM-022",
+    "input": "IF 1 = 1 SELECT 1; ELSE SELECT 2;",
+    "options": {},
+    "should": "IF and ELSE are one statement in T-SQL, so they should stay together",
+    "title": "IF … ELSE without a block"
+  },
+  {
+    "caretMarker": "|",
+    "domain": "statements",
+    "expected": [
+      "L1: SELECT beginning, ending FROM t;",
+      "L1: SELECT 2;"
+    ],
+    "group": "Blocks",
+    "id": "STM-023",
+    "input": "SELECT beginning, ending FROM t; SELECT 2;",
+    "options": {},
+    "should": "Words that only contain BEGIN or END",
+    "title": "Words that only contain BEGIN or END"
+  },
+  {
+    "caretMarker": "|",
+    "domain": "statements",
+    "expected": [
+      "L1: SELECT 1",
+      "L3: SELECT 2"
+    ],
+    "group": "GO",
+    "id": "STM-024",
+    "input": "SELECT 1\nGO\nSELECT 2",
+    "options": {},
+    "should": "GO separates batches",
+    "title": "GO separates batches"
+  },
+  {
+    "caretMarker": "|",
+    "domain": "statements",
+    "expected": [
+      "L1: SELECT 1",
+      "L3: SELECT 2"
+    ],
+    "group": "GO",
+    "id": "STM-025",
+    "input": "SELECT 1\ngo\nSELECT 2",
+    "options": {},
+    "should": "GO in lower case",
+    "title": "GO in lower case"
+  },
+  {
+    "caretMarker": "|",
+    "domain": "statements",
+    "expected": [
+      "L1: SELECT 1",
+      "L3: SELECT 2"
+    ],
+    "group": "GO",
+    "id": "STM-026",
+    "input": "SELECT 1\nGO 5\nSELECT 2",
+    "options": {},
+    "should": "GO with a count",
+    "title": "GO with a count"
+  },
+  {
+    "caretMarker": "|",
+    "domain": "statements",
+    "expected": [
+      "L1: SELECT 1\nGOTO label\nSELECT 2"
+    ],
+    "group": "GO",
+    "id": "STM-027",
+    "input": "SELECT 1\nGOTO label\nSELECT 2",
+    "options": {},
+    "should": "GO inside a longer word is not a separator",
+    "title": "GO inside a longer word is not a separator"
+  },
+  {
+    "caretMarker": "|",
+    "domain": "statements",
+    "expected": [
+      "L1: SELECT 1",
+      "L3: SELECT 2"
+    ],
+    "group": "GO",
+    "id": "STM-028",
+    "input": "SELECT 1\n   GO\nSELECT 2",
+    "options": {},
+    "should": "Indented GO",
+    "title": "Indented GO"
+  },
+  {
+    "caretMarker": "|",
+    "domain": "statements",
+    "expected": [
+      "L1: SELECT [end] FROM t;",
+      "L1: SELECT 2;"
+    ],
+    "group": "Blocks",
+    "id": "STM-029",
+    "input": "SELECT [end] FROM t; SELECT 2;",
+    "options": {},
+    "should": "A bracketed name called end",
+    "title": "A bracketed name called end"
+  },
+  {
+    "caretMarker": "|",
+    "domain": "statements",
+    "expected": [
+      "L1: SELECT [a]];b] FROM t;",
+      "L1: SELECT 2;"
+    ],
+    "group": "Blocks",
+    "id": "STM-030",
+    "input": "SELECT [a]];b] FROM t; SELECT 2;",
+    "options": {},
+    "should": "Escaped closing bracket",
+    "title": "Escaped closing bracket"
+  },
+  {
+    "caretMarker": "|",
+    "domain": "statements",
+    "expected": [
+      "L1: SELECT 1",
+      "L3: SELECT 2"
+    ],
+    "group": "GO",
+    "id": "STM-031",
+    "input": "SELECT 1\nGO\nSELECT 2",
+    "options": {},
+    "should": "GO separates batches",
+    "title": "GO separates batches"
+  },
+  {
+    "caretMarker": "|",
+    "domain": "statements",
+    "expected": [
+      "L1: SELECT 1;",
+      "L4: SELECT 2;",
+      "L6: SELECT 3;"
+    ],
+    "group": "GO",
+    "id": "STM-032",
+    "input": "SELECT 1;\nGO\n\nSELECT 2;\n\nSELECT 3;",
+    "options": {},
+    "should": "Line numbers after GO and blank lines",
+    "title": "Line numbers after GO and blank lines"
+  },
+  {
+    "caretMarker": "|",
+    "domain": "statements",
+    "expected": [
+      "L1: SELECT 1",
+      "L3: SELECT 2"
+    ],
+    "group": "GO",
+    "id": "STM-033",
+    "input": "SELECT 1\ngo\nSELECT 2",
+    "options": {},
+    "should": "GO in lower case",
+    "title": "GO in lower case"
+  },
+  {
+    "caretMarker": "|",
+    "domain": "statements",
+    "expected": [
+      "L1: SELECT 1",
+      "L3: SELECT 2"
+    ],
+    "group": "GO",
+    "id": "STM-034",
+    "input": "SELECT 1\nGO 5\nSELECT 2",
+    "options": {},
+    "should": "GO with a count",
+    "title": "GO with a count"
+  },
+  {
+    "caretMarker": "|",
+    "domain": "statements",
+    "expected": [
+      "L1: SELECT 1\nGOTO label\nSELECT 2"
+    ],
+    "group": "GO",
+    "id": "STM-035",
+    "input": "SELECT 1\nGOTO label\nSELECT 2",
+    "options": {},
+    "should": "GO inside a longer word is not a separator",
+    "title": "GO inside a longer word is not a separator"
+  },
+  {
+    "caretMarker": "|",
+    "domain": "statements",
+    "expected": [
+      "L1: SELECT 1",
+      "L3: SELECT 2"
+    ],
+    "group": "GO",
+    "id": "STM-036",
+    "input": "SELECT 1\n   GO\nSELECT 2",
+    "options": {},
+    "should": "Indented GO",
+    "title": "Indented GO"
+  }
+]

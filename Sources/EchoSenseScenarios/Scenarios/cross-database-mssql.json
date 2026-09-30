@@ -56,7 +56,7 @@
   },
   {
     "caretMarker": "|",
-    "dialect": "postgresql",
+    "dialect": "mssql",
     "echoSense": {
       "excludes": [
         "users"

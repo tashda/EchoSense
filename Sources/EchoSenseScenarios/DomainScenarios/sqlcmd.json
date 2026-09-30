@@ -1,0 +1,153 @@
+[
+  {
+    "caretMarker": "|",
+    "domain": "sqlcmd",
+    "expected": [
+      "batch: SELECT 1"
+    ],
+    "group": "Variables",
+    "id": "CMD-001",
+    "input": "SELECT 1",
+    "options": {},
+    "should": "Plain SQL is one batch",
+    "title": "Plain SQL is one batch"
+  },
+  {
+    "caretMarker": "|",
+    "domain": "sqlcmd",
+    "expected": [
+      "batch: USE Sales"
+    ],
+    "group": "Variables",
+    "id": "CMD-002",
+    "input": ":setvar Db Sales\nUSE $(Db)",
+    "options": {},
+    "should": "setvar and substitution",
+    "title": "setvar and substitution"
+  },
+  {
+    "caretMarker": "|",
+    "domain": "sqlcmd",
+    "expected": [
+      "batch: SELECT * FROM orders\nSELECT COUNT(*) FROM orders"
+    ],
+    "group": "Variables",
+    "id": "CMD-003",
+    "input": ":setvar T orders\nSELECT * FROM $(T)\nSELECT COUNT(*) FROM $(T)",
+    "options": {},
+    "should": "A variable used twice",
+    "title": "A variable used twice"
+  },
+  {
+    "caretMarker": "|",
+    "domain": "sqlcmd",
+    "expected": [
+      "batch: SELECT 'Big Corp'"
+    ],
+    "group": "Variables",
+    "id": "CMD-004",
+    "input": ":setvar Name \"Big Corp\"\nSELECT '$(Name)'",
+    "options": {},
+    "should": "setvar with a quoted value",
+    "title": "setvar with a quoted value"
+  },
+  {
+    "caretMarker": "|",
+    "domain": "sqlcmd",
+    "expected": [
+      "batch: SELECT '$(Nope)'",
+      "warning: Variable 'Nope' is not defined"
+    ],
+    "group": "Variables",
+    "id": "CMD-005",
+    "input": "SELECT '$(Nope)'",
+    "knownIssue": "An unset variable gives no warning",
+    "options": {},
+    "should": "An unset variable is left as written and reported as a warning",
+    "title": "A variable that is not set stays as written"
+  },
+  {
+    "caretMarker": "|",
+    "domain": "sqlcmd",
+    "expected": [
+      "batch: SELECT ':setvar x 1'"
+    ],
+    "group": "Variables",
+    "id": "CMD-006",
+    "input": "SELECT ':setvar x 1'",
+    "options": {},
+    "should": "A colon in a string is not a directive",
+    "title": "A colon in a string is not a directive"
+  },
+  {
+    "caretMarker": "|",
+    "domain": "sqlcmd",
+    "expected": [
+      "batch: SELECT 1",
+      "batch: SELECT 2"
+    ],
+    "group": "Batches",
+    "id": "CMD-007",
+    "input": "SELECT 1\nGO\nSELECT 2",
+    "options": {},
+    "should": "GO splits batches",
+    "title": "GO splits batches"
+  },
+  {
+    "caretMarker": "|",
+    "domain": "sqlcmd",
+    "expected": [
+      "batch: SELECT 5",
+      "batch: SELECT 5"
+    ],
+    "group": "Batches",
+    "id": "CMD-008",
+    "input": ":setvar N 5\nSELECT $(N)\nGO\nSELECT $(N)",
+    "options": {},
+    "should": "Variables carry across GO",
+    "title": "Variables carry across GO"
+  },
+  {
+    "caretMarker": "|",
+    "domain": "sqlcmd",
+    "expected": [
+      "batch: SELECT 1",
+      "batch: SELECT 1"
+    ],
+    "group": "Batches",
+    "id": "CMD-009",
+    "input": "SELECT 1\nGO 2",
+    "options": {},
+    "should": "GO 2 runs the batch twice",
+    "title": "GO 2 runs the batch twice"
+  },
+  {
+    "caretMarker": "|",
+    "domain": "sqlcmd",
+    "expected": [
+      "batch: SELECT 1",
+      "warning: Unsupported directive: :connect server1 — multi-server execution is not supported"
+    ],
+    "group": "Unsupported",
+    "id": "CMD-010",
+    "input": ":connect server1\nSELECT 1",
+    "options": {},
+    "should": "An unsupported directive is a warning",
+    "title": "An unsupported directive is a warning"
+  },
+  {
+    "caretMarker": "|",
+    "domain": "sqlcmd",
+    "expected": [
+      "batch: SELECT 1",
+      "warning: Unknown SQLCMD directive: :on"
+    ],
+    "group": "Unsupported",
+    "id": "CMD-011",
+    "input": ":on error exit\nSELECT 1",
+    "notes": "Pinned to what the preprocessor says today. `:on error` is a real SQLCMD directive, so “unknown” is misleading wording.",
+    "options": {},
+    "should": "On error directive",
+    "title": "On error directive"
+  }
+]

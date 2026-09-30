@@ -3,7 +3,9 @@ import Foundation
 
 // echosense-scenarios run [--failing] [--group "SELECT Clause"] [--id SPEC-1.4]
 // echosense-scenarios triage     mark failing scenarios as known issues, clear ones that now pass
-// Both read and write Sources/EchoSenseScenarios/Scenarios in this checkout.
+// echosense-scenarios domains [--domain statements] [--failing]   the other kinds (statements, GO, ...)
+// echosense-scenarios domains-triage
+// They read and write Sources/EchoSenseScenarios/Scenarios in this checkout.
 
 @main
 enum ScenarioCLI {
@@ -11,6 +13,8 @@ enum ScenarioCLI {
         let directory = URL(fileURLWithPath: #filePath)
             .deletingLastPathComponent().deletingLastPathComponent().deletingLastPathComponent()
             .appending(path: "Sources/EchoSenseScenarios/Scenarios")
+
+        let domainDirectory = directory.deletingLastPathComponent().appending(path: "DomainScenarios")
 
         var arguments = Array(CommandLine.arguments.dropFirst())
         let command = arguments.isEmpty ? "run" : arguments.removeFirst()
@@ -57,8 +61,48 @@ enum ScenarioCLI {
                 }
                 try library.write(to: directory)
                 print("Marked \(marked) as known issues, cleared \(cleared) that pass now.")
+            case "domains", "domains-triage":
+                var domainLibrary = try DomainLibrary.load(directory: domainDirectory)
+                var pass = 0, fail = 0, known = 0, unchecked = 0, changed = 0
+                for domain in ScenarioDomains.all {
+                    if let only = option("--domain"), domain.id != only { continue }
+                    for index in domainLibrary.scenarios.indices where domainLibrary.scenarios[index].domain == domain.id {
+                        let scenario = domainLibrary.scenarios[index]
+                        let result = domain.result(for: scenario)
+                        if command == "domains-triage" {
+                            let failing = scenario.expected != nil && scenario.expected != result.actual
+                            if failing, scenario.knownIssue == nil {
+                                domainLibrary.scenarios[index].knownIssue = "Fails today: " + (result.differences.first ?? "it disagrees")
+                                changed += 1
+                            } else if !failing, scenario.knownIssue != nil, scenario.expected != nil {
+                                domainLibrary.scenarios[index].knownIssue = nil
+                                changed += 1
+                            }
+                            continue
+                        }
+                        let mark: String
+                        switch result.verdict {
+                        case .pass: pass += 1; mark = "PASS "
+                        case .fail: fail += 1; mark = "FAIL "
+                        case .knownIssue: known += 1; mark = "known"
+                        case .noExpectation: unchecked += 1; mark = "  -  "
+                        }
+                        if args.contains("--failing"), result.verdict == .pass { continue }
+                        print("\(mark) \(scenario.id)  \(scenario.title)")
+                        if result.verdict == .fail || (args.contains("--why") && result.verdict == .knownIssue) {
+                            for line in result.differences { print("        \(line.replacingOccurrences(of: "\n", with: "\\n"))") }
+                        }
+                    }
+                }
+                if command == "domains-triage" {
+                    try domainLibrary.write(to: domainDirectory)
+                    print("Changed \(changed) known-issue flags.")
+                } else {
+                    print("\n\(pass) pass, \(fail) fail, \(known) known issues, \(unchecked) without an expectation")
+                    exit(fail == 0 ? 0 : 1)
+                }
             default:
-                print("Usage: echosense-scenarios run [--failing] [--group NAME] [--id ID] | triage")
+                print("Usage: echosense-scenarios run [--failing] [--group NAME] [--id ID] | triage | domains [--domain ID] [--failing] [--why] | domains-triage")
                 exit(2)
             }
         } catch {
