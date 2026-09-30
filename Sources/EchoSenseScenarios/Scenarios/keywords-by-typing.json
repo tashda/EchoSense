@@ -1,58 +1,93 @@
 [
   {
-    "dialect": "postgresql",
-    "echoSense": {
-      "excludes": [],
-      "items": [],
-      "order": "includes",
-      "outcome": "silent"
+    "caretMarker" : "|",
+    "dialect" : "postgresql",
+    "echoSense" : {
+      "excludes" : [
+
+      ],
+      "insertText" : {
+
+      },
+      "items" : [
+
+      ],
+      "order" : "includes",
+      "outcome" : "silent"
     },
-    "group": "Keywords by Typing",
-    "id": "KW-001",
-    "review": "imported",
-    "schema": "spec",
-    "should": "Typing `SEL` does not suggest `SELECT` (13.1).",
-    "source": "AUTOCOMPLETE_SPEC.md",
-    "sql": "SEL|",
-    "title": "A keyword is never word-completed",
-    "trigger": "typing"
+    "group" : "Keywords by Typing",
+    "id" : "KW-001",
+    "options" : {
+      "includeSystemSchemas" : false,
+      "qualifyTableInsertions" : false
+    },
+    "review" : "imported",
+    "schema" : "spec",
+    "should" : "Typing `SEL` does not suggest `SELECT` (13.1).",
+    "source" : "AUTOCOMPLETE_SPEC.md",
+    "sql" : "SEL|",
+    "title" : "A keyword is never word-completed",
+    "trigger" : "typing"
   },
   {
-    "dialect": "postgresql",
-    "echoSense": {
-      "excludes": [],
-      "items": [],
-      "order": "includes",
-      "outcome": "silent"
+    "caretMarker" : "|",
+    "dialect" : "postgresql",
+    "echoSense" : {
+      "excludes" : [
+
+      ],
+      "insertText" : {
+
+      },
+      "items" : [
+
+      ],
+      "order" : "includes",
+      "outcome" : "silent"
     },
-    "group": "Keywords by Typing",
-    "id": "KW-002",
-    "review": "imported",
-    "schema": "spec",
-    "should": "After `FROM users ` the popup stays quiet (13.3, 2.6).",
-    "source": "AUTOCOMPLETE_SPEC.md",
-    "sql": "SELECT * FROM users |",
-    "title": "No keywords after an identifier on the same line",
-    "trigger": "typing"
+    "group" : "Keywords by Typing",
+    "id" : "KW-002",
+    "options" : {
+      "includeSystemSchemas" : false,
+      "qualifyTableInsertions" : false
+    },
+    "review" : "imported",
+    "schema" : "spec",
+    "should" : "After `FROM users ` the popup stays quiet (13.3, 2.6).",
+    "source" : "AUTOCOMPLETE_SPEC.md",
+    "sql" : "SELECT * FROM users |",
+    "title" : "No keywords after an identifier on the same line",
+    "trigger" : "typing"
   },
   {
-    "dialect": "postgresql",
-    "echoSense": {
-      "excludes": [],
-      "items": [
+    "caretMarker" : "|",
+    "dialect" : "postgresql",
+    "echoSense" : {
+      "excludes" : [
+
+      ],
+      "insertText" : {
+
+      },
+      "items" : [
         "WHERE"
       ],
-      "order": "leading",
-      "outcome": "suggests"
+      "order" : "leading",
+      "outcome" : "suggests"
     },
-    "group": "Keywords by Typing",
-    "id": "KW-003",
-    "review": "imported",
-    "schema": "spec",
-    "should": "Keyword suggestions are always uppercase (13.4).",
-    "source": "AUTOCOMPLETE_SPEC.md",
-    "sql": "SELECT * FROM users\nwh|",
-    "title": "Keywords are uppercase",
-    "trigger": "typing"
+    "group" : "Keywords by Typing",
+    "id" : "KW-003",
+    "knownIssue" : "Fails today: Expected suggestions, but EchoSense offered nothing.",
+    "options" : {
+      "includeSystemSchemas" : false,
+      "qualifyTableInsertions" : false
+    },
+    "review" : "imported",
+    "schema" : "spec",
+    "should" : "Keyword suggestions are always uppercase (13.4).",
+    "source" : "AUTOCOMPLETE_SPEC.md",
+    "sql" : "SELECT * FROM users\nwh|",
+    "title" : "Keywords are uppercase",
+    "trigger" : "typing"
   }
 ]

@@ -1,165 +1,213 @@
 [
   {
-    "dialect": "postgresql",
-    "echoSense": {
-      "excludes": [],
-      "insertText": {
-        "events": "analytics.events",
-        "users": "users"
+    "caretMarker" : "|",
+    "dialect" : "postgresql",
+    "echoSense" : {
+      "excludes" : [
+
+      ],
+      "insertText" : {
+        "events" : "analytics.events",
+        "users" : "users"
       },
-      "items": [
+      "items" : [
         "users",
         "events"
       ],
-      "order": "includes",
-      "outcome": "suggests"
+      "order" : "includes",
+      "outcome" : "suggests"
     },
-    "group": "Insert Text",
-    "id": "INS-001",
-    "review": "imported",
-    "schema": "spec",
-    "should": "`users` in `public` inserts `users`; `events` in `analytics` inserts `analytics.events` (16.1, 16.2).",
-    "source": "AUTOCOMPLETE_SPEC.md",
-    "sql": "SELECT * FROM |",
-    "title": "Default schema tables insert unqualified, others qualified",
-    "trigger": "typing"
+    "group" : "Insert Text",
+    "id" : "INS-001",
+    "options" : {
+      "includeSystemSchemas" : false,
+      "qualifyTableInsertions" : false
+    },
+    "review" : "imported",
+    "schema" : "spec",
+    "should" : "`users` in `public` inserts `users`; `events` in `analytics` inserts `analytics.events` (16.1, 16.2).",
+    "source" : "AUTOCOMPLETE_SPEC.md",
+    "sql" : "SELECT * FROM |",
+    "title" : "Default schema tables insert unqualified, others qualified",
+    "trigger" : "typing"
   },
   {
-    "dialect": "postgresql",
-    "echoSense": {
-      "excludes": [],
-      "insertText": {
-        "events": "analytics.events",
-        "users": "public.users"
+    "caretMarker" : "|",
+    "dialect" : "postgresql",
+    "echoSense" : {
+      "excludes" : [
+
+      ],
+      "insertText" : {
+        "events" : "analytics.events",
+        "users" : "public.users"
       },
-      "items": [
+      "items" : [
         "users",
         "events"
       ],
-      "order": "includes",
-      "outcome": "suggests"
+      "order" : "includes",
+      "outcome" : "suggests"
     },
-    "group": "Insert Text",
-    "id": "INS-002",
-    "options": {
-      "qualifyTableInsertions": true
+    "group" : "Insert Text",
+    "id" : "INS-002",
+    "options" : {
+      "includeSystemSchemas" : false,
+      "qualifyTableInsertions" : true
     },
-    "review": "imported",
-    "schema": "spec",
-    "should": "With the preference on, all tables insert with their schema: `public.users`, `analytics.events` (16.3).",
-    "source": "AUTOCOMPLETE_SPEC.md",
-    "sql": "SELECT * FROM |",
-    "title": "Qualified insertion preference",
-    "trigger": "typing"
+    "review" : "imported",
+    "schema" : "spec",
+    "should" : "With the preference on, all tables insert with their schema: `public.users`, `analytics.events` (16.3).",
+    "source" : "AUTOCOMPLETE_SPEC.md",
+    "sql" : "SELECT * FROM |",
+    "title" : "Qualified insertion preference",
+    "trigger" : "typing"
   },
   {
-    "dialect": "postgresql",
-    "echoSense": {
-      "excludes": [],
-      "insertText": {
-        "name": "name"
+    "caretMarker" : "|",
+    "dialect" : "postgresql",
+    "echoSense" : {
+      "excludes" : [
+
+      ],
+      "insertText" : {
+        "name" : "name"
       },
-      "items": [
+      "items" : [
         "name"
       ],
-      "order": "includes",
-      "outcome": "suggests"
+      "order" : "includes",
+      "outcome" : "suggests"
     },
-    "group": "Insert Text",
-    "id": "INS-003",
-    "review": "imported",
-    "schema": "spec",
-    "should": "After `u.` the suggestion inserts `name`, not `u.name` (16.4).",
-    "source": "AUTOCOMPLETE_SPEC.md",
-    "sql": "SELECT u.| FROM users u",
-    "title": "Already-typed path is stripped",
-    "trigger": "typing"
+    "group" : "Insert Text",
+    "id" : "INS-003",
+    "knownIssue" : "Fails today: “name” should insert “name”, but inserts “\"name\"”.",
+    "options" : {
+      "includeSystemSchemas" : false,
+      "qualifyTableInsertions" : false
+    },
+    "review" : "imported",
+    "schema" : "spec",
+    "should" : "After `u.` the suggestion inserts `name`, not `u.name` (16.4).",
+    "source" : "AUTOCOMPLETE_SPEC.md",
+    "sql" : "SELECT u.| FROM users u",
+    "title" : "Already-typed path is stripped",
+    "trigger" : "typing"
   },
   {
-    "dialect": "postgresql",
-    "echo": {
-      "accept": "name",
-      "textAfterAccepting": "SELECT id, name| FROM users"
+    "caretMarker" : "|",
+    "dialect" : "postgresql",
+    "echo" : {
+      "accept" : "name",
+      "textAfterAccepting" : "SELECT id, name| FROM users"
     },
-    "group": "Insert Text",
-    "id": "INS-004",
-    "review": "imported",
-    "schema": "spec",
-    "should": "Accepting `name` after `id,` gives `SELECT id, name` (16.5).",
-    "source": "AUTOCOMPLETE_SPEC.md",
-    "sql": "SELECT id,| FROM users",
-    "title": "Comma spacing on accept",
-    "trigger": "manual"
+    "group" : "Insert Text",
+    "id" : "INS-004",
+    "knownIssue" : "Fails today: Editor: Expected the text after accepting “name” to be “SELECT id, name| FROM users”, but it is “SELECT id,\"name\"| FROM users”.",
+    "options" : {
+      "includeSystemSchemas" : false,
+      "qualifyTableInsertions" : false
+    },
+    "review" : "imported",
+    "schema" : "spec",
+    "should" : "Accepting `name` after `id,` gives `SELECT id, name` (16.5).",
+    "source" : "AUTOCOMPLETE_SPEC.md",
+    "sql" : "SELECT id,| FROM users",
+    "title" : "Comma spacing on accept",
+    "trigger" : "manual"
   },
   {
-    "dialect": "postgresql",
-    "echoSense": {
-      "excludes": [],
-      "insertText": {
-        "COUNT": "COUNT("
+    "caretMarker" : "|",
+    "dialect" : "postgresql",
+    "echoSense" : {
+      "excludes" : [
+
+      ],
+      "insertText" : {
+        "COUNT" : "COUNT("
       },
-      "items": [
+      "items" : [
         "COUNT"
       ],
-      "order": "leading",
-      "outcome": "suggests"
+      "order" : "leading",
+      "outcome" : "suggests"
     },
-    "group": "Insert Text",
-    "id": "INS-005",
-    "review": "imported",
-    "schema": "spec",
-    "should": "Functions insert with parentheses (11.2, 16.6).",
-    "source": "AUTOCOMPLETE_SPEC.md",
-    "sql": "SELECT COU| FROM users",
-    "title": "Function insert has parentheses",
-    "trigger": "typing"
+    "group" : "Insert Text",
+    "id" : "INS-005",
+    "options" : {
+      "includeSystemSchemas" : false,
+      "qualifyTableInsertions" : false
+    },
+    "review" : "imported",
+    "schema" : "spec",
+    "should" : "Functions insert with parentheses (11.2, 16.6).",
+    "source" : "AUTOCOMPLETE_SPEC.md",
+    "sql" : "SELECT COU| FROM users",
+    "title" : "Function insert has parentheses",
+    "trigger" : "typing"
   },
   {
-    "dialect": "postgresql",
-    "echo": {
-      "accept": "users",
-      "textAfterAccepting": "SELECT * FROM users|"
+    "caretMarker" : "|",
+    "dialect" : "postgresql",
+    "echo" : {
+      "accept" : "users",
+      "textAfterAccepting" : "SELECT * FROM users|"
     },
-    "group": "Insert Text",
-    "id": "INS-006",
-    "review": "imported",
-    "schema": "spec",
-    "should": "Accepting `users` for `FROM us` replaces what was typed.",
-    "source": "AUTOCOMPLETE_SPEC.md",
-    "sql": "SELECT * FROM us|",
-    "title": "Accepting a table keeps the typed text before it",
-    "trigger": "typing"
+    "group" : "Insert Text",
+    "id" : "INS-006",
+    "options" : {
+      "includeSystemSchemas" : false,
+      "qualifyTableInsertions" : false
+    },
+    "review" : "imported",
+    "schema" : "spec",
+    "should" : "Accepting `users` for `FROM us` replaces what was typed.",
+    "source" : "AUTOCOMPLETE_SPEC.md",
+    "sql" : "SELECT * FROM us|",
+    "title" : "Accepting a table keeps the typed text before it",
+    "trigger" : "typing"
   },
   {
-    "dialect": "postgresql",
-    "echo": {
-      "accept": "analytics",
-      "textAfterAccepting": "SELECT * FROM analytics.|"
+    "caretMarker" : "|",
+    "dialect" : "postgresql",
+    "echo" : {
+      "accept" : "analytics",
+      "textAfterAccepting" : "SELECT * FROM analytics.|"
     },
-    "group": "Insert Text",
-    "id": "INS-007",
-    "review": "imported",
-    "schema": "spec",
-    "should": "A schema inserts with a trailing dot: `analytics.` (2.1).",
-    "source": "AUTOCOMPLETE_SPEC.md",
-    "sql": "SELECT * FROM ana|",
-    "title": "Accepting a schema adds the dot",
-    "trigger": "typing"
+    "group" : "Insert Text",
+    "id" : "INS-007",
+    "options" : {
+      "includeSystemSchemas" : false,
+      "qualifyTableInsertions" : false
+    },
+    "review" : "imported",
+    "schema" : "spec",
+    "should" : "A schema inserts with a trailing dot: `analytics.` (2.1).",
+    "source" : "AUTOCOMPLETE_SPEC.md",
+    "sql" : "SELECT * FROM ana|",
+    "title" : "Accepting a schema adds the dot",
+    "trigger" : "typing"
   },
   {
-    "dialect": "postgresql",
-    "echo": {
-      "accept": "INNER JOIN",
-      "textAfterAccepting": "SELECT * FROM users\nINNER JOIN |"
+    "caretMarker" : "|",
+    "dialect" : "postgresql",
+    "echo" : {
+      "accept" : "INNER JOIN",
+      "textAfterAccepting" : "SELECT * FROM users\nINNER JOIN |"
     },
-    "group": "Insert Text",
-    "id": "INS-008",
-    "review": "imported",
-    "schema": "spec",
-    "should": "A keyword inserts followed by a space.",
-    "source": "AUTOCOMPLETE_SPEC.md",
-    "sql": "SELECT * FROM users\nIN|",
-    "title": "Accepting a keyword adds a space",
-    "trigger": "typing"
+    "group" : "Insert Text",
+    "id" : "INS-008",
+    "knownIssue" : "Fails today: Editor: Expected the text after accepting “INNER JOIN” to be “SELECT * FROM users⏎INNER JOIN |”, but it is “not offered”.",
+    "options" : {
+      "includeSystemSchemas" : false,
+      "qualifyTableInsertions" : false
+    },
+    "review" : "imported",
+    "schema" : "spec",
+    "should" : "A keyword inserts followed by a space.",
+    "source" : "AUTOCOMPLETE_SPEC.md",
+    "sql" : "SELECT * FROM users\nIN|",
+    "title" : "Accepting a keyword adds a space",
+    "trigger" : "typing"
   }
 ]

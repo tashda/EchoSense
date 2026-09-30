@@ -1,93 +1,122 @@
 [
   {
-    "dialect": "postgresql",
-    "echoSense": {
-      "excludes": [],
-      "insertText": {
-        "UserData": "\"UserData\"",
-        "my_table": "my_table",
-        "order": "\"order\"",
-        "users": "users"
+    "caretMarker" : "|",
+    "dialect" : "postgresql",
+    "echoSense" : {
+      "excludes" : [
+
+      ],
+      "insertText" : {
+        "UserData" : "\"UserData\"",
+        "my_table" : "my_table",
+        "order" : "\"order\"",
+        "users" : "users"
       },
-      "items": [
+      "items" : [
         "order",
         "UserData",
         "users",
         "my_table"
       ],
-      "order": "includes",
-      "outcome": "suggests"
+      "order" : "includes",
+      "outcome" : "suggests"
     },
-    "group": "Identifier Quoting",
-    "id": "QT-001",
-    "review": "imported",
-    "schema": "quoting",
-    "should": "`order` and `UserData` insert quoted; `users` and `my_table` do not (15.1 to 15.3).",
-    "source": "AUTOCOMPLETE_SPEC.md",
-    "sql": "SELECT * FROM |",
-    "title": "PostgreSQL quotes reserved and CamelCase names",
-    "trigger": "typing"
+    "group" : "Identifier Quoting",
+    "id" : "QT-001",
+    "knownIssue" : "Fails today: “order” should insert “\"order\"”, but inserts “order”.",
+    "options" : {
+      "includeSystemSchemas" : false,
+      "qualifyTableInsertions" : false
+    },
+    "review" : "imported",
+    "schema" : "quoting",
+    "should" : "`order` and `UserData` insert quoted; `users` and `my_table` do not (15.1 to 15.3).",
+    "source" : "AUTOCOMPLETE_SPEC.md",
+    "sql" : "SELECT * FROM |",
+    "title" : "PostgreSQL quotes reserved and CamelCase names",
+    "trigger" : "typing"
   },
   {
-    "dialect": "mssql",
-    "echoSense": {
-      "excludes": [],
-      "insertText": {
-        "order": "[order]"
+    "caretMarker" : "|",
+    "dialect" : "mssql",
+    "echoSense" : {
+      "excludes" : [
+
+      ],
+      "insertText" : {
+        "order" : "[order]"
       },
-      "items": [
+      "items" : [
         "order"
       ],
-      "order": "includes",
-      "outcome": "suggests"
+      "order" : "includes",
+      "outcome" : "suggests"
     },
-    "group": "Identifier Quoting",
-    "id": "QT-002",
-    "review": "imported",
-    "schema": "quoting",
-    "should": "`[order]` in SQL Server (15.2).",
-    "source": "AUTOCOMPLETE_SPEC.md",
-    "sql": "SELECT * FROM |",
-    "title": "SQL Server quotes with brackets",
-    "trigger": "typing"
+    "group" : "Identifier Quoting",
+    "id" : "QT-002",
+    "knownIssue" : "Fails today: “order” should insert “[order]”, but inserts “order”.",
+    "options" : {
+      "includeSystemSchemas" : false,
+      "qualifyTableInsertions" : false
+    },
+    "review" : "imported",
+    "schema" : "quoting",
+    "should" : "`[order]` in SQL Server (15.2).",
+    "source" : "AUTOCOMPLETE_SPEC.md",
+    "sql" : "SELECT * FROM |",
+    "title" : "SQL Server quotes with brackets",
+    "trigger" : "typing"
   },
   {
-    "dialect": "postgresql",
-    "echoSense": {
-      "excludes": [],
-      "insertText": {
-        "my table": "\"my table\""
+    "caretMarker" : "|",
+    "dialect" : "postgresql",
+    "echoSense" : {
+      "excludes" : [
+
+      ],
+      "insertText" : {
+        "my table" : "\"my table\""
       },
-      "items": [
+      "items" : [
         "my table"
       ],
-      "order": "includes",
-      "outcome": "suggests"
+      "order" : "includes",
+      "outcome" : "suggests"
     },
-    "group": "Identifier Quoting",
-    "id": "QT-004",
-    "review": "imported",
-    "schema": "quoting",
-    "should": "`\"my table\"` in PostgreSQL (15.1).",
-    "source": "AUTOCOMPLETE_SPEC.md",
-    "sql": "SELECT * FROM |",
-    "title": "A name with a space is quoted",
-    "trigger": "typing"
+    "group" : "Identifier Quoting",
+    "id" : "QT-004",
+    "options" : {
+      "includeSystemSchemas" : false,
+      "qualifyTableInsertions" : false
+    },
+    "review" : "imported",
+    "schema" : "quoting",
+    "should" : "`\"my table\"` in PostgreSQL (15.1).",
+    "source" : "AUTOCOMPLETE_SPEC.md",
+    "sql" : "SELECT * FROM |",
+    "title" : "A name with a space is quoted",
+    "trigger" : "typing"
   },
   {
-    "dialect": "postgresql",
-    "echo": {
-      "accept": "UserData",
-      "textAfterAccepting": "SELECT * FROM \"UserData\"|"
+    "caretMarker" : "|",
+    "dialect" : "postgresql",
+    "echo" : {
+      "accept" : "UserData",
+      "textAfterAccepting" : "SELECT * FROM \"UserData\"|"
     },
-    "group": "Identifier Quoting",
-    "id": "QT-005",
-    "review": "imported",
-    "schema": "quoting",
-    "should": "Typing `\"Us` and accepting `UserData` keeps the quotes.",
-    "source": "AUTOCOMPLETE_SPEC.md",
-    "sql": "SELECT * FROM \"Us|",
-    "title": "A quoted prefix stays quoted when accepting",
-    "trigger": "typing"
+    "group" : "Identifier Quoting",
+    "id" : "QT-005",
+    "knownIssue" : "Fails today: Editor: Expected the text after accepting “UserData” to be “SELECT * FROM \"UserData\"|”, but it is “not offered”.",
+    "options" : {
+      "includeSystemSchemas" : false,
+      "qualifyTableInsertions" : false
+    },
+    "review" : "imported",
+    "schema" : "quoting",
+    "should" : "Typing `\"Us` and accepting `UserData` keeps the quotes.",
+    "source" : "AUTOCOMPLETE_SPEC.md",
+    "sql" : "SELECT * FROM \"Us|",
+    "title" : "A quoted prefix stays quoted when accepting",
+    "trigger" : "typing"
   }
 ]
