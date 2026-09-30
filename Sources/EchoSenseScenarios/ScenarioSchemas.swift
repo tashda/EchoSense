@@ -66,7 +66,19 @@ public enum ScenarioSchemas {
             id(), column("name", "text"), column("value", "numeric"), column("recorded_at", "timestamp")])
         var schemas = [EchoSenseSchemaInfo(name: main, objects: objects)]
         if dialect == .postgresql || dialect == .mssql { schemas.append(EchoSenseSchemaInfo(name: "analytics", objects: [events, metrics])) }
-        return EchoSenseDatabaseStructure(serverVersion: "scenario", databases: [EchoSenseDatabaseInfo(name: "mydb", schemas: schemas)])
+        if dialect == .mssql || dialect == .postgresql {
+            let kind: EchoSenseSchemaObjectInfo.ObjectType = dialect == .mssql ? .procedure : .function
+            schemas[0].objects.append(contentsOf: [
+                EchoSenseSchemaObjectInfo(name: "get_user_orders", schema: main, type: kind, columns: []),
+                EchoSenseSchemaObjectInfo(name: "archive_orders", schema: main, type: kind, columns: [])])
+        }
+        var databases = [EchoSenseDatabaseInfo(name: "mydb", schemas: schemas)]
+        if dialect == .mssql {
+            databases.append(EchoSenseDatabaseInfo(name: "otherdb", schemas: [EchoSenseSchemaInfo(name: "dbo", objects: [
+                EchoSenseSchemaObjectInfo(name: "invoices", schema: "dbo", type: .table, columns: [id(), column("amount", "numeric")]),
+                EchoSenseSchemaObjectInfo(name: "customers", schema: "dbo", type: .table, columns: [id(), column("name", "text")])])]))
+        }
+        return EchoSenseDatabaseStructure(serverVersion: "scenario", databases: databases)
     }
 
     static func quoting(dialect: ScenarioDialect) -> EchoSenseDatabaseStructure {

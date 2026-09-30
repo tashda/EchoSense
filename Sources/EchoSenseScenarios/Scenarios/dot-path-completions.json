@@ -1,268 +1,264 @@
 [
   {
-    "caretMarker" : "|",
-    "dialect" : "postgresql",
-    "echoSense" : {
-      "excludes" : [
-
-      ],
-      "insertText" : {
-
-      },
-      "items" : [
+    "caretMarker": "|",
+    "dialect": "postgresql",
+    "echoSense": {
+      "excludes": [],
+      "insertText": {},
+      "items": [
         "id",
         "name",
         "email",
         "created_at",
         "department_id"
       ],
-      "order" : "leading",
-      "outcome" : "suggests"
+      "order": "leading",
+      "outcome": "suggests"
     },
-    "group" : "Dot Path Completions",
-    "id" : "SPEC-9.1",
-    "knownIssue" : "Fails today: Expected these first, in order: id, name, email, created_at, department_id. Got: id, department_id, \"name\", created_at, email.",
-    "options" : {
-      "includeSystemSchemas" : false,
-      "qualifyTableInsertions" : false
+    "group": "Dot Path Completions",
+    "id": "SPEC-9.1",
+    "knownIssue": "Fails today: Expected these first, in order: id, name, email, created_at, department_id. Got: id, department_id, \"name\", created_at, email.",
+    "options": {
+      "includeSystemSchemas": false,
+      "qualifyTableInsertions": false
     },
-    "review" : "imported",
-    "schema" : "spec",
-    "should" : "=> [id, name, email, created_at, department_id]",
-    "source" : "AUTOCOMPLETE_SPEC.md 9.1",
-    "sql" : "SELECT users.| FROM users",
-    "title" : "Table dot — columns",
-    "trigger" : "typing"
+    "review": "imported",
+    "schema": "spec",
+    "should": "=> [id, name, email, created_at, department_id]",
+    "source": "AUTOCOMPLETE_SPEC.md 9.1",
+    "sql": "SELECT users.| FROM users",
+    "title": "Table dot — columns",
+    "trigger": "typing"
   },
   {
-    "caretMarker" : "|",
-    "dialect" : "postgresql",
-    "echoSense" : {
-      "excludes" : [
-
-      ],
-      "insertText" : {
-
-      },
-      "items" : [
+    "caretMarker": "|",
+    "dialect": "postgresql",
+    "echoSense": {
+      "excludes": [],
+      "insertText": {},
+      "items": [
         "id",
         "name",
         "email",
         "created_at",
         "department_id"
       ],
-      "order" : "leading",
-      "outcome" : "suggests"
+      "order": "leading",
+      "outcome": "suggests"
     },
-    "group" : "Dot Path Completions",
-    "id" : "SPEC-9.2",
-    "knownIssue" : "Fails today: Expected these first, in order: id, name, email, created_at, department_id. Got: id, department_id, \"name\", created_at, email.",
-    "options" : {
-      "includeSystemSchemas" : false,
-      "qualifyTableInsertions" : false
+    "group": "Dot Path Completions",
+    "id": "SPEC-9.2",
+    "knownIssue": "Fails today: Expected these first, in order: id, name, email, created_at, department_id. Got: id, department_id, \"name\", created_at, email.",
+    "options": {
+      "includeSystemSchemas": false,
+      "qualifyTableInsertions": false
     },
-    "review" : "imported",
-    "schema" : "spec",
-    "should" : "=> [id, name, email, created_at, department_id]",
-    "source" : "AUTOCOMPLETE_SPEC.md 9.2",
-    "sql" : "SELECT u.| FROM users u",
-    "title" : "Alias dot — columns",
-    "trigger" : "typing"
+    "review": "imported",
+    "schema": "spec",
+    "should": "=> [id, name, email, created_at, department_id]",
+    "source": "AUTOCOMPLETE_SPEC.md 9.2",
+    "sql": "SELECT u.| FROM users u",
+    "title": "Alias dot — columns",
+    "trigger": "typing"
   },
   {
-    "caretMarker" : "|",
-    "dialect" : "postgresql",
-    "echoSense" : {
-      "excludes" : [
-
-      ],
-      "insertText" : {
-
-      },
-      "items" : [
+    "caretMarker": "|",
+    "dialect": "postgresql",
+    "echoSense": {
+      "excludes": [],
+      "insertText": {},
+      "items": [
         "events",
         "metrics"
       ],
-      "order" : "leading",
-      "outcome" : "suggests"
+      "order": "leading",
+      "outcome": "suggests"
     },
-    "group" : "Dot Path Completions",
-    "id" : "SPEC-9.3",
-    "options" : {
-      "includeSystemSchemas" : false,
-      "qualifyTableInsertions" : false
+    "group": "Dot Path Completions",
+    "id": "SPEC-9.3",
+    "options": {
+      "includeSystemSchemas": false,
+      "qualifyTableInsertions": false
     },
-    "review" : "imported",
-    "schema" : "spec",
-    "should" : "=> [events, metrics]",
-    "source" : "AUTOCOMPLETE_SPEC.md 9.3",
-    "sql" : "SELECT * FROM analytics.|",
-    "title" : "Schema dot — tables",
-    "trigger" : "typing"
+    "review": "imported",
+    "schema": "spec",
+    "should": "=> [events, metrics]",
+    "source": "AUTOCOMPLETE_SPEC.md 9.3",
+    "sql": "SELECT * FROM analytics.|",
+    "title": "Schema dot — tables",
+    "trigger": "typing"
   },
   {
-    "caretMarker" : "|",
-    "dialect" : "postgresql",
-    "echoSense" : {
-      "excludes" : [
-
-      ],
-      "insertText" : {
-
-      },
-      "items" : [
+    "caretMarker": "|",
+    "dialect": "postgresql",
+    "echoSense": {
+      "excludes": [],
+      "insertText": {},
+      "items": [
         "id",
         "user_id",
         "event_type",
         "payload",
         "created_at"
       ],
-      "order" : "leading",
-      "outcome" : "suggests"
+      "order": "leading",
+      "outcome": "suggests"
     },
-    "group" : "Dot Path Completions",
-    "id" : "SPEC-9.4",
-    "knownIssue" : "Fails today: Expected these first, in order: id, user_id, event_type, payload, created_at. Got: id, created_at, event_type, payload, user_id.",
-    "options" : {
-      "includeSystemSchemas" : false,
-      "qualifyTableInsertions" : false
+    "group": "Dot Path Completions",
+    "id": "SPEC-9.4",
+    "knownIssue": "Fails today: Expected these first, in order: id, user_id, event_type, payload, created_at. Got: id, created_at, event_type, payload, user_id.",
+    "options": {
+      "includeSystemSchemas": false,
+      "qualifyTableInsertions": false
     },
-    "review" : "imported",
-    "schema" : "spec",
-    "should" : "=> [id, user_id, event_type, payload, created_at]",
-    "source" : "AUTOCOMPLETE_SPEC.md 9.4",
-    "sql" : "SELECT analytics.events.| FROM analytics.events",
-    "title" : "Schema.table dot — columns",
-    "trigger" : "typing"
+    "review": "imported",
+    "schema": "spec",
+    "should": "=> [id, user_id, event_type, payload, created_at]",
+    "source": "AUTOCOMPLETE_SPEC.md 9.4",
+    "sql": "SELECT analytics.events.| FROM analytics.events",
+    "title": "Schema.table dot — columns",
+    "trigger": "typing"
   },
   {
-    "caretMarker" : "|",
-    "dialect" : "mssql",
-    "group" : "Dot Path Completions",
-    "id" : "SPEC-9.5",
-    "options" : {
-      "includeSystemSchemas" : false,
-      "qualifyTableInsertions" : false
-    },
-    "review" : "imported",
-    "schema" : "spec",
-    "should" : "=> [tables from otherdb]` — Insert text includes full path: `otherdb.dbo.tablename`.\nStatus API reports loading state: Loading → Loaded / Not Found.",
-    "source" : "AUTOCOMPLETE_SPEC.md 9.5",
-    "sql" : "-- MSSQL, databases: mydb, otherdb\nSELECT * FROM otherdb.|",
-    "title" : "Cross-database dot (MSSQL)",
-    "trigger" : "typing"
-  },
-  {
-    "caretMarker" : "|",
-    "dialect" : "mssql",
-    "group" : "Dot Path Completions",
-    "id" : "SPEC-9.5b",
-    "options" : {
-      "includeSystemSchemas" : false,
-      "qualifyTableInsertions" : false
-    },
-    "review" : "imported",
-    "schema" : "spec",
-    "should" : "=> [tables from otherdb.dbo]",
-    "source" : "AUTOCOMPLETE_SPEC.md 9.5",
-    "sql" : "SELECT * FROM otherdb.dbo.|",
-    "title" : "Cross-database dot (MSSQL)",
-    "trigger" : "typing"
-  },
-  {
-    "caretMarker" : "|",
-    "dialect" : "postgresql",
-    "echoSense" : {
-      "excludes" : [
-        "mydb"
-      ],
-      "insertText" : {
-
+    "caretMarker": "|",
+    "dialect": "mssql",
+    "echoSense": {
+      "excludes": [],
+      "insertText": {
+        "invoices": "otherdb.dbo.invoices"
       },
-      "items" : [
+      "items": [
+        "invoices",
+        "customers"
+      ],
+      "order": "includes",
+      "outcome": "suggests"
+    },
+    "group": "Dot Path Completions",
+    "id": "SPEC-9.5",
+    "knownIssue": "Same as SPEC-24.2: tables of another database are not offered after `otherdb.`",
+    "options": {
+      "includeSystemSchemas": false,
+      "qualifyTableInsertions": false
+    },
+    "review": "imported",
+    "schema": "spec",
+    "should": "=> [tables from otherdb]` — Insert text includes full path: `otherdb.dbo.tablename`.\nStatus API reports loading state: Loading → Loaded / Not Found.",
+    "source": "AUTOCOMPLETE_SPEC.md 9.5",
+    "sql": "-- MSSQL, databases: mydb, otherdb\nSELECT * FROM otherdb.|",
+    "title": "Cross-database dot (MSSQL)",
+    "trigger": "typing"
+  },
+  {
+    "caretMarker": "|",
+    "dialect": "mssql",
+    "echoSense": {
+      "excludes": [
         "users"
       ],
-      "order" : "includes",
-      "outcome" : "suggests"
+      "items": [
+        "invoices",
+        "customers"
+      ],
+      "order": "includes",
+      "outcome": "suggests"
     },
-    "group" : "Dot Path Completions",
-    "id" : "SPEC-9.6",
-    "options" : {
-      "includeSystemSchemas" : false,
-      "qualifyTableInsertions" : false
+    "group": "Dot Path Completions",
+    "id": "SPEC-9.5b",
+    "options": {
+      "includeSystemSchemas": false,
+      "qualifyTableInsertions": false
     },
-    "review" : "imported",
-    "schema" : "spec",
-    "should" : "Database names do NOT appear. Only activate when user types a known database name + dot.",
-    "source" : "AUTOCOMPLETE_SPEC.md 9.6",
-    "sql" : "SELECT * FROM |",
-    "title" : "Database names never auto-suggested",
-    "trigger" : "typing"
+    "review": "imported",
+    "schema": "spec",
+    "should": "=> [tables from otherdb.dbo]",
+    "source": "AUTOCOMPLETE_SPEC.md 9.5",
+    "sql": "SELECT * FROM otherdb.dbo.|",
+    "title": "Cross-database dot (MSSQL)",
+    "trigger": "typing"
   },
   {
-    "caretMarker" : "|",
-    "dialect" : "postgresql",
-    "echo" : {
-      "popup" : "shown",
-      "textAfterAccepting" : "SELECT u.name| FROM users u"
-    },
-    "echoSense" : {
-      "excludes" : [
-
+    "caretMarker": "|",
+    "dialect": "postgresql",
+    "echoSense": {
+      "excludes": [
+        "mydb"
       ],
-      "insertText" : {
-
-      },
-      "items" : [
+      "insertText": {},
+      "items": [
+        "users"
+      ],
+      "order": "includes",
+      "outcome": "suggests"
+    },
+    "group": "Dot Path Completions",
+    "id": "SPEC-9.6",
+    "options": {
+      "includeSystemSchemas": false,
+      "qualifyTableInsertions": false
+    },
+    "review": "imported",
+    "schema": "spec",
+    "should": "Database names do NOT appear. Only activate when user types a known database name + dot.",
+    "source": "AUTOCOMPLETE_SPEC.md 9.6",
+    "sql": "SELECT * FROM |",
+    "title": "Database names never auto-suggested",
+    "trigger": "typing"
+  },
+  {
+    "caretMarker": "|",
+    "dialect": "postgresql",
+    "echo": {
+      "popup": "shown",
+      "textAfterAccepting": "SELECT u.name| FROM users u"
+    },
+    "echoSense": {
+      "excludes": [],
+      "insertText": {},
+      "items": [
         "name"
       ],
-      "order" : "leading",
-      "outcome" : "suggests"
+      "order": "leading",
+      "outcome": "suggests"
     },
-    "group" : "Dot Path Completions",
-    "id" : "SPEC-9.7",
-    "knownIssue" : "Fails today: Editor: Expected the text after accepting to be “SELECT u.name| FROM users u”, but it is “SELECT u.\"name\"| FROM users u”.",
-    "options" : {
-      "includeSystemSchemas" : false,
-      "qualifyTableInsertions" : false
+    "group": "Dot Path Completions",
+    "id": "SPEC-9.7",
+    "knownIssue": "Fails today: Editor: Expected the text after accepting to be “SELECT u.name| FROM users u”, but it is “SELECT u.\"name\"| FROM users u”.",
+    "options": {
+      "includeSystemSchemas": false,
+      "qualifyTableInsertions": false
     },
-    "review" : "imported",
-    "schema" : "spec",
-    "should" : "=> [name]",
-    "source" : "AUTOCOMPLETE_SPEC.md 9.7",
-    "sql" : "SELECT u.na| FROM users u",
-    "title" : "Dot with partial typing",
-    "trigger" : "typing"
+    "review": "imported",
+    "schema": "spec",
+    "should": "=> [name]",
+    "source": "AUTOCOMPLETE_SPEC.md 9.7",
+    "sql": "SELECT u.na| FROM users u",
+    "title": "Dot with partial typing",
+    "trigger": "typing"
   },
   {
-    "caretMarker" : "|",
-    "dialect" : "postgresql",
-    "echoSense" : {
-      "excludes" : [
-
-      ],
-      "insertText" : {
-
-      },
-      "items" : [
-
-      ],
-      "order" : "exact",
-      "outcome" : "none"
+    "caretMarker": "|",
+    "dialect": "postgresql",
+    "echoSense": {
+      "excludes": [],
+      "insertText": {},
+      "items": [],
+      "order": "exact",
+      "outcome": "none"
     },
-    "group" : "Dot Path Completions",
-    "id" : "SPEC-9.8",
-    "knownIssue" : "Fails today: Expected nothing, but it offered ABS, AGE, ARRAY_AGG, ARRAY_APPEND, ARRAY_CAT, ARRAY_LENGTH, ARRAY_POSITION, ARRAY_REMOVE, AVG, BOOL_AND, BOOL_OR, CAST and 48 more.",
-    "options" : {
-      "includeSystemSchemas" : false,
-      "qualifyTableInsertions" : false
+    "group": "Dot Path Completions",
+    "id": "SPEC-9.8",
+    "knownIssue": "Fails today: Expected nothing, but it offered ABS, AGE, ARRAY_AGG, ARRAY_APPEND, ARRAY_CAT, ARRAY_LENGTH, ARRAY_POSITION, ARRAY_REMOVE, AVG, BOOL_AND, BOOL_OR, CAST and 48 more.",
+    "options": {
+      "includeSystemSchemas": false,
+      "qualifyTableInsertions": false
     },
-    "review" : "imported",
-    "schema" : "spec",
-    "should" : "=> NONE` — No columns, no crash.",
-    "source" : "AUTOCOMPLETE_SPEC.md 9.8",
-    "sql" : "SELECT x.| FROM users u",
-    "title" : "Dot after unknown alias — no crash",
-    "trigger" : "typing"
+    "review": "imported",
+    "schema": "spec",
+    "should": "=> NONE` — No columns, no crash.",
+    "source": "AUTOCOMPLETE_SPEC.md 9.8",
+    "sql": "SELECT x.| FROM users u",
+    "title": "Dot after unknown alias — no crash",
+    "trigger": "typing"
   }
 ]

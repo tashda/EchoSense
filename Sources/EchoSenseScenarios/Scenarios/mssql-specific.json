@@ -1,19 +1,28 @@
 [
   {
-    "caretMarker" : "|",
-    "dialect" : "mssql",
-    "group" : "MSSQL-Specific",
-    "id" : "SPEC-23.1",
-    "options" : {
-      "includeSystemSchemas" : false,
-      "qualifyTableInsertions" : false
+    "caretMarker": "|",
+    "dialect": "mssql",
+    "echoSense": {
+      "excludes": [],
+      "items": [
+        "id",
+        "value"
+      ],
+      "order": "includes",
+      "outcome": "suggests"
     },
-    "review" : "imported",
-    "schema" : "spec",
-    "should" : "Resolves `[Order]` and shows its columns.",
-    "source" : "AUTOCOMPLETE_SPEC.md 23.1",
-    "sql" : "-- MSSQL\nSELECT * FROM [Order] o WHERE o.|",
-    "title" : "Bracket quoting",
-    "trigger" : "typing"
+    "group": "MSSQL-Specific",
+    "id": "SPEC-23.1",
+    "options": {
+      "includeSystemSchemas": false,
+      "qualifyTableInsertions": false
+    },
+    "review": "imported",
+    "schema": "quoting",
+    "should": "Resolves `[Order]` and shows its columns.",
+    "source": "AUTOCOMPLETE_SPEC.md 23.1",
+    "sql": "-- MSSQL\nSELECT * FROM [Order] o WHERE o.|",
+    "title": "Bracket quoting",
+    "trigger": "typing"
   }
 ]

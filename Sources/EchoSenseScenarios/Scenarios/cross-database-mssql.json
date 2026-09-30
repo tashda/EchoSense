@@ -1,66 +1,86 @@
 [
   {
-    "caretMarker" : "|",
-    "dialect" : "postgresql",
-    "echoSense" : {
-      "excludes" : [
+    "caretMarker": "|",
+    "dialect": "postgresql",
+    "echoSense": {
+      "excludes": [
         "mydb"
       ],
-      "insertText" : {
-
-      },
-      "items" : [
+      "insertText": {},
+      "items": [
         "users"
       ],
-      "order" : "includes",
-      "outcome" : "suggests"
+      "order": "includes",
+      "outcome": "suggests"
     },
-    "group" : "Cross-Database (MSSQL)",
-    "id" : "SPEC-24.1",
-    "options" : {
-      "includeSystemSchemas" : false,
-      "qualifyTableInsertions" : false
+    "group": "Cross-Database (MSSQL)",
+    "id": "SPEC-24.1",
+    "options": {
+      "includeSystemSchemas": false,
+      "qualifyTableInsertions": false
     },
-    "review" : "imported",
-    "schema" : "spec",
-    "should" : "No database names shown.",
-    "source" : "AUTOCOMPLETE_SPEC.md 24.1",
-    "sql" : "SELECT * FROM |",
-    "title" : "Database names never auto-suggested in FROM",
-    "trigger" : "typing"
+    "review": "imported",
+    "schema": "spec",
+    "should": "No database names shown.",
+    "source": "AUTOCOMPLETE_SPEC.md 24.1",
+    "sql": "SELECT * FROM |",
+    "title": "Database names never auto-suggested in FROM",
+    "trigger": "typing"
   },
   {
-    "caretMarker" : "|",
-    "dialect" : "postgresql",
-    "group" : "Cross-Database (MSSQL)",
-    "id" : "SPEC-24.2",
-    "options" : {
-      "includeSystemSchemas" : false,
-      "qualifyTableInsertions" : false
+    "caretMarker": "|",
+    "dialect": "mssql",
+    "echoSense": {
+      "excludes": [],
+      "items": [
+        "invoices",
+        "customers"
+      ],
+      "order": "includes",
+      "outcome": "suggests"
     },
-    "review" : "imported",
-    "schema" : "spec",
-    "should" : "- EchoSense lazy-loads metadata for `otherdb`\n- Returns status: Loading → Loaded / Not Found\n- Once loaded, shows tables (insert text: `otherdb.dbo.tablename`)",
-    "source" : "AUTOCOMPLETE_SPEC.md 24.2",
-    "sql" : "SELECT * FROM otherdb.|",
-    "title" : "Database dot triggers lazy load",
-    "trigger" : "typing"
+    "group": "Cross-Database (MSSQL)",
+    "id": "SPEC-24.2",
+    "knownIssue": "Engine offers nothing after `otherdb.`; cross-database lookup needs the other database's structure loaded (lazy load not modelled by the runner yet)",
+    "options": {
+      "includeSystemSchemas": false,
+      "qualifyTableInsertions": false
+    },
+    "review": "imported",
+    "schema": "spec",
+    "should": "- EchoSense lazy-loads metadata for `otherdb`\n- Returns status: Loading → Loaded / Not Found\n- Once loaded, shows tables (insert text: `otherdb.dbo.tablename`)",
+    "source": "AUTOCOMPLETE_SPEC.md 24.2",
+    "sql": "SELECT * FROM otherdb.|",
+    "title": "Database dot triggers lazy load",
+    "trigger": "typing"
   },
   {
-    "caretMarker" : "|",
-    "dialect" : "postgresql",
-    "group" : "Cross-Database (MSSQL)",
-    "id" : "SPEC-24.3",
-    "options" : {
-      "includeSystemSchemas" : false,
-      "qualifyTableInsertions" : false
+    "caretMarker": "|",
+    "dialect": "postgresql",
+    "echoSense": {
+      "excludes": [
+        "users"
+      ],
+      "items": [
+        "invoices",
+        "customers"
+      ],
+      "order": "includes",
+      "outcome": "suggests"
     },
-    "review" : "imported",
-    "schema" : "spec",
-    "should" : "=> [tables from otherdb.dbo]",
-    "source" : "AUTOCOMPLETE_SPEC.md 24.3",
-    "sql" : "SELECT * FROM otherdb.dbo.|",
-    "title" : "Database.schema.table path",
-    "trigger" : "typing"
+    "group": "Cross-Database (MSSQL)",
+    "id": "SPEC-24.3",
+    "knownIssue": "Same as SPEC-24.2: `otherdb.dbo.` offers nothing",
+    "options": {
+      "includeSystemSchemas": false,
+      "qualifyTableInsertions": false
+    },
+    "review": "imported",
+    "schema": "spec",
+    "should": "=> [tables from otherdb.dbo]",
+    "source": "AUTOCOMPLETE_SPEC.md 24.3",
+    "sql": "SELECT * FROM otherdb.dbo.|",
+    "title": "Database.schema.table path",
+    "trigger": "typing"
   }
 ]

@@ -1,140 +1,125 @@
 [
   {
-    "caretMarker" : "|",
-    "dialect" : "postgresql",
-    "echoSense" : {
-      "excludes" : [
-
-      ],
-      "insertText" : {
-
-      },
-      "items" : [
-
-      ],
-      "order" : "exact",
-      "outcome" : "none"
+    "caretMarker": "|",
+    "dialect": "postgresql",
+    "echoSense": {
+      "excludes": [],
+      "insertText": {},
+      "items": [],
+      "order": "exact",
+      "outcome": "none"
     },
-    "group" : "Edge Cases",
-    "id" : "SPEC-26.1",
-    "options" : {
-      "includeSystemSchemas" : false,
-      "qualifyTableInsertions" : false
+    "group": "Edge Cases",
+    "id": "SPEC-26.1",
+    "options": {
+      "includeSystemSchemas": false,
+      "qualifyTableInsertions": false
     },
-    "review" : "imported",
-    "schema" : "spec",
-    "should" : "=> NONE",
-    "source" : "AUTOCOMPLETE_SPEC.md 26.1",
-    "sql" : "|",
-    "title" : "Empty input",
-    "trigger" : "typing"
+    "review": "imported",
+    "schema": "spec",
+    "should": "=> NONE",
+    "source": "AUTOCOMPLETE_SPEC.md 26.1",
+    "sql": "|",
+    "title": "Empty input",
+    "trigger": "typing"
   },
   {
-    "caretMarker" : "|",
-    "dialect" : "postgresql",
-    "echoSense" : {
-      "excludes" : [
-
-      ],
-      "insertText" : {
-
-      },
-      "items" : [
-
-      ],
-      "order" : "exact",
-      "outcome" : "none"
+    "caretMarker": "|",
+    "dialect": "postgresql",
+    "echoSense": {
+      "excludes": [],
+      "insertText": {},
+      "items": [],
+      "order": "exact",
+      "outcome": "none"
     },
-    "group" : "Edge Cases",
-    "id" : "SPEC-26.4",
-    "options" : {
-      "includeSystemSchemas" : false,
-      "qualifyTableInsertions" : false
+    "group": "Edge Cases",
+    "id": "SPEC-26.4",
+    "options": {
+      "includeSystemSchemas": false,
+      "qualifyTableInsertions": false
     },
-    "review" : "imported",
-    "schema" : "spec",
-    "should" : "=> NONE` — Inside string, no crash.",
-    "source" : "AUTOCOMPLETE_SPEC.md 26.4",
-    "sql" : "SELECT * FROM users WHERE name = 'incomplete|",
-    "title" : "Unclosed string literal",
-    "trigger" : "typing"
+    "review": "imported",
+    "schema": "spec",
+    "should": "=> NONE` — Inside string, no crash.",
+    "source": "AUTOCOMPLETE_SPEC.md 26.4",
+    "sql": "SELECT * FROM users WHERE name = 'incomplete|",
+    "title": "Unclosed string literal",
+    "trigger": "typing"
   },
   {
-    "caretMarker" : "|",
-    "dialect" : "postgresql",
-    "echoSense" : {
-      "excludes" : [
-
-      ],
-      "insertText" : {
-
-      },
-      "items" : [
-
-      ],
-      "order" : "exact",
-      "outcome" : "silent"
+    "caretMarker": "|",
+    "dialect": "postgresql",
+    "echoSense": {
+      "excludes": [],
+      "insertText": {},
+      "items": [],
+      "order": "exact",
+      "outcome": "silent"
     },
-    "group" : "Edge Cases",
-    "id" : "SPEC-26.5",
-    "options" : {
-      "includeSystemSchemas" : false,
-      "qualifyTableInsertions" : false
+    "group": "Edge Cases",
+    "id": "SPEC-26.5",
+    "options": {
+      "includeSystemSchemas": false,
+      "qualifyTableInsertions": false
     },
-    "review" : "imported",
-    "schema" : "spec",
-    "should" : "=> SILENT` — Silent after open paren, suggestions on typing.",
-    "source" : "AUTOCOMPLETE_SPEC.md 26.5",
-    "sql" : "SELECT * FROM users WHERE id IN (|",
-    "title" : "Unclosed parenthesis",
-    "trigger" : "typing"
+    "review": "imported",
+    "schema": "spec",
+    "should": "=> SILENT` — Silent after open paren, suggestions on typing.",
+    "source": "AUTOCOMPLETE_SPEC.md 26.5",
+    "sql": "SELECT * FROM users WHERE id IN (|",
+    "title": "Unclosed parenthesis",
+    "trigger": "typing"
   },
   {
-    "caretMarker" : "|",
-    "dialect" : "postgresql",
-    "group" : "Edge Cases",
-    "id" : "SPEC-26.7",
-    "options" : {
-      "includeSystemSchemas" : false,
-      "qualifyTableInsertions" : false
+    "caretMarker": "|",
+    "dialect": "postgresql",
+    "echoSense": {
+      "excludes": [],
+      "items": [
+        "id",
+        "value"
+      ],
+      "order": "includes",
+      "outcome": "suggests"
     },
-    "review" : "imported",
-    "schema" : "spec",
-    "should" : "Resolves quoted identifier, shows columns.",
-    "source" : "AUTOCOMPLETE_SPEC.md 26.7",
-    "sql" : "SELECT * FROM \"Order\" o WHERE o.|",
-    "title" : "Reserved words as table names",
-    "trigger" : "typing"
+    "group": "Edge Cases",
+    "id": "SPEC-26.7",
+    "options": {
+      "includeSystemSchemas": false,
+      "qualifyTableInsertions": false
+    },
+    "review": "imported",
+    "schema": "quoting",
+    "should": "Resolves quoted identifier, shows columns.",
+    "source": "AUTOCOMPLETE_SPEC.md 26.7",
+    "sql": "SELECT * FROM \"Order\" o WHERE o.|",
+    "title": "Reserved words as table names",
+    "trigger": "typing"
   },
   {
-    "caretMarker" : "|",
-    "dialect" : "postgresql",
-    "echoSense" : {
-      "excludes" : [
-
-      ],
-      "insertText" : {
-
-      },
-      "items" : [
-
-      ],
-      "order" : "exact",
-      "outcome" : "none"
+    "caretMarker": "|",
+    "dialect": "postgresql",
+    "echoSense": {
+      "excludes": [],
+      "insertText": {},
+      "items": [],
+      "order": "exact",
+      "outcome": "none"
     },
-    "group" : "Edge Cases",
-    "id" : "SPEC-26.9",
-    "knownIssue" : "Fails today: Expected nothing, but it offered users.id, department_id, \"name\", email, users.created_at, orders.id, user_id, \"status\", orders.created_at, total, $1, ABS and 48 more.",
-    "options" : {
-      "includeSystemSchemas" : false,
-      "qualifyTableInsertions" : false
+    "group": "Edge Cases",
+    "id": "SPEC-26.9",
+    "knownIssue": "Fails today: Expected nothing, but it offered users.id, department_id, \"name\", email, users.created_at, orders.id, user_id, \"status\", orders.created_at, total, $1, ABS and 48 more.",
+    "options": {
+      "includeSystemSchemas": false,
+      "qualifyTableInsertions": false
     },
-    "review" : "imported",
-    "schema" : "spec",
-    "should" : "=> NONE` — No tables in scope for the subquery's SELECT yet... wait, `orders` IS in scope.\nActually: `=> [columns from orders]` since `FROM orders` gives context.",
-    "source" : "AUTOCOMPLETE_SPEC.md 26.9",
-    "sql" : "SELECT * FROM users WHERE id IN (SELECT | FROM orders)",
-    "title" : "Subquery in WHERE — fresh scope",
-    "trigger" : "typing"
+    "review": "imported",
+    "schema": "spec",
+    "should": "=> NONE` — No tables in scope for the subquery's SELECT yet... wait, `orders` IS in scope.\nActually: `=> [columns from orders]` since `FROM orders` gives context.",
+    "source": "AUTOCOMPLETE_SPEC.md 26.9",
+    "sql": "SELECT * FROM users WHERE id IN (SELECT | FROM orders)",
+    "title": "Subquery in WHERE — fresh scope",
+    "trigger": "typing"
   }
 ]
