@@ -39,6 +39,10 @@
   {
     "caretMarker" : "|",
     "dialect" : "postgresql",
+    "echo" : {
+      "popup" : "shown",
+      "textAfterAccepting" : "SELECT * FROM users|"
+    },
     "echoSense" : {
       "excludes" : [
 

@@ -65,6 +65,10 @@
   {
     "caretMarker" : "|",
     "dialect" : "postgresql",
+    "echo" : {
+      "popup" : "shown",
+      "textAfterAccepting" : "SELECT * FROM users ORDER BY name|"
+    },
     "echoSense" : {
       "excludes" : [
 
@@ -80,6 +84,7 @@
     },
     "group" : "GROUP BY / ORDER BY / HAVING",
     "id" : "SPEC-5.3",
+    "knownIssue" : "Fails today: Editor: Expected the text after accepting to be “SELECT * FROM users ORDER BY name|”, but it is “SELECT * FROM users ORDER BY \"name\"|”.",
     "options" : {
       "includeSystemSchemas" : false,
       "qualifyTableInsertions" : false

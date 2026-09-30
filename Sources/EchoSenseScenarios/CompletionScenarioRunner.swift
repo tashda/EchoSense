@@ -21,6 +21,8 @@ public struct ScenarioActual: Codable, Sendable, Hashable {
     public var popupShown: Bool
     /// Why the editor does or doesn't ask.
     public var triggerNote: String
+    /// The text after accepting the first suggestion, with the caret written as the scenario's marker.
+    public var textAfterAccepting: String?
 
     public var isEmpty: Bool { titles.isEmpty }
 }
@@ -53,12 +55,28 @@ public struct ScenarioResult: Sendable, Hashable, Identifiable {
     public var echo: EchoVerdict
     public var id: String { scenario.id }
 
-    /// True when the result is what the scenario says it should be: a pass, or a failure that the
-    /// scenario already lists as a known issue.
-    public var isAsExpected: Bool {
-        if scenario.knownIssue != nil { return verdict.isFail }
-        return verdict.isPass || verdict == .unchecked
+    /// Everything that disagrees, from EchoSense and from the editor rules.
+    public var failureReasons: [String] {
+        var reasons: [String] = []
+        switch verdict {
+        case .fail(let items): reasons += items
+        case .error(let message): reasons.append(message)
+        default: break
+        }
+        if case .fail(let items) = echo { reasons += items.map { "Editor: " + $0 } }
+        return reasons
     }
+
+    public var isFailing: Bool { !failureReasons.isEmpty }
+
+    /// True when the result is what the scenario says it should be: no disagreement, or a disagreement
+    /// the scenario already lists as a known issue.
+    public var isAsExpected: Bool {
+        scenario.knownIssue != nil ? isFailing : !isFailing
+    }
+
+    /// Pass, fail or nothing to compare, for the scenario as a whole.
+    public var isPass: Bool { !isFailing && (verdict.isPass || { if case .pass = echo { true } else { false } }()) }
 }
 
 /// Runs scenarios against the real completion engine. Used by Echo Labs, the package's tests and Echo's tests.
@@ -76,7 +94,7 @@ public struct CompletionScenarioRunner: Sendable {
         }
         let actual = complete(scenario, structure: structure)
         let verdict = scenario.echoSense.map { Self.compare($0, actual: actual, trigger: scenario.trigger) } ?? .unchecked
-        let echo: EchoVerdict = scenario.echo == nil ? .unchecked : .notRun("Echo's editor rules don't run in this package yet.")
+        let echo: EchoVerdict = scenario.echo.map { Self.compare($0, actual: actual) } ?? .unchecked
         return ScenarioResult(scenario: scenario, actual: actual, verdict: verdict, echo: echo)
     }
 
@@ -102,13 +120,20 @@ public struct CompletionScenarioRunner: Sendable {
             : SQLEditorTriggerPolicy.opensAfterTyping(text: text, caret: caret)
         let response = scenario.trigger == .manual ? manual : automatic
         let asked = policy.opens ? response.suggestions : []
+        var accepted: String?
+        if let first = asked.first {
+            let result = SQLEditorAcceptance.accept(first, from: response, in: text)
+            let ns = result.text as NSString
+            accepted = ns.substring(to: result.caret) + scenario.caretMarker + ns.substring(from: result.caret)
+        }
         return ScenarioActual(
             titles: asked.map(\.title),
             insertText: Dictionary(asked.map { ($0.title, $0.insertText) }, uniquingKeysWith: { first, _ in first }),
             kinds: Dictionary(asked.map { ($0.title, "\($0.kind)") }, uniquingKeysWith: { first, _ in first }),
             clause: "\(response.clause)", token: response.token,
             manualTitles: manual.suggestions.map(\.title), isMetadataLimited: response.isMetadataLimited,
-            engineTitles: response.suggestions.map(\.title), popupShown: !asked.isEmpty, triggerNote: policy.reason)
+            engineTitles: response.suggestions.map(\.title), popupShown: !asked.isEmpty, triggerNote: policy.reason,
+            textAfterAccepting: accepted)
     }
 
     public static func databaseType(_ dialect: ScenarioDialect) -> EchoSenseDatabaseType {
@@ -157,6 +182,22 @@ public struct CompletionScenarioRunner: Sendable {
             } else {
                 reasons.append("“\(title)” should insert “\(text)”, but it isn't offered.")
             }
+        }
+        return reasons.isEmpty ? .pass : .fail(reasons)
+    }
+
+    /// Compares what the editor should do with what it does: the popup, the selected suggestion and the text after accepting.
+    public static func compare(_ expected: EchoExpectation, actual: ScenarioActual) -> EchoVerdict {
+        var reasons: [String] = []
+        if let popup = expected.popup, (popup == .shown) != actual.popupShown {
+            reasons.append(popup == .shown ? "Expected the popup to open. \(actual.triggerNote)" : "Expected no popup, but it opens with \(list(actual.titles)).")
+        }
+        if let selected = expected.selected {
+            let first = actual.titles.first.map(unquoted)
+            if first != unquoted(selected) { reasons.append("Expected “\(selected)” to be selected, but \(first.map { "“\($0)” is" } ?? "nothing is").") }
+        }
+        if let after = expected.textAfterAccepting, after != actual.textAfterAccepting {
+            reasons.append("Expected the text after accepting to be “\(after.replacingOccurrences(of: "\n", with: "⏎"))”, but it is “\((actual.textAfterAccepting ?? "no popup").replacingOccurrences(of: "\n", with: "⏎"))”.")
         }
         return reasons.isEmpty ? .pass : .fail(reasons)
     }

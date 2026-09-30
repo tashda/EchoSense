@@ -37,6 +37,10 @@
   {
     "caretMarker" : "|",
     "dialect" : "postgresql",
+    "echo" : {
+      "popup" : "shown",
+      "textAfterAccepting" : "SELECT * FROM users WHERE name|"
+    },
     "echoSense" : {
       "excludes" : [
 
@@ -52,6 +56,7 @@
     },
     "group" : "WHERE Clause",
     "id" : "SPEC-4.2",
+    "knownIssue" : "Fails today: Editor: Expected the text after accepting to be “SELECT * FROM users WHERE name|”, but it is “SELECT * FROM users WHERE \"name\"|”.",
     "options" : {
       "includeSystemSchemas" : false,
       "qualifyTableInsertions" : false

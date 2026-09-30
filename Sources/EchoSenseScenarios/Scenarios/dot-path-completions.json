@@ -202,6 +202,10 @@
   {
     "caretMarker" : "|",
     "dialect" : "postgresql",
+    "echo" : {
+      "popup" : "shown",
+      "textAfterAccepting" : "SELECT u.name| FROM users u"
+    },
     "echoSense" : {
       "excludes" : [
 
@@ -217,6 +221,7 @@
     },
     "group" : "Dot Path Completions",
     "id" : "SPEC-9.7",
+    "knownIssue" : "Fails today: Editor: Expected the text after accepting to be “SELECT u.name| FROM users u”, but it is “SELECT u.\"name\"| FROM users u”.",
     "options" : {
       "includeSystemSchemas" : false,
       "qualifyTableInsertions" : false

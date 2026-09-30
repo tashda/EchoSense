@@ -30,21 +30,14 @@ enum ScenarioCLI {
                     if let group = option("--group"), scenario.group != group { continue }
                     if let id = option("--id"), scenario.id != id { continue }
                     let result = runner.run(scenario)
-                    switch result.verdict {
-                    case .pass: pass += 1
-                    case .unchecked: unchecked += 1
-                    case .fail, .error: if scenario.knownIssue != nil { known += 1 } else { fail += 1 }
-                    }
-                    if args.contains("--failing"), result.isAsExpected { continue }
                     let mark: String
-                    switch result.verdict {
-                    case .pass: mark = "PASS "
-                    case .unchecked: mark = "  -  "
-                    case .fail, .error: mark = scenario.knownIssue != nil ? "known" : "FAIL "
-                    }
+                    if result.isFailing {
+                        if scenario.knownIssue != nil { known += 1; mark = "known" } else { fail += 1; mark = "FAIL " }
+                    } else if result.isPass { pass += 1; mark = "PASS " } else { unchecked += 1; mark = "  -  " }
+                    if args.contains("--failing"), result.isAsExpected { continue }
                     print("\(mark) \(scenario.id)  \(scenario.title)")
-                    if case .fail(let reasons) = result.verdict, scenario.knownIssue == nil {
-                        for reason in reasons { print("        \(reason)") }
+                    if result.isFailing, scenario.knownIssue == nil {
+                        for reason in result.failureReasons { print("        \(reason)") }
                     }
                 }
                 print("\n\(pass) pass, \(fail) fail, \(known) known issues, \(unchecked) without an expectation")
@@ -54,10 +47,10 @@ enum ScenarioCLI {
                 for index in library.scenarios.indices {
                     let scenario = library.scenarios[index]
                     let result = runner.run(scenario)
-                    if case .fail(let reasons) = result.verdict, scenario.knownIssue == nil {
-                        library.scenarios[index].knownIssue = "Fails today: " + (reasons.first ?? "it disagrees")
+                    if result.isFailing, scenario.knownIssue == nil {
+                        library.scenarios[index].knownIssue = "Fails today: " + (result.failureReasons.first ?? "it disagrees")
                         marked += 1
-                    } else if result.verdict.isPass, scenario.knownIssue != nil {
+                    } else if !result.isFailing, scenario.knownIssue != nil {
                         library.scenarios[index].knownIssue = nil
                         cleared += 1
                     }

@@ -18,14 +18,9 @@ func scenarioBehavesAsExpected(_ scenario: CompletionScenario) {
     let result = CompletionScenarioRunner().run(scenario)
     if let issue = scenario.knownIssue {
         withKnownIssue("\(scenario.id): \(issue)") {
-            if case .fail(let reasons) = result.verdict { Issue.record("\(reasons.joined(separator: " "))") }
-            else if case .error(let message) = result.verdict { Issue.record("\(message)") }
+            if result.isFailing { Issue.record("\(result.failureReasons.joined(separator: " "))") }
         }
         return
     }
-    switch result.verdict {
-    case .pass, .unchecked: break
-    case .fail(let reasons): Issue.record("\(scenario.id) \(scenario.title): \(reasons.joined(separator: " "))")
-    case .error(let message): Issue.record("\(scenario.id): \(message)")
-    }
+    if result.isFailing { Issue.record("\(scenario.id) \(scenario.title): \(result.failureReasons.joined(separator: " "))") }
 }
