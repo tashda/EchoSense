@@ -2,8 +2,26 @@
   {
     "caretMarker" : "|",
     "dialect" : "postgresql",
+    "echoSense" : {
+      "excludes" : [
+
+      ],
+      "insertText" : {
+        "name" : "name"
+      },
+      "items" : [
+        "id",
+        "name",
+        "email",
+        "created_at",
+        "department_id"
+      ],
+      "order" : "includes",
+      "outcome" : "suggests"
+    },
     "group" : "Insert Text Behavior",
     "id" : "SPEC-16.4",
+    "knownIssue" : "Fails today: Missing: name.",
     "options" : {
       "includeSystemSchemas" : false,
       "qualifyTableInsertions" : false

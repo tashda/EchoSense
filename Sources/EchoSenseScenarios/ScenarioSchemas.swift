@@ -53,6 +53,7 @@ public enum ScenarioSchemas {
             columns: [column("id", "integer"), column("name", "text"), column("email", "text")])
         var objects = [users, orders, products, categories, departments, activeUsers]
         if dialect == .postgresql {
+            objects.append(EchoSenseSchemaObjectInfo(name: "calculate_tax", schema: main, type: .function, columns: []))
             objects.append(EchoSenseSchemaObjectInfo(name: "user_stats", schema: main, type: .materializedView,
                 columns: [column("user_id", "integer"), column("order_count", "integer"), column("total_spent", "numeric")]))
         }

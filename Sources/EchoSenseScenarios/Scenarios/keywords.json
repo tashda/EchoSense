@@ -93,8 +93,22 @@
   {
     "caretMarker" : "|",
     "dialect" : "postgresql",
+    "echoSense" : {
+      "excludes" : [
+
+      ],
+      "insertText" : {
+
+      },
+      "items" : [
+        "INNER JOIN"
+      ],
+      "order" : "leading",
+      "outcome" : "suggests"
+    },
     "group" : "Keywords",
     "id" : "SPEC-13.2b",
+    "knownIssue" : "Fails today: Expected suggestions, but EchoSense offered nothing.",
     "options" : {
       "includeSystemSchemas" : false,
       "qualifyTableInsertions" : false
@@ -141,8 +155,25 @@
   {
     "caretMarker" : "|",
     "dialect" : "postgresql",
+    "echoSense" : {
+      "excludes" : [
+
+      ],
+      "insertText" : {
+
+      },
+      "items" : [
+        "ASC",
+        "DESC",
+        "NULLS FIRST",
+        "NULLS LAST"
+      ],
+      "order" : "leading",
+      "outcome" : "suggests"
+    },
     "group" : "Keywords",
     "id" : "SPEC-13.5",
+    "knownIssue" : "Fails today: Expected suggestions, but the popup doesn't open. A space only asks EchoSense after FROM, JOIN, UPDATE, CALL, EXEC or INTO. EchoSense would offer id, department_id, \"name\", created_at, email, ABS, AGE, ARRAY_AGG, ARRAY_APPEND, ARRAY_CAT, ARRAY_LENGTH, ARRAY_POSITION and 48 more.",
     "options" : {
       "includeSystemSchemas" : false,
       "qualifyTableInsertions" : false
@@ -158,8 +189,25 @@
   {
     "caretMarker" : "|",
     "dialect" : "postgresql",
+    "echoSense" : {
+      "excludes" : [
+
+      ],
+      "insertText" : {
+
+      },
+      "items" : [
+        "ILIKE",
+        "IN",
+        "IS NULL",
+        "IS NOT NULL"
+      ],
+      "order" : "includes",
+      "outcome" : "suggests"
+    },
     "group" : "Keywords",
     "id" : "SPEC-13.6",
+    "knownIssue" : "Fails today: Missing: IS NULL, IS NOT NULL.",
     "options" : {
       "includeSystemSchemas" : false,
       "qualifyTableInsertions" : false

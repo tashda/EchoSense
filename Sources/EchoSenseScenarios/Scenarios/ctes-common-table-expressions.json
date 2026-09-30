@@ -82,6 +82,7 @@
     },
     "group" : "CTEs (Common Table Expressions)",
     "id" : "SPEC-7.3",
+    "knownIssue" : "Fails today: Expected suggestions, but the popup doesn't open. A space only asks EchoSense after FROM, JOIN, UPDATE, CALL, EXEC or INTO. EchoSense would offer user_id, user_name, $1, ABS, AGE, ARRAY_AGG, ARRAY_APPEND, ARRAY_CAT, ARRAY_LENGTH, ARRAY_POSITION, ARRAY_REMOVE, AVG and 48 more.",
     "options" : {
       "includeSystemSchemas" : false,
       "qualifyTableInsertions" : false
@@ -132,8 +133,24 @@
   {
     "caretMarker" : "|",
     "dialect" : "postgresql",
+    "echoSense" : {
+      "excludes" : [
+
+      ],
+      "insertText" : {
+
+      },
+      "items" : [
+        "active",
+        "users",
+        "orders"
+      ],
+      "order" : "includes",
+      "outcome" : "suggests"
+    },
     "group" : "CTEs (Common Table Expressions)",
     "id" : "SPEC-7.5",
+    "knownIssue" : "Fails today: Missing: active.",
     "options" : {
       "includeSystemSchemas" : false,
       "qualifyTableInsertions" : false
@@ -181,8 +198,25 @@
   {
     "caretMarker" : "|",
     "dialect" : "postgresql",
+    "echoSense" : {
+      "excludes" : [
+
+      ],
+      "insertText" : {
+
+      },
+      "items" : [
+        "a.id",
+        "r.id",
+        "name",
+        "total"
+      ],
+      "order" : "includes",
+      "outcome" : "suggests"
+    },
     "group" : "CTEs (Common Table Expressions)",
     "id" : "SPEC-7.7",
+    "knownIssue" : "Fails today: Expected suggestions, but the popup doesn't open. A space only asks EchoSense after FROM, JOIN, UPDATE, CALL, EXEC or INTO. EchoSense would offer \"name\", id, $1, ABS, AGE, ARRAY_AGG, ARRAY_APPEND, ARRAY_CAT, ARRAY_LENGTH, ARRAY_POSITION, ARRAY_REMOVE, AVG and 48 more.",
     "options" : {
       "includeSystemSchemas" : false,
       "qualifyTableInsertions" : false
@@ -230,6 +264,25 @@
   {
     "caretMarker" : "|",
     "dialect" : "postgresql",
+    "echoSense" : {
+      "excludes" : [
+        "active_users",
+        "user_stats",
+        "source"
+      ],
+      "insertText" : {
+
+      },
+      "items" : [
+        "users",
+        "orders",
+        "products",
+        "categories",
+        "departments"
+      ],
+      "order" : "includes",
+      "outcome" : "suggests"
+    },
     "group" : "CTEs (Common Table Expressions)",
     "id" : "SPEC-7.9",
     "options" : {

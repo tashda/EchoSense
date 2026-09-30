@@ -2,8 +2,24 @@
   {
     "caretMarker" : "|",
     "dialect" : "postgresql",
+    "echoSense" : {
+      "excludes" : [
+        "users"
+      ],
+      "insertText" : {
+        "departments" : "departments d ON u.department_id = d.id",
+        "orders" : "orders o ON u.id = o.user_id"
+      },
+      "items" : [
+        "orders",
+        "departments"
+      ],
+      "order" : "leading",
+      "outcome" : "suggests"
+    },
     "group" : "JOIN",
     "id" : "SPEC-3.1",
+    "knownIssue" : "Fails today: Expected these first, in order: orders, departments. Got: departments, orders.",
     "options" : {
       "includeSystemSchemas" : false,
       "qualifyTableInsertions" : false
@@ -19,8 +35,22 @@
   {
     "caretMarker" : "|",
     "dialect" : "postgresql",
+    "echoSense" : {
+      "excludes" : [
+
+      ],
+      "insertText" : {
+        "orders" : "orders o ON u.id = o.user_id"
+      },
+      "items" : [
+        "orders"
+      ],
+      "order" : "leading",
+      "outcome" : "suggests"
+    },
     "group" : "JOIN",
     "id" : "SPEC-3.2",
+    "knownIssue" : "Fails today: Expected suggestions, but EchoSense offered nothing.",
     "options" : {
       "includeSystemSchemas" : false,
       "qualifyTableInsertions" : false
@@ -36,6 +66,22 @@
   {
     "caretMarker" : "|",
     "dialect" : "postgresql",
+    "echoSense" : {
+      "excludes" : [
+        "users",
+        "orders"
+      ],
+      "insertText" : {
+
+      },
+      "items" : [
+        "products",
+        "categories",
+        "departments"
+      ],
+      "order" : "includes",
+      "outcome" : "suggests"
+    },
     "group" : "JOIN",
     "id" : "SPEC-3.3",
     "options" : {
@@ -53,8 +99,24 @@
   {
     "caretMarker" : "|",
     "dialect" : "postgresql",
+    "echoSense" : {
+      "excludes" : [
+        "users"
+      ],
+      "insertText" : {
+        "departments" : "departments d ON u.department_id = d.id",
+        "orders" : "orders o ON u.id = o.user_id"
+      },
+      "items" : [
+        "orders",
+        "departments"
+      ],
+      "order" : "leading",
+      "outcome" : "suggests"
+    },
     "group" : "JOIN",
     "id" : "SPEC-3.4",
+    "knownIssue" : "Fails today: Expected these first, in order: orders, departments. Got: departments, orders.",
     "options" : {
       "includeSystemSchemas" : false,
       "qualifyTableInsertions" : false
@@ -70,8 +132,22 @@
   {
     "caretMarker" : "|",
     "dialect" : "postgresql",
+    "echoSense" : {
+      "excludes" : [
+
+      ],
+      "insertText" : {
+
+      },
+      "items" : [
+        "u.id = o.user_id"
+      ],
+      "order" : "leading",
+      "outcome" : "suggests"
+    },
     "group" : "JOIN",
     "id" : "SPEC-3.5",
+    "knownIssue" : "Fails today: Expected suggestions, but the popup doesn't open. A space only asks EchoSense after FROM, JOIN, UPDATE, CALL, EXEC or INTO. EchoSense would offer o.user_id = u.id, o.id, o.created_at, u.id, user_id, \"status\", total, u.created_at, department_id, \"name\", email, $1 and 48 more.",
     "options" : {
       "includeSystemSchemas" : false,
       "qualifyTableInsertions" : false
@@ -122,8 +198,25 @@
   {
     "caretMarker" : "|",
     "dialect" : "postgresql",
+    "echoSense" : {
+      "excludes" : [
+
+      ],
+      "insertText" : {
+
+      },
+      "items" : [
+        "u1.id",
+        "u1.name",
+        "u2.id",
+        "u2.name"
+      ],
+      "order" : "includes",
+      "outcome" : "suggests"
+    },
     "group" : "JOIN",
     "id" : "SPEC-3.7",
+    "knownIssue" : "Fails today: Expected suggestions, but the popup doesn't open. A space only asks EchoSense after FROM, JOIN, UPDATE, CALL, EXEC or INTO. EchoSense would offer u1.id, u2.id, u1.department_id, u2.department_id, u1.\"name\", u1.created_at, u1.email, u2.\"name\", u2.created_at, u2.email, $1, ABS and 48 more.",
     "options" : {
       "includeSystemSchemas" : false,
       "qualifyTableInsertions" : false

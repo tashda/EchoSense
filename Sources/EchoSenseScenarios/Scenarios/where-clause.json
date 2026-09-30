@@ -2,8 +2,26 @@
   {
     "caretMarker" : "|",
     "dialect" : "postgresql",
+    "echoSense" : {
+      "excludes" : [
+
+      ],
+      "insertText" : {
+
+      },
+      "items" : [
+        "id",
+        "name",
+        "email",
+        "created_at",
+        "department_id"
+      ],
+      "order" : "includes",
+      "outcome" : "suggests"
+    },
     "group" : "WHERE Clause",
     "id" : "SPEC-4.1",
+    "knownIssue" : "Fails today: Expected suggestions, but the popup doesn't open. A space only asks EchoSense after FROM, JOIN, UPDATE, CALL, EXEC or INTO. EchoSense would offer id, department_id, \"name\", created_at, email, $1, ABS, AGE, ARRAY_AGG, ARRAY_APPEND, ARRAY_CAT, ARRAY_LENGTH and 48 more.",
     "options" : {
       "includeSystemSchemas" : false,
       "qualifyTableInsertions" : false
@@ -34,7 +52,6 @@
     },
     "group" : "WHERE Clause",
     "id" : "SPEC-4.2",
-    "knownIssue" : "Fails today: Expected these first, in order: name. Got: \"name\".",
     "options" : {
       "includeSystemSchemas" : false,
       "qualifyTableInsertions" : false
@@ -65,7 +82,6 @@
     },
     "group" : "WHERE Clause",
     "id" : "SPEC-4.3",
-    "knownIssue" : "Fails today: Expected silence while typing, but it offered id, department_id, \"name\", created_at, email, $1, ABS, AGE, ARRAY_AGG, ARRAY_APPEND, ARRAY_CAT, ARRAY_LENGTH and 48 more.",
     "options" : {
       "includeSystemSchemas" : false,
       "qualifyTableInsertions" : false
@@ -81,8 +97,26 @@
   {
     "caretMarker" : "|",
     "dialect" : "postgresql",
+    "echoSense" : {
+      "excludes" : [
+
+      ],
+      "insertText" : {
+
+      },
+      "items" : [
+        "id",
+        "name",
+        "email",
+        "created_at",
+        "department_id"
+      ],
+      "order" : "includes",
+      "outcome" : "suggests"
+    },
     "group" : "WHERE Clause",
     "id" : "SPEC-4.4",
+    "knownIssue" : "Fails today: Expected suggestions, but the popup doesn't open. A space only asks EchoSense after FROM, JOIN, UPDATE, CALL, EXEC or INTO. EchoSense would offer id, department_id, \"name\", created_at, email, $1, ABS, AGE, ARRAY_AGG, ARRAY_APPEND, ARRAY_CAT, ARRAY_LENGTH and 48 more.",
     "options" : {
       "includeSystemSchemas" : false,
       "qualifyTableInsertions" : false
@@ -98,8 +132,31 @@
   {
     "caretMarker" : "|",
     "dialect" : "postgresql",
+    "echoSense" : {
+      "excludes" : [
+
+      ],
+      "insertText" : {
+
+      },
+      "items" : [
+        "name",
+        "email",
+        "total",
+        "status",
+        "department_id",
+        "user_id",
+        "u.id",
+        "o.id",
+        "u.created_at",
+        "o.created_at"
+      ],
+      "order" : "includes",
+      "outcome" : "suggests"
+    },
     "group" : "WHERE Clause",
     "id" : "SPEC-4.5",
+    "knownIssue" : "Fails today: Expected suggestions, but the popup doesn't open. A space only asks EchoSense after FROM, JOIN, UPDATE, CALL, EXEC or INTO. EchoSense would offer o.id, o.created_at, u.id, user_id, \"status\", total, u.created_at, department_id, \"name\", email, $1, ABS and 48 more.",
     "options" : {
       "includeSystemSchemas" : false,
       "qualifyTableInsertions" : false
@@ -150,8 +207,22 @@
   {
     "caretMarker" : "|",
     "dialect" : "postgresql",
+    "echoSense" : {
+      "excludes" : [
+
+      ],
+      "insertText" : {
+
+      },
+      "items" : [
+        "$1"
+      ],
+      "order" : "leading",
+      "outcome" : "suggests"
+    },
     "group" : "WHERE Clause",
     "id" : "SPEC-4.7",
+    "knownIssue" : "Fails today: Expected suggestions, but the popup doesn't open. Typing “$” doesn't ask EchoSense; a manual trigger (⌘.) does. EchoSense would offer $1.",
     "options" : {
       "includeSystemSchemas" : false,
       "qualifyTableInsertions" : false
@@ -167,8 +238,22 @@
   {
     "caretMarker" : "|",
     "dialect" : "mssql",
+    "echoSense" : {
+      "excludes" : [
+
+      ],
+      "insertText" : {
+
+      },
+      "items" : [
+        "@p1"
+      ],
+      "order" : "leading",
+      "outcome" : "suggests"
+    },
     "group" : "WHERE Clause",
     "id" : "SPEC-4.7b",
+    "knownIssue" : "Fails today: Expected suggestions, but the popup doesn't open. Typing “@” doesn't ask EchoSense; a manual trigger (⌘.) does. EchoSense would offer id, department_id, [name], created_at, email, @p1, ABS, AVG, CAST, CEILING, CHARINDEX, CHOOSE and 48 more.",
     "options" : {
       "includeSystemSchemas" : false,
       "qualifyTableInsertions" : false
@@ -199,7 +284,6 @@
     },
     "group" : "WHERE Clause",
     "id" : "SPEC-4.8",
-    "knownIssue" : "Fails today: Expected silence while typing, but it offered id, department_id, \"name\", created_at, email, $1, ABS, AGE, ARRAY_AGG, ARRAY_APPEND, ARRAY_CAT, ARRAY_LENGTH and 48 more.",
     "options" : {
       "includeSystemSchemas" : false,
       "qualifyTableInsertions" : false
@@ -230,7 +314,6 @@
     },
     "group" : "WHERE Clause",
     "id" : "SPEC-4.8b",
-    "knownIssue" : "Fails today: Expected these first, in order: name. Got: \"name\".",
     "options" : {
       "includeSystemSchemas" : false,
       "qualifyTableInsertions" : false
@@ -246,6 +329,24 @@
   {
     "caretMarker" : "|",
     "dialect" : "postgresql",
+    "echoSense" : {
+      "excludes" : [
+        "email",
+        "department_id"
+      ],
+      "insertText" : {
+
+      },
+      "items" : [
+        "id",
+        "user_id",
+        "total",
+        "status",
+        "created_at"
+      ],
+      "order" : "includes",
+      "outcome" : "suggests"
+    },
     "group" : "WHERE Clause",
     "id" : "SPEC-4.9",
     "options" : {
@@ -278,7 +379,6 @@
     },
     "group" : "WHERE Clause",
     "id" : "SPEC-4.10",
-    "knownIssue" : "Fails today: Expected silence while typing, but it offered id, department_id, \"name\", created_at, email, $1, ABS, AGE, ARRAY_AGG, ARRAY_APPEND, ARRAY_CAT, ARRAY_LENGTH and 48 more.",
     "options" : {
       "includeSystemSchemas" : false,
       "qualifyTableInsertions" : false
@@ -294,8 +394,25 @@
   {
     "caretMarker" : "|",
     "dialect" : "postgresql",
+    "echoSense" : {
+      "excludes" : [
+
+      ],
+      "insertText" : {
+
+      },
+      "items" : [
+        "ILIKE",
+        "IN",
+        "IS NULL",
+        "IS NOT NULL"
+      ],
+      "order" : "includes",
+      "outcome" : "suggests"
+    },
     "group" : "WHERE Clause",
     "id" : "SPEC-4.10b",
+    "knownIssue" : "Fails today: Missing: IS NULL, IS NOT NULL.",
     "options" : {
       "includeSystemSchemas" : false,
       "qualifyTableInsertions" : false

@@ -2,8 +2,22 @@
   {
     "caretMarker" : "|",
     "dialect" : "postgresql",
+    "echoSense" : {
+      "excludes" : [
+
+      ],
+      "insertText" : {
+
+      },
+      "items" : [
+        "$2"
+      ],
+      "order" : "leading",
+      "outcome" : "suggests"
+    },
     "group" : "Parameters",
     "id" : "SPEC-12.2",
+    "knownIssue" : "Fails today: Expected suggestions, but the popup doesn't open. Typing “$” doesn't ask EchoSense; a manual trigger (⌘.) does. EchoSense would offer $2.",
     "options" : {
       "includeSystemSchemas" : false,
       "qualifyTableInsertions" : false

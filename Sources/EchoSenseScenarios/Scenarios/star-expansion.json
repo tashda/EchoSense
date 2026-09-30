@@ -2,6 +2,19 @@
   {
     "caretMarker" : "|",
     "dialect" : "postgresql",
+    "echoSense" : {
+      "excludes" : [
+
+      ],
+      "insertText" : {
+        "Expand * to columns" : "id, name, email, created_at, department_id"
+      },
+      "items" : [
+        "Expand * to columns"
+      ],
+      "order" : "includes",
+      "outcome" : "suggests"
+    },
     "group" : "Star Expansion",
     "id" : "SPEC-10.1",
     "options" : {
@@ -14,11 +27,24 @@
     "source" : "AUTOCOMPLETE_SPEC.md 10.1",
     "sql" : "SELECT *| FROM users",
     "title" : "Single table — unqualified",
-    "trigger" : "typing"
+    "trigger" : "manual"
   },
   {
     "caretMarker" : "|",
     "dialect" : "postgresql",
+    "echoSense" : {
+      "excludes" : [
+
+      ],
+      "insertText" : {
+        "Expand * to columns" : "u.id, u.name, u.email, u.created_at, u.department_id, o.id, o.user_id, o.total, o.status, o.created_at"
+      },
+      "items" : [
+        "Expand * to columns"
+      ],
+      "order" : "includes",
+      "outcome" : "suggests"
+    },
     "group" : "Star Expansion",
     "id" : "SPEC-10.2",
     "options" : {
@@ -31,13 +57,27 @@
     "source" : "AUTOCOMPLETE_SPEC.md 10.2",
     "sql" : "SELECT *| FROM users u JOIN orders o ON u.id = o.user_id",
     "title" : "Multiple tables — all qualified",
-    "trigger" : "typing"
+    "trigger" : "manual"
   },
   {
     "caretMarker" : "|",
     "dialect" : "postgresql",
+    "echoSense" : {
+      "excludes" : [
+
+      ],
+      "insertText" : {
+        "Expand * to columns" : "u.id, u.name, u.email, u.created_at, u.department_id"
+      },
+      "items" : [
+        "Expand * to columns"
+      ],
+      "order" : "includes",
+      "outcome" : "suggests"
+    },
     "group" : "Star Expansion",
     "id" : "SPEC-10.3",
+    "knownIssue" : "Fails today: Expected suggestions, but EchoSense offered nothing.",
     "options" : {
       "includeSystemSchemas" : false,
       "qualifyTableInsertions" : false
@@ -48,6 +88,6 @@
     "source" : "AUTOCOMPLETE_SPEC.md 10.3",
     "sql" : "SELECT u.*| FROM users u JOIN orders o ON u.id = o.user_id",
     "title" : "Alias-qualified star",
-    "trigger" : "typing"
+    "trigger" : "manual"
   }
 ]

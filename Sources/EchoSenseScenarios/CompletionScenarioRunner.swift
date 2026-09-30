@@ -15,6 +15,12 @@ public struct ScenarioActual: Codable, Sendable, Hashable {
     /// What a manual trigger returned, recorded for typing scenarios that expect silence.
     public var manualTitles: [String]
     public var isMetadataLimited: Bool
+    /// What the engine returned when asked, whether or not the editor would have asked.
+    public var engineTitles: [String]
+    /// Whether the editor opens the popup for this trigger (`SQLEditorTriggerPolicy`) and there is something to show.
+    public var popupShown: Bool
+    /// Why the editor does or doesn't ask.
+    public var triggerNote: String
 
     public var isEmpty: Bool { titles.isEmpty }
 }
@@ -90,13 +96,19 @@ public struct CompletionScenarioRunner: Sendable {
             qualifyTableInsertions: scenario.options.qualifyTableInsertions, autoJoinOnClause: true))
         let automatic = engine.completions(in: text, at: caret)
         let manual = engine.manualCompletions(in: text, at: caret)
+        // What the editor does: typing asks only for some characters; a manual trigger always asks.
+        let policy = scenario.trigger == .manual
+            ? (opens: true, reason: "The manual trigger (⌘.) always asks EchoSense.")
+            : SQLEditorTriggerPolicy.opensAfterTyping(text: text, caret: caret)
         let response = scenario.trigger == .manual ? manual : automatic
+        let asked = policy.opens ? response.suggestions : []
         return ScenarioActual(
-            titles: response.suggestions.map(\.title),
-            insertText: Dictionary(response.suggestions.map { ($0.title, $0.insertText) }, uniquingKeysWith: { first, _ in first }),
-            kinds: Dictionary(response.suggestions.map { ($0.title, "\($0.kind)") }, uniquingKeysWith: { first, _ in first }),
+            titles: asked.map(\.title),
+            insertText: Dictionary(asked.map { ($0.title, $0.insertText) }, uniquingKeysWith: { first, _ in first }),
+            kinds: Dictionary(asked.map { ($0.title, "\($0.kind)") }, uniquingKeysWith: { first, _ in first }),
             clause: "\(response.clause)", token: response.token,
-            manualTitles: manual.suggestions.map(\.title), isMetadataLimited: response.isMetadataLimited)
+            manualTitles: manual.suggestions.map(\.title), isMetadataLimited: response.isMetadataLimited,
+            engineTitles: response.suggestions.map(\.title), popupShown: !asked.isEmpty, triggerNote: policy.reason)
     }
 
     public static func databaseType(_ dialect: ScenarioDialect) -> EchoSenseDatabaseType {
@@ -104,8 +116,15 @@ public struct CompletionScenarioRunner: Sendable {
     }
 
     /// Compares one expectation with what came back.
-    public static func compare(_ expected: EchoSenseExpectation, actual: ScenarioActual, trigger: ScenarioTrigger) -> ScenarioVerdict {
+    public static func compare(_ expected: EchoSenseExpectation, actual rawActual: ScenarioActual, trigger: ScenarioTrigger) -> ScenarioVerdict {
         var reasons: [String] = []
+        // Titles are compared without identifier quoting: "name" and name are the same suggestion. What
+        // gets inserted (with its quotes) is checked by `insertText`.
+        var actual = rawActual
+        actual.titles = rawActual.titles.map(unquoted)
+        actual.manualTitles = rawActual.manualTitles.map(unquoted)
+        actual.engineTitles = rawActual.engineTitles.map(unquoted)
+        actual.insertText = Dictionary(rawActual.insertText.map { (unquoted($0.key), $0.value) }, uniquingKeysWith: { first, _ in first })
         switch expected.outcome {
         case .nothing:
             if !actual.titles.isEmpty { reasons.append("Expected nothing, but it offered \(list(actual.titles)).") }
@@ -113,7 +132,11 @@ public struct CompletionScenarioRunner: Sendable {
         case .silent:
             if !actual.titles.isEmpty { reasons.append("Expected silence while typing, but it offered \(list(actual.titles)).") }
         case .suggests:
-            if actual.titles.isEmpty { reasons.append("Expected suggestions, but it offered nothing.") }
+            if actual.titles.isEmpty {
+                reasons.append(actual.engineTitles.isEmpty
+                    ? "Expected suggestions, but EchoSense offered nothing."
+                    : "Expected suggestions, but the popup doesn't open. \(actual.triggerNote) EchoSense would offer \(list(actual.engineTitles)).")
+            }
             switch expected.order {
             case .exact:
                 if actual.titles != expected.items { reasons.append(differences(expected.items, actual.titles)) }
@@ -138,6 +161,14 @@ public struct CompletionScenarioRunner: Sendable {
         return reasons.isEmpty ? .pass : .fail(reasons)
     }
 
+    /// A title without identifier quoting: "name", `name` and [name] are name.
+    static func unquoted(_ title: String) -> String {
+        guard title.count >= 2 else { return title }
+        let pairs: [(Character, Character)] = [("\"", "\""), ("`", "`"), ("[", "]")]
+        for (open, close) in pairs where title.first == open && title.last == close { return String(title.dropFirst().dropLast()) }
+        return title
+    }
+
     private static func list(_ titles: [String]) -> String {
         titles.isEmpty ? "nothing" : titles.prefix(12).joined(separator: ", ") + (titles.count > 12 ? " and \(titles.count - 12) more" : "")
     }
@@ -158,6 +189,6 @@ public extension CompletionScenario {
     func expectation(matching actual: ScenarioActual) -> EchoSenseExpectation {
         actual.titles.isEmpty
             ? EchoSenseExpectation(outcome: trigger == .manual ? .nothing : (actual.manualTitles.isEmpty ? .nothing : .silent))
-            : EchoSenseExpectation(outcome: .suggests, items: actual.titles, order: .exact)
+            : EchoSenseExpectation(outcome: .suggests, items: actual.titles.map(CompletionScenarioRunner.unquoted), order: .exact)
     }
 }

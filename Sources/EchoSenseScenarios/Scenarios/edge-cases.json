@@ -77,7 +77,6 @@
     },
     "group" : "Edge Cases",
     "id" : "SPEC-26.5",
-    "knownIssue" : "Fails today: Expected silence while typing, but it offered id, department_id, \"name\", created_at, email, $1, ABS, AGE, ARRAY_AGG, ARRAY_APPEND, ARRAY_CAT, ARRAY_LENGTH and 48 more.",
     "options" : {
       "includeSystemSchemas" : false,
       "qualifyTableInsertions" : false

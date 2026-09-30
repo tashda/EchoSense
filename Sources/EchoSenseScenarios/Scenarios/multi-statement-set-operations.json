@@ -2,8 +2,25 @@
   {
     "caretMarker" : "|",
     "dialect" : "postgresql",
+    "echoSense" : {
+      "excludes" : [
+        "email",
+        "department_id"
+      ],
+      "insertText" : {
+
+      },
+      "items" : [
+        "id",
+        "total",
+        "status"
+      ],
+      "order" : "includes",
+      "outcome" : "suggests"
+    },
     "group" : "Multi-Statement & Set Operations",
     "id" : "SPEC-20.1",
+    "knownIssue" : "Fails today: Expected suggestions, but the popup doesn't open. A space only asks EchoSense after FROM, JOIN, UPDATE, CALL, EXEC or INTO. EchoSense would offer id, user_id, \"status\", created_at, total, $1, ABS, AGE, ARRAY_AGG, ARRAY_APPEND, ARRAY_CAT, ARRAY_LENGTH and 48 more.",
     "options" : {
       "includeSystemSchemas" : false,
       "qualifyTableInsertions" : false
@@ -19,8 +36,25 @@
   {
     "caretMarker" : "|",
     "dialect" : "postgresql",
+    "echoSense" : {
+      "excludes" : [
+        "email",
+        "department_id"
+      ],
+      "insertText" : {
+
+      },
+      "items" : [
+        "id",
+        "total",
+        "status"
+      ],
+      "order" : "includes",
+      "outcome" : "suggests"
+    },
     "group" : "Multi-Statement & Set Operations",
     "id" : "SPEC-20.2",
+    "knownIssue" : "Fails today: Expected suggestions, but the popup doesn't open. A space only asks EchoSense after FROM, JOIN, UPDATE, CALL, EXEC or INTO. EchoSense would offer UNION.id, UNION.created_at, department_id, \"name\", email, orders.id, user_id, \"status\", orders.created_at, total, $1, ABS and 48 more.",
     "options" : {
       "includeSystemSchemas" : false,
       "qualifyTableInsertions" : false

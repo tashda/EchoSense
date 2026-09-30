@@ -33,8 +33,32 @@
   {
     "caretMarker" : "|",
     "dialect" : "postgresql",
+    "echoSense" : {
+      "excludes" : [
+        "users",
+        "orders",
+        "products",
+        "categories",
+        "departments",
+        "analytics",
+        "public"
+      ],
+      "insertText" : {
+
+      },
+      "items" : [
+        "id",
+        "name",
+        "email",
+        "created_at",
+        "department_id"
+      ],
+      "order" : "includes",
+      "outcome" : "suggests"
+    },
     "group" : "SELECT Clause",
     "id" : "SPEC-1.2",
+    "knownIssue" : "Fails today: Expected suggestions, but the popup doesn't open. A space only asks EchoSense after FROM, JOIN, UPDATE, CALL, EXEC or INTO. EchoSense would offer id, department_id, \"name\", created_at, email, $1, ABS, AGE, ARRAY_AGG, ARRAY_APPEND, ARRAY_CAT, ARRAY_LENGTH and 48 more.",
     "options" : {
       "includeSystemSchemas" : false,
       "qualifyTableInsertions" : false
@@ -65,7 +89,6 @@
     },
     "group" : "SELECT Clause",
     "id" : "SPEC-1.3",
-    "knownIssue" : "Fails today: Expected these first, in order: name. Got: \"name\".",
     "options" : {
       "includeSystemSchemas" : false,
       "qualifyTableInsertions" : false
@@ -81,8 +104,25 @@
   {
     "caretMarker" : "|",
     "dialect" : "postgresql",
+    "echoSense" : {
+      "excludes" : [
+        "id"
+      ],
+      "insertText" : {
+
+      },
+      "items" : [
+        "name",
+        "email",
+        "created_at",
+        "department_id"
+      ],
+      "order" : "includes",
+      "outcome" : "suggests"
+    },
     "group" : "SELECT Clause",
     "id" : "SPEC-1.4",
+    "knownIssue" : "Fails today: Expected suggestions, but the popup doesn't open. A space only asks EchoSense after FROM, JOIN, UPDATE, CALL, EXEC or INTO. EchoSense would offer department_id, \"name\", created_at, email, $1, ABS, AGE, ARRAY_AGG, ARRAY_APPEND, ARRAY_CAT, ARRAY_LENGTH, ARRAY_POSITION and 48 more.",
     "options" : {
       "includeSystemSchemas" : false,
       "qualifyTableInsertions" : false
@@ -91,7 +131,7 @@
     "schema" : "spec",
     "should" : "=> [name, email, created_at, department_id, functions]\n- `id` is excluded — already in the SELECT list\n- Deduplication applies to top-level column references only",
     "source" : "AUTOCOMPLETE_SPEC.md 1.4",
-    "sql" : "SELECT id,  FROM users|",
+    "sql" : "SELECT id, | FROM users",
     "title" : "SELECT after comma — deduplication",
     "trigger" : "typing"
   },
@@ -113,7 +153,6 @@
     },
     "group" : "SELECT Clause",
     "id" : "SPEC-1.5",
-    "knownIssue" : "Fails today: Expected these first, in order: name. Got: \"name\".",
     "options" : {
       "includeSystemSchemas" : false,
       "qualifyTableInsertions" : false
@@ -129,8 +168,31 @@
   {
     "caretMarker" : "|",
     "dialect" : "postgresql",
+    "echoSense" : {
+      "excludes" : [
+
+      ],
+      "insertText" : {
+
+      },
+      "items" : [
+        "name",
+        "email",
+        "total",
+        "status",
+        "department_id",
+        "user_id",
+        "u.id",
+        "o.id",
+        "u.created_at",
+        "o.created_at"
+      ],
+      "order" : "includes",
+      "outcome" : "suggests"
+    },
     "group" : "SELECT Clause",
     "id" : "SPEC-1.6",
+    "knownIssue" : "Fails today: Expected suggestions, but the popup doesn't open. A space only asks EchoSense after FROM, JOIN, UPDATE, CALL, EXEC or INTO. EchoSense would offer o.id, o.created_at, u.id, user_id, \"status\", total, u.created_at, department_id, \"name\", email, $1, ABS and 48 more.",
     "options" : {
       "includeSystemSchemas" : false,
       "qualifyTableInsertions" : false
@@ -196,7 +258,6 @@
     },
     "group" : "SELECT Clause",
     "id" : "SPEC-1.8",
-    "knownIssue" : "Fails today: Expected these first, in order: name. Got: \"name\".",
     "options" : {
       "includeSystemSchemas" : false,
       "qualifyTableInsertions" : false
@@ -247,8 +308,30 @@
   {
     "caretMarker" : "|",
     "dialect" : "postgresql",
+    "echoSense" : {
+      "excludes" : [
+        "users",
+        "orders",
+        "products",
+        "categories",
+        "departments"
+      ],
+      "insertText" : {
+
+      },
+      "items" : [
+        "id",
+        "name",
+        "email",
+        "created_at",
+        "department_id"
+      ],
+      "order" : "includes",
+      "outcome" : "suggests"
+    },
     "group" : "SELECT Clause",
     "id" : "SPEC-1.10",
+    "knownIssue" : "Fails today: Expected suggestions, but the popup doesn't open. A space only asks EchoSense after FROM, JOIN, UPDATE, CALL, EXEC or INTO. EchoSense would offer id, department_id, \"name\", created_at, email, $1, ABS, AGE, ARRAY_AGG, ARRAY_APPEND, ARRAY_CAT, ARRAY_LENGTH and 48 more.",
     "options" : {
       "includeSystemSchemas" : false,
       "qualifyTableInsertions" : false
@@ -264,8 +347,30 @@
   {
     "caretMarker" : "|",
     "dialect" : "postgresql",
+    "echoSense" : {
+      "excludes" : [
+        "users",
+        "orders",
+        "products",
+        "categories",
+        "departments"
+      ],
+      "insertText" : {
+
+      },
+      "items" : [
+        "id",
+        "name",
+        "email",
+        "created_at",
+        "department_id"
+      ],
+      "order" : "includes",
+      "outcome" : "suggests"
+    },
     "group" : "SELECT Clause",
     "id" : "SPEC-1.11",
+    "knownIssue" : "Fails today: Expected suggestions, but the popup doesn't open. A space only asks EchoSense after FROM, JOIN, UPDATE, CALL, EXEC or INTO. EchoSense would offer department_id, \"name\", created_at, email, $1, ABS, AGE, ARRAY_AGG, ARRAY_APPEND, ARRAY_CAT, ARRAY_LENGTH, ARRAY_POSITION and 48 more.",
     "options" : {
       "includeSystemSchemas" : false,
       "qualifyTableInsertions" : false
@@ -281,8 +386,26 @@
   {
     "caretMarker" : "|",
     "dialect" : "postgresql",
+    "echoSense" : {
+      "excludes" : [
+
+      ],
+      "insertText" : {
+
+      },
+      "items" : [
+        "id",
+        "name",
+        "email",
+        "created_at",
+        "department_id"
+      ],
+      "order" : "includes",
+      "outcome" : "suggests"
+    },
     "group" : "SELECT Clause",
     "id" : "SPEC-1.12",
+    "knownIssue" : "Fails today: Expected suggestions, but the popup doesn't open. A space only asks EchoSense after FROM, JOIN, UPDATE, CALL, EXEC or INTO. EchoSense would offer id, department_id, \"name\", created_at, email, $1, ABS, AGE, ARRAY_AGG, ARRAY_APPEND, ARRAY_CAT, ARRAY_LENGTH and 48 more.",
     "options" : {
       "includeSystemSchemas" : false,
       "qualifyTableInsertions" : false
@@ -298,8 +421,26 @@
   {
     "caretMarker" : "|",
     "dialect" : "postgresql",
+    "echoSense" : {
+      "excludes" : [
+
+      ],
+      "insertText" : {
+
+      },
+      "items" : [
+        "id",
+        "name",
+        "email",
+        "created_at",
+        "department_id"
+      ],
+      "order" : "includes",
+      "outcome" : "suggests"
+    },
     "group" : "SELECT Clause",
     "id" : "SPEC-1.13",
+    "knownIssue" : "Fails today: Expected suggestions, but the popup doesn't open. A space only asks EchoSense after FROM, JOIN, UPDATE, CALL, EXEC or INTO. EchoSense would offer id, department_id, \"name\", created_at, email, $1, ABS, AGE, ARRAY_AGG, ARRAY_APPEND, ARRAY_CAT, ARRAY_LENGTH and 48 more.",
     "options" : {
       "includeSystemSchemas" : false,
       "qualifyTableInsertions" : false
@@ -315,8 +456,23 @@
   {
     "caretMarker" : "|",
     "dialect" : "postgresql",
+    "echoSense" : {
+      "excludes" : [
+
+      ],
+      "insertText" : {
+
+      },
+      "items" : [
+        "u.name",
+        "o.name"
+      ],
+      "order" : "includes",
+      "outcome" : "suggests"
+    },
     "group" : "SELECT Clause",
     "id" : "SPEC-1.14",
+    "knownIssue" : "Fails today: Missing: u.name, o.name.",
     "options" : {
       "includeSystemSchemas" : false,
       "qualifyTableInsertions" : false
@@ -332,8 +488,24 @@
   {
     "caretMarker" : "|",
     "dialect" : "postgresql",
+    "echoSense" : {
+      "excludes" : [
+
+      ],
+      "insertText" : {
+
+      },
+      "items" : [
+        "id",
+        "name",
+        "email"
+      ],
+      "order" : "includes",
+      "outcome" : "suggests"
+    },
     "group" : "SELECT Clause",
     "id" : "SPEC-1.15",
+    "knownIssue" : "Fails today: Expected suggestions, but the popup doesn't open. A space only asks EchoSense after FROM, JOIN, UPDATE, CALL, EXEC or INTO. EchoSense would offer id, department_id, \"name\", created_at, email, \"partition\", $1, ABS, AGE, ARRAY_AGG, ARRAY_APPEND, ARRAY_CAT and 48 more.",
     "options" : {
       "includeSystemSchemas" : false,
       "qualifyTableInsertions" : false

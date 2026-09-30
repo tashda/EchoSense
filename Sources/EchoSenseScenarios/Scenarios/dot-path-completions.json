@@ -172,6 +172,19 @@
   {
     "caretMarker" : "|",
     "dialect" : "postgresql",
+    "echoSense" : {
+      "excludes" : [
+        "mydb"
+      ],
+      "insertText" : {
+
+      },
+      "items" : [
+        "users"
+      ],
+      "order" : "includes",
+      "outcome" : "suggests"
+    },
     "group" : "Dot Path Completions",
     "id" : "SPEC-9.6",
     "options" : {
@@ -204,7 +217,6 @@
     },
     "group" : "Dot Path Completions",
     "id" : "SPEC-9.7",
-    "knownIssue" : "Fails today: Expected these first, in order: name. Got: \"name\".",
     "options" : {
       "includeSystemSchemas" : false,
       "qualifyTableInsertions" : false

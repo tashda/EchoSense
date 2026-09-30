@@ -2,6 +2,19 @@
   {
     "caretMarker" : "|",
     "dialect" : "postgresql",
+    "echoSense" : {
+      "excludes" : [
+        "mydb"
+      ],
+      "insertText" : {
+
+      },
+      "items" : [
+        "users"
+      ],
+      "order" : "includes",
+      "outcome" : "suggests"
+    },
     "group" : "Cross-Database (MSSQL)",
     "id" : "SPEC-24.1",
     "options" : {

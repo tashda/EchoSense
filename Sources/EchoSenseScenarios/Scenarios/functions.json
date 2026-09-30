@@ -2,6 +2,21 @@
   {
     "caretMarker" : "|",
     "dialect" : "postgresql",
+    "echoSense" : {
+      "excludes" : [
+
+      ],
+      "insertText" : {
+
+      },
+      "items" : [
+        "COUNT",
+        "COALESCE",
+        "CONCAT"
+      ],
+      "order" : "includes",
+      "outcome" : "suggests"
+    },
     "group" : "Functions",
     "id" : "SPEC-11.1",
     "options" : {
@@ -19,6 +34,19 @@
   {
     "caretMarker" : "|",
     "dialect" : "postgresql",
+    "echoSense" : {
+      "excludes" : [
+
+      ],
+      "insertText" : {
+
+      },
+      "items" : [
+        "LOWER"
+      ],
+      "order" : "leading",
+      "outcome" : "suggests"
+    },
     "group" : "Functions",
     "id" : "SPEC-11.3",
     "options" : {
@@ -36,6 +64,19 @@
   {
     "caretMarker" : "|",
     "dialect" : "postgresql",
+    "echoSense" : {
+      "excludes" : [
+
+      ],
+      "insertText" : {
+
+      },
+      "items" : [
+        "COUNT"
+      ],
+      "order" : "leading",
+      "outcome" : "suggests"
+    },
     "group" : "Functions",
     "id" : "SPEC-11.4",
     "options" : {
@@ -53,6 +94,21 @@
   {
     "caretMarker" : "|",
     "dialect" : "postgresql",
+    "echoSense" : {
+      "excludes" : [
+        "COUNT",
+        "COALESCE",
+        "CONCAT"
+      ],
+      "insertText" : {
+
+      },
+      "items" : [
+
+      ],
+      "order" : "includes",
+      "outcome" : "suggests"
+    },
     "group" : "Functions",
     "id" : "SPEC-11.6",
     "options" : {
@@ -70,6 +126,19 @@
   {
     "caretMarker" : "|",
     "dialect" : "postgresql",
+    "echoSense" : {
+      "excludes" : [
+
+      ],
+      "insertText" : {
+
+      },
+      "items" : [
+        "calculate_tax"
+      ],
+      "order" : "includes",
+      "outcome" : "suggests"
+    },
     "group" : "Functions",
     "id" : "SPEC-11.7",
     "options" : {

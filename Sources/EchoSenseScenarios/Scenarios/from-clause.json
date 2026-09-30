@@ -2,6 +2,26 @@
   {
     "caretMarker" : "|",
     "dialect" : "postgresql",
+    "echoSense" : {
+      "excludes" : [
+
+      ],
+      "insertText" : {
+        "analytics" : "analytics."
+      },
+      "items" : [
+        "users",
+        "orders",
+        "products",
+        "categories",
+        "departments",
+        "active_users",
+        "user_stats",
+        "analytics"
+      ],
+      "order" : "includes",
+      "outcome" : "suggests"
+    },
     "group" : "FROM Clause",
     "id" : "SPEC-2.1",
     "options" : {
@@ -110,8 +130,25 @@
   {
     "caretMarker" : "|",
     "dialect" : "postgresql",
+    "echoSense" : {
+      "excludes" : [
+
+      ],
+      "insertText" : {
+
+      },
+      "items" : [
+        "orders",
+        "products",
+        "categories",
+        "departments"
+      ],
+      "order" : "includes",
+      "outcome" : "suggests"
+    },
     "group" : "FROM Clause",
     "id" : "SPEC-2.5",
+    "knownIssue" : "Fails today: Expected suggestions, but the popup doesn't open. A space only asks EchoSense after FROM, JOIN, UPDATE, CALL, EXEC or INTO. EchoSense would offer active_users, categories, departments, orders, products, user_stats, users, analytics, public, events, metrics, Built-in and 44 more.",
     "options" : {
       "includeSystemSchemas" : false,
       "qualifyTableInsertions" : false
@@ -249,8 +286,22 @@
   {
     "caretMarker" : "|",
     "dialect" : "postgresql",
+    "echoSense" : {
+      "excludes" : [
+
+      ],
+      "insertText" : {
+
+      },
+      "items" : [
+        "INNER JOIN"
+      ],
+      "order" : "leading",
+      "outcome" : "suggests"
+    },
     "group" : "FROM Clause",
     "id" : "SPEC-2.7d",
+    "knownIssue" : "Fails today: Expected suggestions, but EchoSense offered nothing.",
     "options" : {
       "includeSystemSchemas" : false,
       "qualifyTableInsertions" : false
@@ -266,6 +317,24 @@
   {
     "caretMarker" : "|",
     "dialect" : "postgresql",
+    "echoSense" : {
+      "excludes" : [
+        "active_users",
+        "user_stats"
+      ],
+      "insertText" : {
+
+      },
+      "items" : [
+        "users",
+        "orders",
+        "products",
+        "categories",
+        "departments"
+      ],
+      "order" : "includes",
+      "outcome" : "suggests"
+    },
     "group" : "FROM Clause",
     "id" : "SPEC-2.8",
     "options" : {
@@ -283,8 +352,27 @@
   {
     "caretMarker" : "|",
     "dialect" : "postgresql",
+    "echoSense" : {
+      "excludes" : [
+        "active_users",
+        "user_stats"
+      ],
+      "insertText" : {
+
+      },
+      "items" : [
+        "users",
+        "orders",
+        "products",
+        "categories",
+        "departments"
+      ],
+      "order" : "includes",
+      "outcome" : "suggests"
+    },
     "group" : "FROM Clause",
     "id" : "SPEC-2.9",
+    "knownIssue" : "Fails today: Should not offer: active_users, user_stats.",
     "options" : {
       "includeSystemSchemas" : false,
       "qualifyTableInsertions" : false
@@ -300,8 +388,27 @@
   {
     "caretMarker" : "|",
     "dialect" : "postgresql",
+    "echoSense" : {
+      "excludes" : [
+        "active_users",
+        "user_stats"
+      ],
+      "insertText" : {
+
+      },
+      "items" : [
+        "users",
+        "orders",
+        "products",
+        "categories",
+        "departments"
+      ],
+      "order" : "includes",
+      "outcome" : "suggests"
+    },
     "group" : "FROM Clause",
     "id" : "SPEC-2.10",
+    "knownIssue" : "Fails today: Should not offer: active_users, user_stats.",
     "options" : {
       "includeSystemSchemas" : false,
       "qualifyTableInsertions" : false
