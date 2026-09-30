@@ -1,259 +1,297 @@
 [
   {
-    "caretMarker": "|",
-    "domain": "go-batches",
-    "expected": [
+    "caretMarker" : "|",
+    "domain" : "go-batches",
+    "expected" : [
       "×1: SELECT 1"
     ],
-    "group": "Separators",
-    "id": "GOB-001",
-    "input": "SELECT 1",
-    "options": {},
-    "should": "One batch without GO",
-    "title": "One batch without GO"
+    "group" : "Separators",
+    "id" : "GOB-001",
+    "input" : "SELECT 1",
+    "options" : {
+
+    },
+    "should" : "One batch without GO",
+    "title" : "One batch without GO"
   },
   {
-    "caretMarker": "|",
-    "domain": "go-batches",
-    "expected": [
+    "caretMarker" : "|",
+    "domain" : "go-batches",
+    "expected" : [
       "×1: SELECT 1",
       "×1: SELECT 2"
     ],
-    "group": "Separators",
-    "id": "GOB-002",
-    "input": "SELECT 1\nGO\nSELECT 2",
-    "options": {},
-    "should": "GO between two batches",
-    "title": "GO between two batches"
+    "group" : "Separators",
+    "id" : "GOB-002",
+    "input" : "SELECT 1\nGO\nSELECT 2",
+    "options" : {
+
+    },
+    "should" : "GO between two batches",
+    "title" : "GO between two batches"
   },
   {
-    "caretMarker": "|",
-    "domain": "go-batches",
-    "expected": [
+    "caretMarker" : "|",
+    "domain" : "go-batches",
+    "expected" : [
       "×1: SELECT 1",
       "×1: SELECT 2",
       "×1: SELECT 3"
     ],
-    "group": "Separators",
-    "id": "GOB-003",
-    "input": "SELECT 1\ngo\nSELECT 2\nGo\nSELECT 3",
-    "options": {},
-    "should": "GO in lower and mixed case",
-    "title": "GO in lower and mixed case"
+    "group" : "Separators",
+    "id" : "GOB-003",
+    "input" : "SELECT 1\ngo\nSELECT 2\nGo\nSELECT 3",
+    "options" : {
+
+    },
+    "should" : "GO in lower and mixed case",
+    "title" : "GO in lower and mixed case"
   },
   {
-    "caretMarker": "|",
-    "domain": "go-batches",
-    "expected": [
+    "caretMarker" : "|",
+    "domain" : "go-batches",
+    "expected" : [
       "×1: SELECT 1"
     ],
-    "group": "Separators",
-    "id": "GOB-004",
-    "input": "SELECT 1\nGO",
-    "options": {},
-    "should": "GO at the very end",
-    "title": "GO at the very end"
+    "group" : "Separators",
+    "id" : "GOB-004",
+    "input" : "SELECT 1\nGO",
+    "options" : {
+
+    },
+    "should" : "GO at the very end",
+    "title" : "GO at the very end"
   },
   {
-    "caretMarker": "|",
-    "domain": "go-batches",
-    "expected": [
+    "caretMarker" : "|",
+    "domain" : "go-batches",
+    "expected" : [
       "×1: SELECT 1"
     ],
-    "group": "Separators",
-    "id": "GOB-005",
-    "input": "GO\nSELECT 1",
-    "options": {},
-    "should": "GO at the very start",
-    "title": "GO at the very start"
+    "group" : "Separators",
+    "id" : "GOB-005",
+    "input" : "GO\nSELECT 1",
+    "options" : {
+
+    },
+    "should" : "GO at the very start",
+    "title" : "GO at the very start"
   },
   {
-    "caretMarker": "|",
-    "domain": "go-batches",
-    "expected": [
+    "caretMarker" : "|",
+    "domain" : "go-batches",
+    "expected" : [
       "×1: SELECT 1",
       "×1: SELECT 2"
     ],
-    "group": "Separators",
-    "id": "GOB-006",
-    "input": "SELECT 1\nGO\nGO\nSELECT 2",
-    "options": {},
-    "should": "Empty batches are dropped",
-    "title": "Empty batches are dropped"
+    "group" : "Separators",
+    "id" : "GOB-006",
+    "input" : "SELECT 1\nGO\nGO\nSELECT 2",
+    "options" : {
+
+    },
+    "should" : "Empty batches are dropped",
+    "title" : "Empty batches are dropped"
   },
   {
-    "caretMarker": "|",
-    "domain": "go-batches",
-    "expected": [
+    "caretMarker" : "|",
+    "domain" : "go-batches",
+    "expected" : [
       "×1: SELECT 1",
       "×1: SELECT 2"
     ],
-    "group": "Separators",
-    "id": "GOB-007",
-    "input": "SELECT 1\n   GO   \nSELECT 2",
-    "options": {},
-    "should": "Indented GO",
-    "title": "Indented GO"
+    "group" : "Separators",
+    "id" : "GOB-007",
+    "input" : "SELECT 1\n   GO   \nSELECT 2",
+    "options" : {
+
+    },
+    "should" : "Indented GO",
+    "title" : "Indented GO"
   },
   {
-    "caretMarker": "|",
-    "domain": "go-batches",
-    "expected": [
+    "caretMarker" : "|",
+    "domain" : "go-batches",
+    "expected" : [
       "×1: SELECT 1\nGO;\nSELECT 2"
     ],
-    "group": "Separators",
-    "id": "GOB-008",
-    "input": "SELECT 1\nGO;\nSELECT 2",
-    "options": {},
-    "should": "GO; is not a separator",
-    "title": "GO; is not a separator"
+    "group" : "Separators",
+    "id" : "GOB-008",
+    "input" : "SELECT 1\nGO;\nSELECT 2",
+    "options" : {
+
+    },
+    "should" : "GO; is not a separator",
+    "title" : "GO; is not a separator"
   },
   {
-    "caretMarker": "|",
-    "domain": "go-batches",
-    "expected": [
+    "caretMarker" : "|",
+    "domain" : "go-batches",
+    "expected" : [
       "×1: SELECT 1\nGO SELECT 2"
     ],
-    "group": "Separators",
-    "id": "GOB-009",
-    "input": "SELECT 1\nGO SELECT 2",
-    "options": {},
-    "should": "GO with other text on the line is not a separator",
-    "title": "GO with other text on the line is not a separator"
+    "group" : "Separators",
+    "id" : "GOB-009",
+    "input" : "SELECT 1\nGO SELECT 2",
+    "options" : {
+
+    },
+    "should" : "GO with other text on the line is not a separator",
+    "title" : "GO with other text on the line is not a separator"
   },
   {
-    "caretMarker": "|",
-    "domain": "go-batches",
-    "expected": [
+    "caretMarker" : "|",
+    "domain" : "go-batches",
+    "expected" : [
       "×1: SELECT 1 GO SELECT 2"
     ],
-    "group": "Separators",
-    "id": "GOB-010",
-    "input": "SELECT 1 GO SELECT 2",
-    "options": {},
-    "should": "GO in the middle of a line is not a separator",
-    "title": "GO in the middle of a line is not a separator"
+    "group" : "Separators",
+    "id" : "GOB-010",
+    "input" : "SELECT 1 GO SELECT 2",
+    "options" : {
+
+    },
+    "should" : "GO in the middle of a line is not a separator",
+    "title" : "GO in the middle of a line is not a separator"
   },
   {
-    "caretMarker": "|",
-    "domain": "go-batches",
-    "expected": [
+    "caretMarker" : "|",
+    "domain" : "go-batches",
+    "expected" : [
       "×3: SELECT 1",
       "×1: SELECT 2"
     ],
-    "group": "Repeat counts",
-    "id": "GOB-011",
-    "input": "SELECT 1\nGO 3\nSELECT 2",
-    "options": {},
-    "should": "GO 3 repeats the batch three times",
-    "title": "GO 3 repeats the batch three times"
+    "group" : "Repeat counts",
+    "id" : "GOB-011",
+    "input" : "SELECT 1\nGO 3\nSELECT 2",
+    "options" : {
+
+    },
+    "should" : "GO 3 repeats the batch three times",
+    "title" : "GO 3 repeats the batch three times"
   },
   {
-    "caretMarker": "|",
-    "domain": "go-batches",
-    "expected": [
+    "caretMarker" : "|",
+    "domain" : "go-batches",
+    "expected" : [
       "×1: SELECT 1"
     ],
-    "group": "Repeat counts",
-    "id": "GOB-012",
-    "input": "SELECT 1\nGO 1",
-    "options": {},
-    "should": "GO 1",
-    "title": "GO 1"
+    "group" : "Repeat counts",
+    "id" : "GOB-012",
+    "input" : "SELECT 1\nGO 1",
+    "options" : {
+
+    },
+    "should" : "GO 1",
+    "title" : "GO 1"
   },
   {
-    "caretMarker": "|",
-    "domain": "go-batches",
-    "expected": [
+    "caretMarker" : "|",
+    "domain" : "go-batches",
+    "expected" : [
       "×1: SELECT 1",
       "×1: SELECT 2"
     ],
-    "group": "Repeat counts",
-    "id": "GOB-013",
-    "input": "SELECT 1\nGO -- run it\nSELECT 2",
-    "options": {},
-    "should": "GO with a comment after it",
-    "title": "GO with a comment after it"
+    "group" : "Repeat counts",
+    "id" : "GOB-013",
+    "input" : "SELECT 1\nGO -- run it\nSELECT 2",
+    "options" : {
+
+    },
+    "should" : "GO with a comment after it",
+    "title" : "GO with a comment after it"
   },
   {
-    "caretMarker": "|",
-    "domain": "go-batches",
-    "expected": [
+    "caretMarker" : "|",
+    "domain" : "go-batches",
+    "expected" : [
       "×2: SELECT 1",
       "×1: SELECT 2"
     ],
-    "group": "Repeat counts",
-    "id": "GOB-014",
-    "input": "SELECT 1\nGO 2 -- twice\nSELECT 2",
-    "options": {},
-    "should": "GO with a count and a comment",
-    "title": "GO with a count and a comment"
+    "group" : "Repeat counts",
+    "id" : "GOB-014",
+    "input" : "SELECT 1\nGO 2 -- twice\nSELECT 2",
+    "options" : {
+
+    },
+    "should" : "GO with a count and a comment",
+    "title" : "GO with a count and a comment"
   },
   {
-    "caretMarker": "|",
-    "domain": "go-batches",
-    "expected": [
+    "caretMarker" : "|",
+    "domain" : "go-batches",
+    "expected" : [
       "×1: SELECT '\nGO\n'"
     ],
-    "group": "Quotes and comments",
-    "id": "GOB-015",
-    "input": "SELECT '\nGO\n'",
-    "options": {},
-    "should": "GO inside a string",
-    "title": "GO inside a string"
+    "group" : "Quotes and comments",
+    "id" : "GOB-015",
+    "input" : "SELECT '\nGO\n'",
+    "options" : {
+
+    },
+    "should" : "GO inside a string",
+    "title" : "GO inside a string"
   },
   {
-    "caretMarker": "|",
-    "domain": "go-batches",
-    "expected": [
+    "caretMarker" : "|",
+    "domain" : "go-batches",
+    "expected" : [
       "×1: /*\nGO\n*/\nSELECT 1"
     ],
-    "group": "Quotes and comments",
-    "id": "GOB-016",
-    "input": "/*\nGO\n*/\nSELECT 1",
-    "options": {},
-    "should": "GO inside a block comment",
-    "title": "GO inside a block comment"
+    "group" : "Quotes and comments",
+    "id" : "GOB-016",
+    "input" : "/*\nGO\n*/\nSELECT 1",
+    "options" : {
+
+    },
+    "should" : "GO inside a block comment",
+    "title" : "GO inside a block comment"
   },
   {
-    "caretMarker": "|",
-    "domain": "go-batches",
-    "expected": [
+    "caretMarker" : "|",
+    "domain" : "go-batches",
+    "expected" : [
       "×1: SELECT [a\nGO\nb]"
     ],
-    "group": "Quotes and comments",
-    "id": "GOB-017",
-    "input": "SELECT [a\nGO\nb]",
-    "options": {},
-    "should": "GO inside a bracketed name",
-    "title": "GO inside a bracketed name"
+    "group" : "Quotes and comments",
+    "id" : "GOB-017",
+    "input" : "SELECT [a\nGO\nb]",
+    "options" : {
+
+    },
+    "should" : "GO inside a bracketed name",
+    "title" : "GO inside a bracketed name"
   },
   {
-    "caretMarker": "|",
-    "domain": "go-batches",
-    "expected": [
+    "caretMarker" : "|",
+    "domain" : "go-batches",
+    "expected" : [
       "×1: /* x */",
       "×1: SELECT 1"
     ],
-    "group": "Quotes and comments",
-    "id": "GOB-018",
-    "input": "/* x */\nGO\nSELECT 1",
-    "options": {},
-    "should": "GO after a closed comment",
-    "title": "GO after a closed comment"
+    "group" : "Quotes and comments",
+    "id" : "GOB-018",
+    "input" : "/* x */\nGO\nSELECT 1",
+    "options" : {
+
+    },
+    "should" : "GO after a closed comment",
+    "title" : "GO after a closed comment"
   },
   {
-    "caretMarker": "|",
-    "domain": "go-batches",
-    "expected": [
+    "caretMarker" : "|",
+    "domain" : "go-batches",
+    "expected" : [
       "×1: SELECT 1",
       "×1: SELECT 2"
     ],
-    "group": "Quotes and comments",
-    "id": "GOB-019",
-    "input": "SELECT 1\r\nGO\r\nSELECT 2",
-    "options": {},
-    "should": "Windows line endings",
-    "title": "Windows line endings"
+    "group" : "Quotes and comments",
+    "id" : "GOB-019",
+    "input" : "SELECT 1\r\nGO\r\nSELECT 2",
+    "options" : {
+
+    },
+    "should" : "Windows line endings",
+    "title" : "Windows line endings"
   }
 ]

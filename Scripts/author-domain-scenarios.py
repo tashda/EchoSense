@@ -144,6 +144,94 @@ add(D,P,G,"An unsupported directive is a warning",":connect server1\nSELECT 1",[
 add(D,P,G,"On error directive",":on error exit\nSELECT 1",["batch: SELECT 1","warning: :on error is not supported and was skipped"],
     issue="The exact warning text is a guess; confirm against the preprocessor")
 
+# ---------------------------------------------------------------- error line
+D, P = "error-line", "ERL"
+G = "Servers"
+add(D,P,G,"SQL Server message","Msg 102, Level 15, State 1, Line 3\nIncorrect syntax near 'FROM'.",["3"])
+add(D,P,G,"PostgreSQL message","ERROR:  syntax error at or near \"FORM\"\nLINE 3: SELECT * FORM users\n                 ^",["3"])
+add(D,P,G,"MySQL message","You have an error in your SQL syntax; check the manual near 'FORM users' at line 2",["2"])
+add(D,P,G,"Lower case","error at line 12",["12"])
+G = "No line"
+add(D,P,G,"No line in the message","relation \"users\" does not exist",["(none)"])
+add(D,P,G,"The word line without a number","Incorrect syntax near 'line'.",["(none)"])
+add(D,P,G,"Line 0 is not a line","Msg 50000, Level 16, State 1, Line 0",["(none)"])
+add(D,P,G,"Part of a longer word","Query timeline 5 exceeded the deadline 4",["(none)"])
+add(D,P,G,"The first line wins","Line 3: first\nLine 5: second",["3"])
+add(D,P,G,"A large line number","Msg 102, Level 15, State 1, Line 10482",["10482"])
+
+# ---------------------------------------------------------------- run note
+D, P = "run-note", "RUN"
+G = "Success"
+add(D,P,G,"Rows and time","",["✓ 1,200 rows · 3.2 s","tooltip: ✓ 1,200 rows · 3.2 s"],options={"kind":"success","rows":"1200","seconds":"3.2"})
+add(D,P,G,"One row","",["✓ 1 row · 12 ms","tooltip: ✓ 1 row · 12 ms"],options={"kind":"success","rows":"1","seconds":"0.012"})
+add(D,P,G,"No rows","",["✓ 0 rows · 5 ms","tooltip: ✓ 0 rows · 5 ms"],options={"kind":"success","rows":"0","seconds":"0.005"})
+add(D,P,G,"A statement without results","",["✓ Done · 45 ms","tooltip: ✓ Done · 45 ms"],options={"kind":"success","hasResults":"false","seconds":"0.045"})
+add(D,P,G,"No time known","",["✓ Done","tooltip: ✓ Done"],options={"kind":"success","hasResults":"false"})
+add(D,P,G,"Minutes","",["✓ 10 rows · 1 min 15 s","tooltip: ✓ 10 rows · 1 min 15 s"],options={"kind":"success","rows":"10","seconds":"75"})
+add(D,P,G,"Just under a second rounds up to a second","",["✓ 1 row · 1.0 s","tooltip: ✓ 1 row · 1.0 s"],options={"kind":"success","rows":"1","seconds":"0.9996"},
+    should="0.9996 seconds is shown as 1.0 s, not 1000 ms",issue="Shown as 1000 ms")
+add(D,P,G,"Just under a minute rounds up to a minute","",["✓ 1 row · 1 min 0 s","tooltip: ✓ 1 row · 1 min 0 s"],options={"kind":"success","rows":"1","seconds":"59.96"},
+    should="59.96 seconds is shown as 1 min 0 s, not 60.0 s",issue="Shown as 60.0 s")
+G = "Errors"
+add(D,P,G,"Short message","Incorrect syntax near 'FROM'.",["Incorrect syntax near 'FROM'.","tooltip: Incorrect syntax near 'FROM'."],options={"kind":"failure"})
+add(D,P,G,"Only the first line shows","Msg 102, Level 15\nIncorrect syntax near 'FROM'.",["Msg 102, Level 15","tooltip: Msg 102, Level 15\nIncorrect syntax near 'FROM'."],options={"kind":"failure"})
+add(D,P,G,"A long first line is cut at 80 characters","0123456789 0123456789 0123456789 0123456789 0123456789 0123456789 0123456789 0123456789",["0123456789 0123456789 0123456789 0123456789 0123456789 0123456789 0123456789 012","tooltip: 0123456789 0123456789 0123456789 0123456789 0123456789 0123456789 0123456789 0123456789"],options={"kind":"failure"})
+add(D,P,G,"Short form says Error","relation \"users\" does not exist",["! Error","tooltip: relation \"users\" does not exist"],options={"kind":"shortFailure"})
+G = "Cancelled"
+add(D,P,G,"Cancelled with nothing known","",["Cancelled","tooltip: Cancelled"],options={"kind":"cancelled"})
+add(D,P,G,"Cancelled after a time","",["Cancelled after 3.2 s","tooltip: Cancelled after 3.2 s"],options={"kind":"cancelled","seconds":"3.2"})
+add(D,P,G,"Cancelled with rows kept","",["Cancelled after 3.2 s · 1,200 rows","tooltip: Cancelled after 3.2 s · 1,200 rows"],options={"kind":"cancelled","seconds":"3.2","rows":"1200"})
+add(D,P,G,"Cancelled with one row","",["Cancelled · 1 row","tooltip: Cancelled · 1 row"],options={"kind":"cancelled","rows":"1"})
+add(D,P,G,"Cancelled inside a transaction","",["Cancelled after 3.2 s · The transaction now needs ROLLBACK","tooltip: Cancelled after 3.2 s · The transaction now needs ROLLBACK"],options={"kind":"cancelled","seconds":"3.2","rollback":"true"})
+
+# ---------------------------------------------------------------- connection loss
+D, P = "connection-loss", "LOS"
+G = "Dropped"
+add(D,P,G,"Dropped with a transaction open","",["Connection lost: the connection to sales dropped while a transaction was open. The server rolled the transaction back; nothing since BEGIN was saved. Reconnect to start a new session. Details: the server or the network closed the connection."],options={"kind":"droppedWithTransaction","database":"sales"})
+add(D,P,G,"Notification when a transaction was open","",["Connection lost: Query 1 (sales) had a transaction open. The server rolled it back; nothing since BEGIN was saved."],options={"kind":"notification","database":"sales","tab":"Query 1"},
+    should="The notification splits into a title and a detail at the first “: ”")
+add(D,P,G,"Dropped while idle","",["Connection closed: Query 1 (sales) was idle, so nothing was lost. The next run reconnects."],options={"kind":"droppedIdle","database":"sales","tab":"Query 1"})
+G = "Reconnecting"
+add(D,P,G,"Running while waiting for Reconnect","",["Not connected: the connection to sales was lost with a transaction open, and the server rolled it back. Press Reconnect in the notification to start a new session (SET and temporary tables will be gone)."],options={"kind":"awaitingReconnect","database":"sales"})
+add(D,P,G,"Reconnected","",["Reconnected to sales: a new session. SET, temporary tables and the lost transaction are gone."],options={"kind":"reconnected","database":"sales"})
+add(D,P,G,"Reconnect failed","",["Reconnect failed: could not connect to sales. Login timeout expired."],options={"kind":"reconnectFailed","database":"sales","reason":"Login timeout expired."})
+
+# ---------------------------------------------------------------- table preview
+D, P = "table-preview", "TBL"
+G = "Dialects"
+add(D,P,G,"SQL Server uses TOP and brackets","dbo.Orders",["SELECT TOP 1000 * FROM [dbo].[Orders];"],options={"dialect":"mssql"})
+add(D,P,G,"PostgreSQL uses LIMIT and double quotes","public.orders",["SELECT * FROM \"public\".\"orders\" LIMIT 1000;"],options={"dialect":"postgresql"})
+add(D,P,G,"MySQL uses LIMIT and backticks","shop.orders",["SELECT * FROM `shop`.`orders` LIMIT 1000;"],options={"dialect":"mysql"})
+add(D,P,G,"SQLite has no schema","main.orders",["SELECT * FROM \"orders\" LIMIT 1000;"],options={"dialect":"sqlite"})
+G = "Quoting"
+add(D,P,G,"A closing bracket is doubled","",["SELECT TOP 1000 * FROM [dbo].[a]]b];"],options={"dialect":"mssql","schema":"dbo","table":"a]b"})
+add(D,P,G,"A double quote is doubled","",["SELECT * FROM \"public\".\"a\"\"b\" LIMIT 1000;"],options={"dialect":"postgresql","schema":"public","table":"a\"b"})
+add(D,P,G,"A backtick is doubled","",["SELECT * FROM `shop`.`a``b` LIMIT 1000;"],options={"dialect":"mysql","schema":"shop","table":"a`b"})
+add(D,P,G,"Names with spaces and capitals","",["SELECT * FROM \"My Schema\".\"Order Items\" LIMIT 1000;"],options={"dialect":"postgresql","schema":"My Schema","table":"Order Items"})
+
+# ---------------------------------------------------------------- grid selection
+D, P = "grid-selection", "GRD"
+G = "Counting"
+add(D,P,G,"One cell","5",["1 cell"])
+add(D,P,G,"Two numbers","1\n3",["2 cells · Sum 4 · Avg 2"])
+add(D,P,G,"Three numbers","1\n2\n3",["3 cells · Sum 6 · Avg 2"])
+add(D,P,G,"One number among text is only counted","5\nabc",["2 cells"])
+add(D,P,G,"Text only","a\nb\nc",["3 cells"])
+add(D,P,G,"NULL counts as a cell but adds nothing","1\n∅\n3",["3 cells · Sum 4 · Avg 2"])
+add(D,P,G,"Text among numbers counts as a cell","1\nx\n3",["3 cells · Sum 4 · Avg 2"])
+G = "Numbers"
+add(D,P,G,"Decimals","1.5\n2.25",["2 cells · Sum 3.75 · Avg 1.88"])
+add(D,P,G,"Thousands separators in the result","1000\n2000",["2 cells · Sum 3,000 · Avg 1,500"])
+add(D,P,G,"Negative numbers","-1\n1",["2 cells · Sum 0 · Avg 0"])
+add(D,P,G,"Spaces around a number","  4 \n6",["2 cells · Sum 10 · Avg 5"])
+add(D,P,G,"Exponent notation","1e3\n1",["2 cells · Sum 1,001 · Avg 500.5"])
+add(D,P,G,"NaN and infinity are not numbers","NaN\n1\n2\ninf",["4 cells · Sum 3 · Avg 1.5"])
+add(D,P,G,"Hexadecimal text is not a number","0x10\n1\n2",["3 cells · Sum 3 · Avg 1.5"],
+    should="A cell holding 0x10 is text, not 16",issue="Swift reads 0x10 as 16, so it is added to the sum")
+G = "Large selections"
+add(D,P,G,"More than 50,000 cells shows the count only","1\n2",["60,000 cells"],options={"cellCount":"60000"})
+add(D,P,G,"Exactly 50,000 cells is still added up","1\n2",["50,000 cells · Sum 3 · Avg 1.5"],options={"cellCount":"50000"})
+
 for domain, items in OUT.items():
     path = os.path.join(ROOT, domain + ".json")
     os.makedirs(ROOT, exist_ok=True)

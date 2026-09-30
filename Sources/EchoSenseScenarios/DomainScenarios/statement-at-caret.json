@@ -1,301 +1,347 @@
 [
   {
-    "caretMarker": "|",
-    "domain": "statement-at-caret",
-    "expected": [
+    "caretMarker" : "|",
+    "domain" : "statement-at-caret",
+    "expected" : [
       "SELECT 1"
     ],
-    "group": "Semicolons",
-    "id": "CAR-001",
-    "input": "SELECT |1; SELECT 2; SELECT 3;",
-    "options": {},
-    "should": "Caret inside the first statement",
-    "title": "Caret inside the first statement"
+    "group" : "Semicolons",
+    "id" : "CAR-001",
+    "input" : "SELECT |1; SELECT 2; SELECT 3;",
+    "options" : {
+
+    },
+    "should" : "Caret inside the first statement",
+    "title" : "Caret inside the first statement"
   },
   {
-    "caretMarker": "|",
-    "domain": "statement-at-caret",
-    "expected": [
+    "caretMarker" : "|",
+    "domain" : "statement-at-caret",
+    "expected" : [
       "SELECT 2"
     ],
-    "group": "Semicolons",
-    "id": "CAR-002",
-    "input": "SELECT 1; SELECT |2; SELECT 3;",
-    "options": {},
-    "should": "Caret inside the middle statement",
-    "title": "Caret inside the middle statement"
+    "group" : "Semicolons",
+    "id" : "CAR-002",
+    "input" : "SELECT 1; SELECT |2; SELECT 3;",
+    "options" : {
+
+    },
+    "should" : "Caret inside the middle statement",
+    "title" : "Caret inside the middle statement"
   },
   {
-    "caretMarker": "|",
-    "domain": "statement-at-caret",
-    "expected": [
+    "caretMarker" : "|",
+    "domain" : "statement-at-caret",
+    "expected" : [
       "SELECT 1"
     ],
-    "group": "Semicolons",
-    "id": "CAR-003",
-    "input": "|SELECT 1; SELECT 2;",
-    "options": {},
-    "should": "Caret at the very start",
-    "title": "Caret at the very start"
+    "group" : "Semicolons",
+    "id" : "CAR-003",
+    "input" : "|SELECT 1; SELECT 2;",
+    "options" : {
+
+    },
+    "should" : "Caret at the very start",
+    "title" : "Caret at the very start"
   },
   {
-    "caretMarker": "|",
-    "domain": "statement-at-caret",
-    "expected": [
+    "caretMarker" : "|",
+    "domain" : "statement-at-caret",
+    "expected" : [
       "SELECT 1"
     ],
-    "group": "Semicolons",
-    "id": "CAR-004",
-    "input": "SELECT 1;| SELECT 2;",
-    "options": {},
-    "should": "Caret right after a semicolon belongs to the statement before",
-    "title": "Caret right after a semicolon belongs to the statement before"
+    "group" : "Semicolons",
+    "id" : "CAR-004",
+    "input" : "SELECT 1;| SELECT 2;",
+    "options" : {
+
+    },
+    "should" : "Caret right after a semicolon belongs to the statement before",
+    "title" : "Caret right after a semicolon belongs to the statement before"
   },
   {
-    "caretMarker": "|",
-    "domain": "statement-at-caret",
-    "expected": [
+    "caretMarker" : "|",
+    "domain" : "statement-at-caret",
+    "expected" : [
       "SELECT 2"
     ],
-    "group": "Semicolons",
-    "id": "CAR-005",
-    "input": "SELECT 1; SELECT 2;\n|",
-    "options": {},
-    "should": "Caret after the last semicolon picks the last statement",
-    "title": "Caret after the last semicolon picks the last statement"
+    "group" : "Semicolons",
+    "id" : "CAR-005",
+    "input" : "SELECT 1; SELECT 2;\n|",
+    "options" : {
+
+    },
+    "should" : "Caret after the last semicolon picks the last statement",
+    "title" : "Caret after the last semicolon picks the last statement"
   },
   {
-    "caretMarker": "|",
-    "domain": "statement-at-caret",
-    "expected": [
+    "caretMarker" : "|",
+    "domain" : "statement-at-caret",
+    "expected" : [
       "SELECT 2"
     ],
-    "group": "Semicolons",
-    "id": "CAR-006",
-    "input": "SELECT 1; SELECT 2|",
-    "options": {},
-    "should": "Caret at the end without a semicolon",
-    "title": "Caret at the end without a semicolon"
+    "group" : "Semicolons",
+    "id" : "CAR-006",
+    "input" : "SELECT 1; SELECT 2|",
+    "options" : {
+
+    },
+    "should" : "Caret at the end without a semicolon",
+    "title" : "Caret at the end without a semicolon"
   },
   {
-    "caretMarker": "|",
-    "domain": "statement-at-caret",
-    "expected": [
+    "caretMarker" : "|",
+    "domain" : "statement-at-caret",
+    "expected" : [
       "(none)"
     ],
-    "group": "Semicolons",
-    "id": "CAR-007",
-    "input": "  |  ",
-    "options": {},
-    "should": "A script with no statements",
-    "title": "A script with no statements"
+    "group" : "Semicolons",
+    "id" : "CAR-007",
+    "input" : "  |  ",
+    "options" : {
+
+    },
+    "should" : "A script with no statements",
+    "title" : "A script with no statements"
   },
   {
-    "caretMarker": "|",
-    "domain": "statement-at-caret",
-    "expected": [
+    "caretMarker" : "|",
+    "domain" : "statement-at-caret",
+    "expected" : [
       "(none)"
     ],
-    "group": "Semicolons",
-    "id": "CAR-008",
-    "input": "|;;",
-    "options": {},
-    "should": "Only semicolons",
-    "title": "Only semicolons"
+    "group" : "Semicolons",
+    "id" : "CAR-008",
+    "input" : "|;;",
+    "options" : {
+
+    },
+    "should" : "Only semicolons",
+    "title" : "Only semicolons"
   },
   {
-    "caretMarker": "|",
-    "domain": "statement-at-caret",
-    "expected": [
+    "caretMarker" : "|",
+    "domain" : "statement-at-caret",
+    "expected" : [
       "SELECT 2\nFROM b"
     ],
-    "group": "Blank lines",
-    "id": "CAR-009",
-    "input": "SELECT 1\nFROM a\n\nSELECT |2\nFROM b",
-    "options": {},
-    "should": "A blank line ends a statement",
-    "title": "A blank line ends a statement"
+    "group" : "Blank lines",
+    "id" : "CAR-009",
+    "input" : "SELECT 1\nFROM a\n\nSELECT |2\nFROM b",
+    "options" : {
+
+    },
+    "should" : "A blank line ends a statement",
+    "title" : "A blank line ends a statement"
   },
   {
-    "caretMarker": "|",
-    "domain": "statement-at-caret",
-    "expected": [
+    "caretMarker" : "|",
+    "domain" : "statement-at-caret",
+    "expected" : [
       "SELECT 1"
     ],
-    "group": "Blank lines",
-    "id": "CAR-010",
-    "input": "SELECT 1\n\n|\n\nSELECT 2",
-    "options": {},
-    "should": "Caret on a blank line picks the statement before",
-    "title": "Caret on a blank line picks the statement before"
+    "group" : "Blank lines",
+    "id" : "CAR-010",
+    "input" : "SELECT 1\n\n|\n\nSELECT 2",
+    "options" : {
+
+    },
+    "should" : "Caret on a blank line picks the statement before",
+    "title" : "Caret on a blank line picks the statement before"
   },
   {
-    "caretMarker": "|",
-    "domain": "statement-at-caret",
-    "expected": [
+    "caretMarker" : "|",
+    "domain" : "statement-at-caret",
+    "expected" : [
       "SELECT a,\n  b\nFROM t\nWHERE x = 1"
     ],
-    "group": "Blank lines",
-    "id": "CAR-011",
-    "input": "SELECT a,\n  b\nFROM |t\nWHERE x = 1",
-    "options": {},
-    "should": "Several lines without a blank line are one statement",
-    "title": "Several lines without a blank line are one statement"
+    "group" : "Blank lines",
+    "id" : "CAR-011",
+    "input" : "SELECT a,\n  b\nFROM |t\nWHERE x = 1",
+    "options" : {
+
+    },
+    "should" : "Several lines without a blank line are one statement",
+    "title" : "Several lines without a blank line are one statement"
   },
   {
-    "caretMarker": "|",
-    "domain": "statement-at-caret",
-    "expected": [
+    "caretMarker" : "|",
+    "domain" : "statement-at-caret",
+    "expected" : [
       "SELECT 'a;b', 1"
     ],
-    "group": "Quotes and comments",
-    "id": "CAR-012",
-    "input": "SELECT 'a;b', |1; SELECT 2;",
-    "options": {},
-    "should": "Semicolon in a string does not end it",
-    "title": "Semicolon in a string does not end it"
+    "group" : "Quotes and comments",
+    "id" : "CAR-012",
+    "input" : "SELECT 'a;b', |1; SELECT 2;",
+    "options" : {
+
+    },
+    "should" : "Semicolon in a string does not end it",
+    "title" : "Semicolon in a string does not end it"
   },
   {
-    "caretMarker": "|",
-    "domain": "statement-at-caret",
-    "expected": [
+    "caretMarker" : "|",
+    "domain" : "statement-at-caret",
+    "expected" : [
       "SELECT 'a\n\nb', 1"
     ],
-    "group": "Quotes and comments",
-    "id": "CAR-013",
-    "input": "SELECT 'a\n\nb', |1; SELECT 2;",
-    "options": {},
-    "should": "Blank line in a string does not end it",
-    "title": "Blank line in a string does not end it"
+    "group" : "Quotes and comments",
+    "id" : "CAR-013",
+    "input" : "SELECT 'a\n\nb', |1; SELECT 2;",
+    "options" : {
+
+    },
+    "should" : "Blank line in a string does not end it",
+    "title" : "Blank line in a string does not end it"
   },
   {
-    "caretMarker": "|",
-    "domain": "statement-at-caret",
-    "expected": [
+    "caretMarker" : "|",
+    "domain" : "statement-at-caret",
+    "expected" : [
       "SELECT 1 -- ; not the end\n, 2"
     ],
-    "group": "Quotes and comments",
-    "id": "CAR-014",
-    "input": "SELECT |1 -- ; not the end\n, 2; SELECT 3;",
-    "options": {},
-    "should": "Semicolon in a line comment",
-    "title": "Semicolon in a line comment"
+    "group" : "Quotes and comments",
+    "id" : "CAR-014",
+    "input" : "SELECT |1 -- ; not the end\n, 2; SELECT 3;",
+    "options" : {
+
+    },
+    "should" : "Semicolon in a line comment",
+    "title" : "Semicolon in a line comment"
   },
   {
-    "caretMarker": "|",
-    "domain": "statement-at-caret",
-    "expected": [
+    "caretMarker" : "|",
+    "domain" : "statement-at-caret",
+    "expected" : [
       "SELECT 1 /* ; */, 2"
     ],
-    "group": "Quotes and comments",
-    "id": "CAR-015",
-    "input": "SELECT |1 /* ; */, 2; SELECT 3;",
-    "options": {},
-    "should": "Semicolon in a block comment",
-    "title": "Semicolon in a block comment"
+    "group" : "Quotes and comments",
+    "id" : "CAR-015",
+    "input" : "SELECT |1 /* ; */, 2; SELECT 3;",
+    "options" : {
+
+    },
+    "should" : "Semicolon in a block comment",
+    "title" : "Semicolon in a block comment"
   },
   {
-    "caretMarker": "|",
-    "domain": "statement-at-caret",
-    "expected": [
+    "caretMarker" : "|",
+    "domain" : "statement-at-caret",
+    "expected" : [
       "SELECT [a;b], 1"
     ],
-    "group": "Quotes and comments",
-    "id": "CAR-016",
-    "input": "SELECT [a;b]|, 1; SELECT 2;",
-    "options": {},
-    "should": "Semicolon in a bracketed name",
-    "title": "Semicolon in a bracketed name"
+    "group" : "Quotes and comments",
+    "id" : "CAR-016",
+    "input" : "SELECT [a;b]|, 1; SELECT 2;",
+    "options" : {
+
+    },
+    "should" : "Semicolon in a bracketed name",
+    "title" : "Semicolon in a bracketed name"
   },
   {
-    "caretMarker": "|",
-    "domain": "statement-at-caret",
-    "expected": [
+    "caretMarker" : "|",
+    "domain" : "statement-at-caret",
+    "expected" : [
       "SELECT `a;b`, 1"
     ],
-    "group": "Quotes and comments",
-    "id": "CAR-017",
-    "input": "SELECT `a;b`|, 1; SELECT 2;",
-    "options": {},
-    "should": "Semicolon in a backtick name",
-    "title": "Semicolon in a backtick name"
+    "group" : "Quotes and comments",
+    "id" : "CAR-017",
+    "input" : "SELECT `a;b`|, 1; SELECT 2;",
+    "options" : {
+
+    },
+    "should" : "Semicolon in a backtick name",
+    "title" : "Semicolon in a backtick name"
   },
   {
-    "caretMarker": "|",
-    "domain": "statement-at-caret",
-    "expected": [
+    "caretMarker" : "|",
+    "domain" : "statement-at-caret",
+    "expected" : [
       "DO $$ BEGIN PERFORM 1; END $$"
     ],
-    "group": "Quotes and comments",
-    "id": "CAR-018",
-    "input": "DO $$ BEGIN PERFORM 1; |END $$; SELECT 2;",
-    "options": {},
-    "should": "Dollar-quoted body",
-    "title": "Dollar-quoted body"
+    "group" : "Quotes and comments",
+    "id" : "CAR-018",
+    "input" : "DO $$ BEGIN PERFORM 1; |END $$; SELECT 2;",
+    "options" : {
+
+    },
+    "should" : "Dollar-quoted body",
+    "title" : "Dollar-quoted body"
   },
   {
-    "caretMarker": "|",
-    "domain": "statement-at-caret",
-    "expected": [
+    "caretMarker" : "|",
+    "domain" : "statement-at-caret",
+    "expected" : [
       "DO $body$ BEGIN PERFORM 1; END $body$"
     ],
-    "group": "Quotes and comments",
-    "id": "CAR-019",
-    "input": "DO $body$ BEGIN PERFORM 1; |END $body$; SELECT 2;",
-    "options": {},
-    "should": "Dollar-quoted body with a tag",
-    "title": "Dollar-quoted body with a tag"
+    "group" : "Quotes and comments",
+    "id" : "CAR-019",
+    "input" : "DO $body$ BEGIN PERFORM 1; |END $body$; SELECT 2;",
+    "options" : {
+
+    },
+    "should" : "Dollar-quoted body with a tag",
+    "title" : "Dollar-quoted body with a tag"
   },
   {
-    "caretMarker": "|",
-    "domain": "statement-at-caret",
-    "expected": [
+    "caretMarker" : "|",
+    "domain" : "statement-at-caret",
+    "expected" : [
       "SELECT 2"
     ],
-    "group": "GO",
-    "id": "CAR-020",
-    "input": "SELECT 1\nGO\nSELECT |2",
-    "options": {},
-    "should": "GO line separates statements",
-    "title": "GO line separates statements"
+    "group" : "GO",
+    "id" : "CAR-020",
+    "input" : "SELECT 1\nGO\nSELECT |2",
+    "options" : {
+
+    },
+    "should" : "GO line separates statements",
+    "title" : "GO line separates statements"
   },
   {
-    "caretMarker": "|",
-    "domain": "statement-at-caret",
-    "expected": [
+    "caretMarker" : "|",
+    "domain" : "statement-at-caret",
+    "expected" : [
       "SELECT 1"
     ],
-    "group": "GO",
-    "id": "CAR-021",
-    "input": "SELECT 1\nG|O\nSELECT 2",
-    "options": {},
-    "should": "Caret on the GO line picks the statement before",
-    "title": "Caret on the GO line picks the statement before"
+    "group" : "GO",
+    "id" : "CAR-021",
+    "input" : "SELECT 1\nG|O\nSELECT 2",
+    "options" : {
+
+    },
+    "should" : "Caret on the GO line picks the statement before",
+    "title" : "Caret on the GO line picks the statement before"
   },
   {
-    "caretMarker": "|",
-    "domain": "statement-at-caret",
-    "expected": [
+    "caretMarker" : "|",
+    "domain" : "statement-at-caret",
+    "expected" : [
       "SELECT 2"
     ],
-    "group": "GO",
-    "id": "CAR-022",
-    "input": "SELECT 1\ngo\nSELECT |2",
-    "options": {},
-    "should": "GO in lower case",
-    "title": "GO in lower case"
+    "group" : "GO",
+    "id" : "CAR-022",
+    "input" : "SELECT 1\ngo\nSELECT |2",
+    "options" : {
+
+    },
+    "should" : "GO in lower case",
+    "title" : "GO in lower case"
   },
   {
-    "caretMarker": "|",
-    "domain": "statement-at-caret",
-    "expected": [
+    "caretMarker" : "|",
+    "domain" : "statement-at-caret",
+    "expected" : [
       "SELECT 2"
     ],
-    "group": "Unicode",
-    "id": "CAR-023",
-    "input": "SELECT '😀'; SELECT |2;",
-    "options": {},
-    "should": "Emoji before the caret (UTF-16 offsets)",
-    "title": "Emoji before the caret (UTF-16 offsets)"
+    "group" : "Unicode",
+    "id" : "CAR-023",
+    "input" : "SELECT '😀'; SELECT |2;",
+    "options" : {
+
+    },
+    "should" : "Emoji before the caret (UTF-16 offsets)",
+    "title" : "Emoji before the caret (UTF-16 offsets)"
   }
 ]

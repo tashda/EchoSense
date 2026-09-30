@@ -1,0 +1,101 @@
+[
+  {
+    "caretMarker" : "|",
+    "domain" : "connection-loss",
+    "expected" : [
+      "Connection lost: the connection to sales dropped while a transaction was open. The server rolled the transaction back; nothing since BEGIN was saved. Reconnect to start a new session. Details: the server or the network closed the connection."
+    ],
+    "group" : "Dropped",
+    "id" : "LOS-001",
+    "input" : "",
+    "options" : {
+      "database" : "sales",
+      "kind" : "droppedWithTransaction"
+    },
+    "should" : "Dropped with a transaction open",
+    "title" : "Dropped with a transaction open"
+  },
+  {
+    "caretMarker" : "|",
+    "domain" : "connection-loss",
+    "expected" : [
+      "Connection lost: Query 1 (sales) had a transaction open. The server rolled it back; nothing since BEGIN was saved."
+    ],
+    "group" : "Dropped",
+    "id" : "LOS-002",
+    "input" : "",
+    "options" : {
+      "database" : "sales",
+      "kind" : "notification",
+      "tab" : "Query 1"
+    },
+    "should" : "The notification splits into a title and a detail at the first “: ”",
+    "title" : "Notification when a transaction was open"
+  },
+  {
+    "caretMarker" : "|",
+    "domain" : "connection-loss",
+    "expected" : [
+      "Connection closed: Query 1 (sales) was idle, so nothing was lost. The next run reconnects."
+    ],
+    "group" : "Dropped",
+    "id" : "LOS-003",
+    "input" : "",
+    "options" : {
+      "database" : "sales",
+      "kind" : "droppedIdle",
+      "tab" : "Query 1"
+    },
+    "should" : "Dropped while idle",
+    "title" : "Dropped while idle"
+  },
+  {
+    "caretMarker" : "|",
+    "domain" : "connection-loss",
+    "expected" : [
+      "Not connected: the connection to sales was lost with a transaction open, and the server rolled it back. Press Reconnect in the notification to start a new session (SET and temporary tables will be gone)."
+    ],
+    "group" : "Reconnecting",
+    "id" : "LOS-004",
+    "input" : "",
+    "options" : {
+      "database" : "sales",
+      "kind" : "awaitingReconnect"
+    },
+    "should" : "Running while waiting for Reconnect",
+    "title" : "Running while waiting for Reconnect"
+  },
+  {
+    "caretMarker" : "|",
+    "domain" : "connection-loss",
+    "expected" : [
+      "Reconnected to sales: a new session. SET, temporary tables and the lost transaction are gone."
+    ],
+    "group" : "Reconnecting",
+    "id" : "LOS-005",
+    "input" : "",
+    "options" : {
+      "database" : "sales",
+      "kind" : "reconnected"
+    },
+    "should" : "Reconnected",
+    "title" : "Reconnected"
+  },
+  {
+    "caretMarker" : "|",
+    "domain" : "connection-loss",
+    "expected" : [
+      "Reconnect failed: could not connect to sales. Login timeout expired."
+    ],
+    "group" : "Reconnecting",
+    "id" : "LOS-006",
+    "input" : "",
+    "options" : {
+      "database" : "sales",
+      "kind" : "reconnectFailed",
+      "reason" : "Login timeout expired."
+    },
+    "should" : "Reconnect failed",
+    "title" : "Reconnect failed"
+  }
+]

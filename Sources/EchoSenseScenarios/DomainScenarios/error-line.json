@@ -1,0 +1,152 @@
+[
+  {
+    "caretMarker" : "|",
+    "domain" : "error-line",
+    "expected" : [
+      "3"
+    ],
+    "group" : "Servers",
+    "id" : "ERL-001",
+    "input" : "Msg 102, Level 15, State 1, Line 3\nIncorrect syntax near 'FROM'.",
+    "options" : {
+
+    },
+    "should" : "SQL Server message",
+    "title" : "SQL Server message"
+  },
+  {
+    "caretMarker" : "|",
+    "domain" : "error-line",
+    "expected" : [
+      "3"
+    ],
+    "group" : "Servers",
+    "id" : "ERL-002",
+    "input" : "ERROR:  syntax error at or near \"FORM\"\nLINE 3: SELECT * FORM users\n                 ^",
+    "options" : {
+
+    },
+    "should" : "PostgreSQL message",
+    "title" : "PostgreSQL message"
+  },
+  {
+    "caretMarker" : "|",
+    "domain" : "error-line",
+    "expected" : [
+      "2"
+    ],
+    "group" : "Servers",
+    "id" : "ERL-003",
+    "input" : "You have an error in your SQL syntax; check the manual near 'FORM users' at line 2",
+    "options" : {
+
+    },
+    "should" : "MySQL message",
+    "title" : "MySQL message"
+  },
+  {
+    "caretMarker" : "|",
+    "domain" : "error-line",
+    "expected" : [
+      "12"
+    ],
+    "group" : "Servers",
+    "id" : "ERL-004",
+    "input" : "error at line 12",
+    "options" : {
+
+    },
+    "should" : "Lower case",
+    "title" : "Lower case"
+  },
+  {
+    "caretMarker" : "|",
+    "domain" : "error-line",
+    "expected" : [
+      "(none)"
+    ],
+    "group" : "No line",
+    "id" : "ERL-005",
+    "input" : "relation \"users\" does not exist",
+    "options" : {
+
+    },
+    "should" : "No line in the message",
+    "title" : "No line in the message"
+  },
+  {
+    "caretMarker" : "|",
+    "domain" : "error-line",
+    "expected" : [
+      "(none)"
+    ],
+    "group" : "No line",
+    "id" : "ERL-006",
+    "input" : "Incorrect syntax near 'line'.",
+    "options" : {
+
+    },
+    "should" : "The word line without a number",
+    "title" : "The word line without a number"
+  },
+  {
+    "caretMarker" : "|",
+    "domain" : "error-line",
+    "expected" : [
+      "(none)"
+    ],
+    "group" : "No line",
+    "id" : "ERL-007",
+    "input" : "Msg 50000, Level 16, State 1, Line 0",
+    "options" : {
+
+    },
+    "should" : "Line 0 is not a line",
+    "title" : "Line 0 is not a line"
+  },
+  {
+    "caretMarker" : "|",
+    "domain" : "error-line",
+    "expected" : [
+      "(none)"
+    ],
+    "group" : "No line",
+    "id" : "ERL-008",
+    "input" : "Query timeline 5 exceeded the deadline 4",
+    "options" : {
+
+    },
+    "should" : "Part of a longer word",
+    "title" : "Part of a longer word"
+  },
+  {
+    "caretMarker" : "|",
+    "domain" : "error-line",
+    "expected" : [
+      "3"
+    ],
+    "group" : "No line",
+    "id" : "ERL-009",
+    "input" : "Line 3: first\nLine 5: second",
+    "options" : {
+
+    },
+    "should" : "The first line wins",
+    "title" : "The first line wins"
+  },
+  {
+    "caretMarker" : "|",
+    "domain" : "error-line",
+    "expected" : [
+      "10482"
+    ],
+    "group" : "No line",
+    "id" : "ERL-010",
+    "input" : "Msg 102, Level 15, State 1, Line 10482",
+    "options" : {
+
+    },
+    "should" : "A large line number",
+    "title" : "A large line number"
+  }
+]

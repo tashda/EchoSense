@@ -1,0 +1,295 @@
+[
+  {
+    "caretMarker" : "|",
+    "domain" : "run-note",
+    "expected" : [
+      "✓ 1,200 rows · 3.2 s",
+      "tooltip: ✓ 1,200 rows · 3.2 s"
+    ],
+    "group" : "Success",
+    "id" : "RUN-001",
+    "input" : "",
+    "options" : {
+      "kind" : "success",
+      "rows" : "1200",
+      "seconds" : "3.2"
+    },
+    "should" : "Rows and time",
+    "title" : "Rows and time"
+  },
+  {
+    "caretMarker" : "|",
+    "domain" : "run-note",
+    "expected" : [
+      "✓ 1 row · 12 ms",
+      "tooltip: ✓ 1 row · 12 ms"
+    ],
+    "group" : "Success",
+    "id" : "RUN-002",
+    "input" : "",
+    "options" : {
+      "kind" : "success",
+      "rows" : "1",
+      "seconds" : "0.012"
+    },
+    "should" : "One row",
+    "title" : "One row"
+  },
+  {
+    "caretMarker" : "|",
+    "domain" : "run-note",
+    "expected" : [
+      "✓ 0 rows · 5 ms",
+      "tooltip: ✓ 0 rows · 5 ms"
+    ],
+    "group" : "Success",
+    "id" : "RUN-003",
+    "input" : "",
+    "options" : {
+      "kind" : "success",
+      "rows" : "0",
+      "seconds" : "0.005"
+    },
+    "should" : "No rows",
+    "title" : "No rows"
+  },
+  {
+    "caretMarker" : "|",
+    "domain" : "run-note",
+    "expected" : [
+      "✓ Done · 45 ms",
+      "tooltip: ✓ Done · 45 ms"
+    ],
+    "group" : "Success",
+    "id" : "RUN-004",
+    "input" : "",
+    "options" : {
+      "hasResults" : "false",
+      "kind" : "success",
+      "seconds" : "0.045"
+    },
+    "should" : "A statement without results",
+    "title" : "A statement without results"
+  },
+  {
+    "caretMarker" : "|",
+    "domain" : "run-note",
+    "expected" : [
+      "✓ Done",
+      "tooltip: ✓ Done"
+    ],
+    "group" : "Success",
+    "id" : "RUN-005",
+    "input" : "",
+    "options" : {
+      "hasResults" : "false",
+      "kind" : "success"
+    },
+    "should" : "No time known",
+    "title" : "No time known"
+  },
+  {
+    "caretMarker" : "|",
+    "domain" : "run-note",
+    "expected" : [
+      "✓ 10 rows · 1 min 15 s",
+      "tooltip: ✓ 10 rows · 1 min 15 s"
+    ],
+    "group" : "Success",
+    "id" : "RUN-006",
+    "input" : "",
+    "options" : {
+      "kind" : "success",
+      "rows" : "10",
+      "seconds" : "75"
+    },
+    "should" : "Minutes",
+    "title" : "Minutes"
+  },
+  {
+    "caretMarker" : "|",
+    "domain" : "run-note",
+    "expected" : [
+      "✓ 1 row · 1.0 s",
+      "tooltip: ✓ 1 row · 1.0 s"
+    ],
+    "group" : "Success",
+    "id" : "RUN-007",
+    "input" : "",
+    "options" : {
+      "kind" : "success",
+      "rows" : "1",
+      "seconds" : "0.9996"
+    },
+    "should" : "0.9996 seconds is shown as 1.0 s, not 1000 ms",
+    "title" : "Just under a second rounds up to a second"
+  },
+  {
+    "caretMarker" : "|",
+    "domain" : "run-note",
+    "expected" : [
+      "✓ 1 row · 1 min 0 s",
+      "tooltip: ✓ 1 row · 1 min 0 s"
+    ],
+    "group" : "Success",
+    "id" : "RUN-008",
+    "input" : "",
+    "options" : {
+      "kind" : "success",
+      "rows" : "1",
+      "seconds" : "59.96"
+    },
+    "should" : "59.96 seconds is shown as 1 min 0 s, not 60.0 s",
+    "title" : "Just under a minute rounds up to a minute"
+  },
+  {
+    "caretMarker" : "|",
+    "domain" : "run-note",
+    "expected" : [
+      "Incorrect syntax near 'FROM'.",
+      "tooltip: Incorrect syntax near 'FROM'."
+    ],
+    "group" : "Errors",
+    "id" : "RUN-009",
+    "input" : "Incorrect syntax near 'FROM'.",
+    "options" : {
+      "kind" : "failure"
+    },
+    "should" : "Short message",
+    "title" : "Short message"
+  },
+  {
+    "caretMarker" : "|",
+    "domain" : "run-note",
+    "expected" : [
+      "Msg 102, Level 15",
+      "tooltip: Msg 102, Level 15\nIncorrect syntax near 'FROM'."
+    ],
+    "group" : "Errors",
+    "id" : "RUN-010",
+    "input" : "Msg 102, Level 15\nIncorrect syntax near 'FROM'.",
+    "options" : {
+      "kind" : "failure"
+    },
+    "should" : "Only the first line shows",
+    "title" : "Only the first line shows"
+  },
+  {
+    "caretMarker" : "|",
+    "domain" : "run-note",
+    "expected" : [
+      "0123456789 0123456789 0123456789 0123456789 0123456789 0123456789 0123456789 012",
+      "tooltip: 0123456789 0123456789 0123456789 0123456789 0123456789 0123456789 0123456789 0123456789"
+    ],
+    "group" : "Errors",
+    "id" : "RUN-011",
+    "input" : "0123456789 0123456789 0123456789 0123456789 0123456789 0123456789 0123456789 0123456789",
+    "options" : {
+      "kind" : "failure"
+    },
+    "should" : "A long first line is cut at 80 characters",
+    "title" : "A long first line is cut at 80 characters"
+  },
+  {
+    "caretMarker" : "|",
+    "domain" : "run-note",
+    "expected" : [
+      "! Error",
+      "tooltip: relation \"users\" does not exist"
+    ],
+    "group" : "Errors",
+    "id" : "RUN-012",
+    "input" : "relation \"users\" does not exist",
+    "options" : {
+      "kind" : "shortFailure"
+    },
+    "should" : "Short form says Error",
+    "title" : "Short form says Error"
+  },
+  {
+    "caretMarker" : "|",
+    "domain" : "run-note",
+    "expected" : [
+      "Cancelled",
+      "tooltip: Cancelled"
+    ],
+    "group" : "Cancelled",
+    "id" : "RUN-013",
+    "input" : "",
+    "options" : {
+      "kind" : "cancelled"
+    },
+    "should" : "Cancelled with nothing known",
+    "title" : "Cancelled with nothing known"
+  },
+  {
+    "caretMarker" : "|",
+    "domain" : "run-note",
+    "expected" : [
+      "Cancelled after 3.2 s",
+      "tooltip: Cancelled after 3.2 s"
+    ],
+    "group" : "Cancelled",
+    "id" : "RUN-014",
+    "input" : "",
+    "options" : {
+      "kind" : "cancelled",
+      "seconds" : "3.2"
+    },
+    "should" : "Cancelled after a time",
+    "title" : "Cancelled after a time"
+  },
+  {
+    "caretMarker" : "|",
+    "domain" : "run-note",
+    "expected" : [
+      "Cancelled after 3.2 s · 1,200 rows",
+      "tooltip: Cancelled after 3.2 s · 1,200 rows"
+    ],
+    "group" : "Cancelled",
+    "id" : "RUN-015",
+    "input" : "",
+    "options" : {
+      "kind" : "cancelled",
+      "rows" : "1200",
+      "seconds" : "3.2"
+    },
+    "should" : "Cancelled with rows kept",
+    "title" : "Cancelled with rows kept"
+  },
+  {
+    "caretMarker" : "|",
+    "domain" : "run-note",
+    "expected" : [
+      "Cancelled · 1 row",
+      "tooltip: Cancelled · 1 row"
+    ],
+    "group" : "Cancelled",
+    "id" : "RUN-016",
+    "input" : "",
+    "options" : {
+      "kind" : "cancelled",
+      "rows" : "1"
+    },
+    "should" : "Cancelled with one row",
+    "title" : "Cancelled with one row"
+  },
+  {
+    "caretMarker" : "|",
+    "domain" : "run-note",
+    "expected" : [
+      "Cancelled after 3.2 s · The transaction now needs ROLLBACK",
+      "tooltip: Cancelled after 3.2 s · The transaction now needs ROLLBACK"
+    ],
+    "group" : "Cancelled",
+    "id" : "RUN-017",
+    "input" : "",
+    "options" : {
+      "kind" : "cancelled",
+      "rollback" : "true",
+      "seconds" : "3.2"
+    },
+    "should" : "Cancelled inside a transaction",
+    "title" : "Cancelled inside a transaction"
+  }
+]

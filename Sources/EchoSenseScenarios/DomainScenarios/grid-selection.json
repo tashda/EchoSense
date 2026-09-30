@@ -1,0 +1,242 @@
+[
+  {
+    "caretMarker" : "|",
+    "domain" : "grid-selection",
+    "expected" : [
+      "1 cell"
+    ],
+    "group" : "Counting",
+    "id" : "GRD-001",
+    "input" : "5",
+    "options" : {
+
+    },
+    "should" : "One cell",
+    "title" : "One cell"
+  },
+  {
+    "caretMarker" : "|",
+    "domain" : "grid-selection",
+    "expected" : [
+      "2 cells · Sum 4 · Avg 2"
+    ],
+    "group" : "Counting",
+    "id" : "GRD-002",
+    "input" : "1\n3",
+    "options" : {
+
+    },
+    "should" : "Two numbers",
+    "title" : "Two numbers"
+  },
+  {
+    "caretMarker" : "|",
+    "domain" : "grid-selection",
+    "expected" : [
+      "3 cells · Sum 6 · Avg 2"
+    ],
+    "group" : "Counting",
+    "id" : "GRD-003",
+    "input" : "1\n2\n3",
+    "options" : {
+
+    },
+    "should" : "Three numbers",
+    "title" : "Three numbers"
+  },
+  {
+    "caretMarker" : "|",
+    "domain" : "grid-selection",
+    "expected" : [
+      "2 cells"
+    ],
+    "group" : "Counting",
+    "id" : "GRD-004",
+    "input" : "5\nabc",
+    "options" : {
+
+    },
+    "should" : "One number among text is only counted",
+    "title" : "One number among text is only counted"
+  },
+  {
+    "caretMarker" : "|",
+    "domain" : "grid-selection",
+    "expected" : [
+      "3 cells"
+    ],
+    "group" : "Counting",
+    "id" : "GRD-005",
+    "input" : "a\nb\nc",
+    "options" : {
+
+    },
+    "should" : "Text only",
+    "title" : "Text only"
+  },
+  {
+    "caretMarker" : "|",
+    "domain" : "grid-selection",
+    "expected" : [
+      "3 cells · Sum 4 · Avg 2"
+    ],
+    "group" : "Counting",
+    "id" : "GRD-006",
+    "input" : "1\n∅\n3",
+    "options" : {
+
+    },
+    "should" : "NULL counts as a cell but adds nothing",
+    "title" : "NULL counts as a cell but adds nothing"
+  },
+  {
+    "caretMarker" : "|",
+    "domain" : "grid-selection",
+    "expected" : [
+      "3 cells · Sum 4 · Avg 2"
+    ],
+    "group" : "Counting",
+    "id" : "GRD-007",
+    "input" : "1\nx\n3",
+    "options" : {
+
+    },
+    "should" : "Text among numbers counts as a cell",
+    "title" : "Text among numbers counts as a cell"
+  },
+  {
+    "caretMarker" : "|",
+    "domain" : "grid-selection",
+    "expected" : [
+      "2 cells · Sum 3.75 · Avg 1.88"
+    ],
+    "group" : "Numbers",
+    "id" : "GRD-008",
+    "input" : "1.5\n2.25",
+    "options" : {
+
+    },
+    "should" : "Decimals",
+    "title" : "Decimals"
+  },
+  {
+    "caretMarker" : "|",
+    "domain" : "grid-selection",
+    "expected" : [
+      "2 cells · Sum 3,000 · Avg 1,500"
+    ],
+    "group" : "Numbers",
+    "id" : "GRD-009",
+    "input" : "1000\n2000",
+    "options" : {
+
+    },
+    "should" : "Thousands separators in the result",
+    "title" : "Thousands separators in the result"
+  },
+  {
+    "caretMarker" : "|",
+    "domain" : "grid-selection",
+    "expected" : [
+      "2 cells · Sum 0 · Avg 0"
+    ],
+    "group" : "Numbers",
+    "id" : "GRD-010",
+    "input" : "-1\n1",
+    "options" : {
+
+    },
+    "should" : "Negative numbers",
+    "title" : "Negative numbers"
+  },
+  {
+    "caretMarker" : "|",
+    "domain" : "grid-selection",
+    "expected" : [
+      "2 cells · Sum 10 · Avg 5"
+    ],
+    "group" : "Numbers",
+    "id" : "GRD-011",
+    "input" : "  4 \n6",
+    "options" : {
+
+    },
+    "should" : "Spaces around a number",
+    "title" : "Spaces around a number"
+  },
+  {
+    "caretMarker" : "|",
+    "domain" : "grid-selection",
+    "expected" : [
+      "2 cells · Sum 1,001 · Avg 500.5"
+    ],
+    "group" : "Numbers",
+    "id" : "GRD-012",
+    "input" : "1e3\n1",
+    "options" : {
+
+    },
+    "should" : "Exponent notation",
+    "title" : "Exponent notation"
+  },
+  {
+    "caretMarker" : "|",
+    "domain" : "grid-selection",
+    "expected" : [
+      "4 cells · Sum 3 · Avg 1.5"
+    ],
+    "group" : "Numbers",
+    "id" : "GRD-013",
+    "input" : "NaN\n1\n2\ninf",
+    "options" : {
+
+    },
+    "should" : "NaN and infinity are not numbers",
+    "title" : "NaN and infinity are not numbers"
+  },
+  {
+    "caretMarker" : "|",
+    "domain" : "grid-selection",
+    "expected" : [
+      "3 cells · Sum 3 · Avg 1.5"
+    ],
+    "group" : "Numbers",
+    "id" : "GRD-014",
+    "input" : "0x10\n1\n2",
+    "options" : {
+
+    },
+    "should" : "A cell holding 0x10 is text, not 16",
+    "title" : "Hexadecimal text is not a number"
+  },
+  {
+    "caretMarker" : "|",
+    "domain" : "grid-selection",
+    "expected" : [
+      "60,000 cells"
+    ],
+    "group" : "Large selections",
+    "id" : "GRD-015",
+    "input" : "1\n2",
+    "options" : {
+      "cellCount" : "60000"
+    },
+    "should" : "More than 50,000 cells shows the count only",
+    "title" : "More than 50,000 cells shows the count only"
+  },
+  {
+    "caretMarker" : "|",
+    "domain" : "grid-selection",
+    "expected" : [
+      "50,000 cells · Sum 3 · Avg 1.5"
+    ],
+    "group" : "Large selections",
+    "id" : "GRD-016",
+    "input" : "1\n2",
+    "options" : {
+      "cellCount" : "50000"
+    },
+    "should" : "Exactly 50,000 cells is still added up",
+    "title" : "Exactly 50,000 cells is still added up"
+  }
+]
