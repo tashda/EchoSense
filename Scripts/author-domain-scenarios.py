@@ -232,6 +232,45 @@ G = "Large selections"
 add(D,P,G,"More than 50,000 cells shows the count only","1\n2",["60,000 cells"],options={"cellCount":"60000"})
 add(D,P,G,"Exactly 50,000 cells is still added up","1\n2",["50,000 cells · Sum 3 · Avg 1.5"],options={"cellCount":"50000"})
 
+# ---------------------------------------------------------------- JSON viewer
+D, P = "json-outline", "JSN"
+G = "Values"
+add(D,P,G,"A number","42",["Number: 42  $"])
+add(D,P,G,"A string","\"hi\"",["String: hi  $"])
+add(D,P,G,"true, false and null","[true,false,null]",["Array: 3 items  $","  [0]: true  $[0]","  [1]: false  $[1]","  [2]: null  $[2]"])
+add(D,P,G,"Unicode escapes","\"\\u4e16\\u754c\"",["String: 世界  $"])
+add(D,P,G,"Empty object","{}",["Object: 0 keys  $"])
+add(D,P,G,"Empty array","[]",["Array: 0 items  $"])
+add(D,P,G,"One key is singular","{\"a\":1}",["Object: 1 key  $","  a: 1  $.a"])
+add(D,P,G,"One item is singular","[7]",["Array: 1 item  $","  [0]: 7  $[0]"])
+G = "Structure"
+add(D,P,G,"Nested paths","{\"a\":{\"b\":[{\"c\":1}]}}",["Object: 1 key  $","  a: 1 key  $.a","    b: 1 item  $.a.b","      [0]: 1 key  $.a.b[0]","        c: 1  $.a.b[0].c"])
+add(D,P,G,"Keys keep the order of the document","{\"b\":1,\"a\":2}",["Object: 2 keys  $","  b: 1  $.b","  a: 2  $.a"],
+    should="A JSON column's keys are shown in the order they are stored",
+    issue="Keys are sorted alphabetically (an Echo test pins this). Whether the viewer should keep the document's order is the owner's to decide")
+add(D,P,G,"Array of arrays","[[1,2],[3]]",["Array: 2 items  $","  [0]: 2 items  $[0]","    [0]: 1  $[0][0]","    [1]: 2  $[0][1]","  [1]: 1 item  $[1]","    [0]: 3  $[1][0]"])
+G = "Paths"
+add(D,P,G,"A name with a dot","{\"a.b\":1}",["Object: 1 key  $","  a.b: 1  $['a.b']"])
+add(D,P,G,"A name with a space","{\"a b\":1}",["Object: 1 key  $","  a b: 1  $['a b']"])
+add(D,P,G,"A name with a hyphen","{\"a-b\":1}",["Object: 1 key  $","  a-b: 1  $['a-b']"])
+add(D,P,G,"A name with an underscore","{\"a_b\":1}",["Object: 1 key  $","  a_b: 1  $.a_b"])
+add(D,P,G,"A name with an apostrophe is escaped","{\"it's\":1}",["Object: 1 key  $","  it's: 1  $['it\\'s']"])
+add(D,P,G,"A name starting with a digit","{\"1a\":1}",["Object: 1 key  $","  1a: 1  $['1a']"])
+add(D,P,G,"A name with brackets","{\"a[0]\":1}",["Object: 1 key  $","  a[0]: 1  $['a[0]']"])
+add(D,P,G,"An empty name","{\"\":1}",["Object: 1 key  $","  : 1  $['']"])
+G = "Numbers"
+add(D,P,G,"A decimal","0.1",["Number: 0.1  $"])
+add(D,P,G,"A number too big for a double","12345678901234567890",["Number: 12345678901234567890  $"],
+    should="The digits in the column are the digits shown",issue="Shown as 1.2345678901234567e+19")
+add(D,P,G,"A trailing zero","1.0",["Number: 1.0  $"],
+    should="The digits in the column are the digits shown",issue="Shown as 1")
+G = "Invalid"
+add(D,P,G,"Not JSON","not json",["(invalid)"])
+add(D,P,G,"Empty","",["(invalid)"])
+add(D,P,G,"A trailing comma","[1,]",["(invalid)"])
+add(D,P,G,"Single quotes","{'a':1}",["(invalid)"])
+add(D,P,G,"An unclosed object","{\"a\":1",["(invalid)"])
+
 for domain, items in OUT.items():
     path = os.path.join(ROOT, domain + ".json")
     os.makedirs(ROOT, exist_ok=True)

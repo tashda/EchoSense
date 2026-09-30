@@ -5,7 +5,7 @@ import Foundation
 public enum ScenarioDomains {
     public static let all: [ScenarioDomain] = [
         statements, statementAtCaret, goBatches, sqlcmd,
-        errorLine, runNote, connectionLoss, tablePreview, gridSelection,
+        errorLine, runNote, connectionLoss, tablePreview, gridSelection, jsonOutline,
     ]
 
     public static func domain(id: String) -> ScenarioDomain? { all.first { $0.id == id } }
@@ -123,5 +123,20 @@ public enum ScenarioDomains {
         let cells: [String?] = scenario.input.components(separatedBy: "\n").map { $0 == "∅" ? nil : $0 }
         let count = Int(scenario.options["cellCount"] ?? "") ?? cells.count
         return [GridSelectionSummary.summarize(cells, cellCount: count).text(locale: fixedLocale)]
+    }
+
+    public static let jsonOutline = ScenarioDomain(
+        id: "json-outline", title: "JSON viewer",
+        summary: "How a JSON value is laid out in the inspector: each node's title, what it shows and the path you copy.",
+        inputLabel: "The JSON text", expectedLabel: "One node: indent, title, “: ”, what it shows, two spaces, its path; or “(invalid)”"
+    ) { scenario in
+        guard let value = try? JsonValue.parse(from: scenario.input) else { return ["(invalid)"] }
+        func lines(_ node: JsonOutlineNode, path: String, depth: Int) -> [String] {
+            let nodePath = node.jsonPath(parentPath: path)
+            var out = [String(repeating: "  ", count: depth) + "\(node.title): \(node.subtitle)  \(nodePath)"]
+            for child in node.children { out += lines(child, path: nodePath, depth: depth + 1) }
+            return out
+        }
+        return lines(value.toOutlineNode(), path: "$", depth: 0)
     }
 }
