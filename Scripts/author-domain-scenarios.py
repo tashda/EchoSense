@@ -271,6 +271,89 @@ add(D,P,G,"A trailing comma","[1,]",["(invalid)"])
 add(D,P,G,"Single quotes","{'a':1}",["(invalid)"])
 add(D,P,G,"An unclosed object","{\"a\":1",["(invalid)"])
 
+# ---------------------------------------------------------------- table DDL
+D, P = "table-ddl", "DDL"
+def ddl(group, title, dialect, opts, expected, issue=None, should=""):
+    o = {"dialect": dialect}; o.update(opts)
+    add(D, P, group, title, "", expected, should=should, issue=issue, options=o)
+PG, MS, MY = "postgresql", "mssql", "mysql"
+G = "Transactions"
+ddl(G,"Begin, PostgreSQL",PG,{"op":"begin"},["BEGIN;"])
+ddl(G,"Begin, SQL Server",MS,{"op":"begin"},["BEGIN TRANSACTION;"])
+ddl(G,"Begin, MySQL",MY,{"op":"begin"},["START TRANSACTION;"])
+ddl(G,"Rollback, SQL Server",MS,{"op":"rollback"},["ROLLBACK TRANSACTION;"])
+G = "Add column"
+ddl(G,"Plain column, PostgreSQL",PG,{"op":"addColumn","column":"note","type":"text"},['ALTER TABLE "public"."orders" ADD COLUMN "note" text;'])
+ddl(G,"Not null with default, PostgreSQL",PG,{"op":"addColumn","column":"status","type":"text","nullable":"false","default":"'new'"},['ALTER TABLE "public"."orders" ADD COLUMN "status" text NOT NULL DEFAULT \'new\';'])
+ddl(G,"Identity, PostgreSQL",PG,{"op":"addColumn","column":"id","type":"integer","nullable":"false","identity":"1,1"},['ALTER TABLE "public"."orders" ADD COLUMN "id" integer GENERATED ALWAYS AS IDENTITY (START WITH 1 INCREMENT BY 1) NOT NULL;'])
+ddl(G,"Generated column, PostgreSQL",PG,{"op":"addColumn","column":"total","type":"numeric","expression":"price * qty"},['ALTER TABLE "public"."orders" ADD COLUMN "total" numeric GENERATED ALWAYS AS (price * qty) STORED;'])
+ddl(G,"Collation, PostgreSQL",PG,{"op":"addColumn","column":"name","type":"text","collation":"C"},['ALTER TABLE "public"."orders" ADD COLUMN "name" text COLLATE "C";'])
+ddl(G,"Plain column, SQL Server",MS,{"op":"addColumn","column":"note","type":"nvarchar(200)"},['ALTER TABLE [dbo].[orders] ADD [note] nvarchar(200) NULL;'])
+ddl(G,"Not null with default, SQL Server",MS,{"op":"addColumn","column":"status","type":"nvarchar(20)","nullable":"false","default":"'new'"},["ALTER TABLE [dbo].[orders] ADD [status] nvarchar(20) NOT NULL DEFAULT 'new';"])
+ddl(G,"Identity, SQL Server",MS,{"op":"addColumn","column":"id","type":"int","nullable":"false","identity":"1,1"},['ALTER TABLE [dbo].[orders] ADD [id] int IDENTITY(1, 1) NOT NULL;'])
+ddl(G,"Computed column, SQL Server",MS,{"op":"addColumn","column":"total","type":"money","expression":"price * qty"},['ALTER TABLE [dbo].[orders] ADD [total] AS (price * qty) PERSISTED;'])
+ddl(G,"Collation, SQL Server",MS,{"op":"addColumn","column":"name","type":"nvarchar(50)","collation":"Latin1_General_CI_AS"},['ALTER TABLE [dbo].[orders] ADD [name] nvarchar(50) COLLATE Latin1_General_CI_AS NULL;'])
+ddl(G,"Plain column, MySQL",MY,{"op":"addColumn","column":"note","type":"varchar(200)"},['ALTER TABLE `shop`.`orders` ADD COLUMN `note` varchar(200);'])
+ddl(G,"Not null with default, MySQL",MY,{"op":"addColumn","column":"status","type":"varchar(20)","nullable":"false","default":"'new'"},["ALTER TABLE `shop`.`orders` ADD COLUMN `status` varchar(20) NOT NULL DEFAULT 'new';"])
+ddl(G,"Auto increment, MySQL",MY,{"op":"addColumn","column":"id","type":"int","nullable":"false","identity":"1,1"},['ALTER TABLE `shop`.`orders` ADD COLUMN `id` int NOT NULL AUTO_INCREMENT;'])
+ddl(G,"A name with a quote is escaped",PG,{"op":"addColumn","column":"a\"b","type":"text"},['ALTER TABLE "public"."orders" ADD COLUMN "a""b" text;'])
+G = "Drop and rename column"
+ddl(G,"Drop column, PostgreSQL",PG,{"op":"dropColumn","column":"note"},['ALTER TABLE "public"."orders" DROP COLUMN "note";'],
+    should="Dropping a column does not silently drop the views and constraints that use it",
+    issue="Adds CASCADE, which also drops dependent views and constraints without saying so. Whether it should is the owner's to decide")
+ddl(G,"Drop column, SQL Server",MS,{"op":"dropColumn","column":"note"},['ALTER TABLE [dbo].[orders] DROP COLUMN [note];'])
+ddl(G,"Drop column, MySQL",MY,{"op":"dropColumn","column":"note"},['ALTER TABLE `shop`.`orders` DROP COLUMN `note`;'])
+ddl(G,"Rename column, PostgreSQL",PG,{"op":"renameColumn","column":"status","to":"state"},['ALTER TABLE "public"."orders" RENAME COLUMN "status" TO "state";'])
+ddl(G,"Rename column, MySQL",MY,{"op":"renameColumn","column":"status","to":"state"},['ALTER TABLE `shop`.`orders` RENAME COLUMN `status` TO `state`;'])
+ddl(G,"Rename column, SQL Server",MS,{"op":"renameColumn","column":"status","to":"state"},["EXEC sp_rename 'dbo.orders.status', 'state', 'COLUMN';"])
+ddl(G,"Rename with an apostrophe in the name, SQL Server",MS,{"op":"renameColumn","column":"it's","to":"its"},["EXEC sp_rename 'dbo.orders.it''s', 'its', 'COLUMN';"],
+    should="A quote in a name is doubled inside the string",issue="The apostrophe is not doubled, so the statement breaks (or runs something else)")
+G = "Change a column"
+ddl(G,"Change type, PostgreSQL",PG,{"op":"alterColumnType","column":"total","type":"numeric(12,2)"},['ALTER TABLE "public"."orders" ALTER COLUMN "total" TYPE numeric(12,2);'])
+ddl(G,"Change type, SQL Server",MS,{"op":"alterColumnType","column":"total","type":"decimal(12,2)","nullable":"false"},['ALTER TABLE [dbo].[orders] ALTER COLUMN [total] decimal(12,2) NOT NULL;'])
+ddl(G,"Change type, MySQL",MY,{"op":"alterColumnType","column":"total","type":"decimal(12,2)"},['ALTER TABLE `shop`.`orders` MODIFY COLUMN `total` decimal(12,2) NULL;'])
+ddl(G,"Allow NULL, PostgreSQL",PG,{"op":"alterColumnNullability","column":"note","nullable":"true"},['ALTER TABLE "public"."orders" ALTER COLUMN "note" DROP NOT NULL;'])
+ddl(G,"Disallow NULL, PostgreSQL",PG,{"op":"alterColumnNullability","column":"note","nullable":"false"},['ALTER TABLE "public"."orders" ALTER COLUMN "note" SET NOT NULL;'])
+ddl(G,"Disallow NULL, SQL Server",MS,{"op":"alterColumnNullability","column":"note","nullable":"false","type":"nvarchar(200)"},['ALTER TABLE [dbo].[orders] ALTER COLUMN [note] nvarchar(200) NOT NULL;'])
+ddl(G,"Set default, PostgreSQL",PG,{"op":"setDefault","column":"status","default":"'new'"},['ALTER TABLE "public"."orders" ALTER COLUMN "status" SET DEFAULT \'new\';'])
+ddl(G,"Drop default, MySQL",MY,{"op":"dropDefault","column":"status"},['ALTER TABLE `shop`.`orders` ALTER COLUMN `status` DROP DEFAULT;'])
+ddl(G,"Set default names the constraint after the table and column, SQL Server",MS,{"op":"setDefault","column":"status","default":"'new'"},["ALTER TABLE [dbo].[orders] ADD CONSTRAINT [DF_orders_status] DEFAULT 'new' FOR [status];"],
+    should="Two tables with a status column do not get the same constraint name (names are unique per schema)",
+    issue="The constraint is named DF_status, so the second table's default fails with a duplicate name")
+G = "Keys and constraints"
+ddl(G,"Primary key, PostgreSQL",PG,{"op":"addPrimaryKey","name":"pk_orders","columns":"id"},['ALTER TABLE "public"."orders" ADD CONSTRAINT "pk_orders" PRIMARY KEY ("id");'])
+ddl(G,"Primary key on two columns, SQL Server",MS,{"op":"addPrimaryKey","name":"pk_orders","columns":"a,b"},['ALTER TABLE [dbo].[orders] ADD CONSTRAINT [pk_orders] PRIMARY KEY ([a], [b]);'])
+ddl(G,"Primary key, MySQL has no name",MY,{"op":"addPrimaryKey","name":"pk_orders","columns":"id"},['ALTER TABLE `shop`.`orders` ADD PRIMARY KEY (`id`);'])
+ddl(G,"Deferrable primary key, PostgreSQL",PG,{"op":"addPrimaryKey","name":"pk_orders","columns":"id","deferrable":"true","deferred":"true"},['ALTER TABLE "public"."orders" ADD CONSTRAINT "pk_orders" PRIMARY KEY ("id") DEFERRABLE INITIALLY DEFERRED;'])
+ddl(G,"Unique, PostgreSQL",PG,{"op":"addUnique","name":"uq_email","columns":"email"},['ALTER TABLE "public"."orders" ADD CONSTRAINT "uq_email" UNIQUE ("email");'])
+ddl(G,"Check, SQL Server",MS,{"op":"addCheck","name":"ck_total","expression":"total >= 0"},['ALTER TABLE [dbo].[orders] ADD CONSTRAINT [ck_total] CHECK (total >= 0);'])
+ddl(G,"Drop constraint, PostgreSQL",PG,{"op":"dropConstraint","name":"uq_email"},['ALTER TABLE "public"."orders" DROP CONSTRAINT "uq_email";'])
+ddl(G,"Drop constraint, SQL Server",MS,{"op":"dropConstraint","name":"uq_email"},['ALTER TABLE [dbo].[orders] DROP CONSTRAINT [uq_email];'])
+ddl(G,"Drop the primary key, MySQL",MY,{"op":"dropConstraint","name":"PRIMARY"},['ALTER TABLE `shop`.`orders` DROP PRIMARY KEY;'])
+ddl(G,"Drop a foreign key, MySQL",MY,{"op":"dropConstraint","name":"fk_customer"},['ALTER TABLE `shop`.`orders` DROP FOREIGN KEY `fk_customer`;'],
+    should="Dropping a foreign key in MySQL uses DROP FOREIGN KEY; a unique or check constraint needs DROP INDEX or DROP CHECK")
+ddl(G,"Foreign key with actions, PostgreSQL",PG,{"op":"addForeignKey","name":"fk_customer","columns":"customer_id","refTable":"customers","refColumns":"id","onDelete":"CASCADE","onUpdate":"NO ACTION"},['ALTER TABLE "public"."orders" ADD CONSTRAINT "fk_customer" FOREIGN KEY ("customer_id") REFERENCES "public"."customers" ("id") ON UPDATE NO ACTION ON DELETE CASCADE;'])
+ddl(G,"Foreign key, SQL Server",MS,{"op":"addForeignKey","name":"fk_customer","columns":"customer_id","refTable":"customers","refColumns":"id"},['ALTER TABLE [dbo].[orders] ADD CONSTRAINT [fk_customer] FOREIGN KEY ([customer_id]) REFERENCES [dbo].[customers] ([id]);'])
+ddl(G,"Foreign key across schemas, MySQL",MY,{"op":"addForeignKey","name":"fk_customer","columns":"customer_id","refSchema":"crm","refTable":"customers","refColumns":"id"},['ALTER TABLE `shop`.`orders` ADD CONSTRAINT `fk_customer` FOREIGN KEY (`customer_id`) REFERENCES `crm`.`customers` (`id`);'])
+G = "Indexes"
+ddl(G,"Index, PostgreSQL",PG,{"op":"createIndex","name":"ix_orders_date","columns":"created_at DESC"},['CREATE INDEX "ix_orders_date" ON "public"."orders" ("created_at" DESC);'])
+ddl(G,"Unique index with include and filter, SQL Server",MS,{"op":"createIndex","name":"ix_orders_email","columns":"email","unique":"true","include":"name","filter":"email IS NOT NULL"},['CREATE UNIQUE INDEX [ix_orders_email] ON [dbo].[orders] ([email] ASC) INCLUDE ([name]) WHERE email IS NOT NULL;'])
+ddl(G,"GIN index, PostgreSQL",PG,{"op":"createIndex","name":"ix_orders_doc","columns":"doc","indexType":"GIN"},['CREATE INDEX "ix_orders_doc" ON "public"."orders" USING gin ("doc" ASC);'])
+ddl(G,"A plain btree index has no USING, PostgreSQL",PG,{"op":"createIndex","name":"ix_a","columns":"a","indexType":"btree"},['CREATE INDEX "ix_a" ON "public"."orders" ("a" ASC);'])
+ddl(G,"Fulltext index, MySQL",MY,{"op":"createIndex","name":"ft_body","columns":"body","indexType":"fulltext"},['CREATE FULLTEXT INDEX `ft_body` ON `shop`.`orders` (`body` ASC);'])
+ddl(G,"Drop index, PostgreSQL",PG,{"op":"dropIndex","name":"ix_a"},['DROP INDEX IF EXISTS "public"."ix_a";'])
+ddl(G,"Drop index, SQL Server",MS,{"op":"dropIndex","name":"ix_a"},['DROP INDEX [ix_a] ON [dbo].[orders];'])
+ddl(G,"Drop index, MySQL",MY,{"op":"dropIndex","name":"ix_a"},['DROP INDEX `ix_a` ON `shop`.`orders`;'])
+G = "Table properties"
+ddl(G,"Storage parameter, PostgreSQL",PG,{"op":"tableProperties","properties":"fillfactor = 70"},['ALTER TABLE "public"."orders" SET (fillfactor = 70);'])
+ddl(G,"No properties, PostgreSQL",PG,{"op":"tableProperties"},[])
+ddl(G,"Compression, SQL Server",MS,{"op":"tableProperties","properties":"DATA_COMPRESSION = PAGE"},['ALTER TABLE [dbo].[orders] REBUILD WITH (DATA_COMPRESSION = PAGE);'])
+ddl(G,"Engine and comment, MySQL",MY,{"op":"tableProperties","properties":"ENGINE = InnoDB, COMMENT = 'orders'"},["ALTER TABLE `shop`.`orders` ENGINE = InnoDB, COMMENT = 'orders';"])
+G = "Names"
+ddl(G,"A table with a space, PostgreSQL",PG,{"op":"dropColumn","table":"Order Items","column":"x"},['ALTER TABLE "public"."Order Items" DROP COLUMN "x";'],issue="Adds CASCADE; see the drop column scenario")
+ddl(G,"A table with a closing bracket, SQL Server",MS,{"op":"dropColumn","table":"a]b","column":"x"},['ALTER TABLE [dbo].[a]]b] DROP COLUMN [x];'])
+ddl(G,"A table with a backtick, MySQL",MY,{"op":"dropColumn","table":"a`b","column":"x"},['ALTER TABLE `shop`.`a``b` DROP COLUMN `x`;'])
+
 for domain, items in OUT.items():
     path = os.path.join(ROOT, domain + ".json")
     os.makedirs(ROOT, exist_ok=True)

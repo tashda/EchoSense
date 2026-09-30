@@ -1,0 +1,1131 @@
+[
+  {
+    "caretMarker" : "|",
+    "domain" : "table-ddl",
+    "expected" : [
+      "BEGIN;"
+    ],
+    "group" : "Transactions",
+    "id" : "DDL-001",
+    "input" : "",
+    "options" : {
+      "dialect" : "postgresql",
+      "op" : "begin"
+    },
+    "should" : "Begin, PostgreSQL",
+    "title" : "Begin, PostgreSQL"
+  },
+  {
+    "caretMarker" : "|",
+    "domain" : "table-ddl",
+    "expected" : [
+      "BEGIN TRANSACTION;"
+    ],
+    "group" : "Transactions",
+    "id" : "DDL-002",
+    "input" : "",
+    "options" : {
+      "dialect" : "mssql",
+      "op" : "begin"
+    },
+    "should" : "Begin, SQL Server",
+    "title" : "Begin, SQL Server"
+  },
+  {
+    "caretMarker" : "|",
+    "domain" : "table-ddl",
+    "expected" : [
+      "START TRANSACTION;"
+    ],
+    "group" : "Transactions",
+    "id" : "DDL-003",
+    "input" : "",
+    "options" : {
+      "dialect" : "mysql",
+      "op" : "begin"
+    },
+    "should" : "Begin, MySQL",
+    "title" : "Begin, MySQL"
+  },
+  {
+    "caretMarker" : "|",
+    "domain" : "table-ddl",
+    "expected" : [
+      "ROLLBACK TRANSACTION;"
+    ],
+    "group" : "Transactions",
+    "id" : "DDL-004",
+    "input" : "",
+    "options" : {
+      "dialect" : "mssql",
+      "op" : "rollback"
+    },
+    "should" : "Rollback, SQL Server",
+    "title" : "Rollback, SQL Server"
+  },
+  {
+    "caretMarker" : "|",
+    "domain" : "table-ddl",
+    "expected" : [
+      "ALTER TABLE \"public\".\"orders\" ADD COLUMN \"note\" text;"
+    ],
+    "group" : "Add column",
+    "id" : "DDL-005",
+    "input" : "",
+    "options" : {
+      "column" : "note",
+      "dialect" : "postgresql",
+      "op" : "addColumn",
+      "type" : "text"
+    },
+    "should" : "Plain column, PostgreSQL",
+    "title" : "Plain column, PostgreSQL"
+  },
+  {
+    "caretMarker" : "|",
+    "domain" : "table-ddl",
+    "expected" : [
+      "ALTER TABLE \"public\".\"orders\" ADD COLUMN \"status\" text NOT NULL DEFAULT 'new';"
+    ],
+    "group" : "Add column",
+    "id" : "DDL-006",
+    "input" : "",
+    "options" : {
+      "column" : "status",
+      "default" : "'new'",
+      "dialect" : "postgresql",
+      "nullable" : "false",
+      "op" : "addColumn",
+      "type" : "text"
+    },
+    "should" : "Not null with default, PostgreSQL",
+    "title" : "Not null with default, PostgreSQL"
+  },
+  {
+    "caretMarker" : "|",
+    "domain" : "table-ddl",
+    "expected" : [
+      "ALTER TABLE \"public\".\"orders\" ADD COLUMN \"id\" integer GENERATED ALWAYS AS IDENTITY (START WITH 1 INCREMENT BY 1) NOT NULL;"
+    ],
+    "group" : "Add column",
+    "id" : "DDL-007",
+    "input" : "",
+    "options" : {
+      "column" : "id",
+      "dialect" : "postgresql",
+      "identity" : "1,1",
+      "nullable" : "false",
+      "op" : "addColumn",
+      "type" : "integer"
+    },
+    "should" : "Identity, PostgreSQL",
+    "title" : "Identity, PostgreSQL"
+  },
+  {
+    "caretMarker" : "|",
+    "domain" : "table-ddl",
+    "expected" : [
+      "ALTER TABLE \"public\".\"orders\" ADD COLUMN \"total\" numeric GENERATED ALWAYS AS (price * qty) STORED;"
+    ],
+    "group" : "Add column",
+    "id" : "DDL-008",
+    "input" : "",
+    "options" : {
+      "column" : "total",
+      "dialect" : "postgresql",
+      "expression" : "price * qty",
+      "op" : "addColumn",
+      "type" : "numeric"
+    },
+    "should" : "Generated column, PostgreSQL",
+    "title" : "Generated column, PostgreSQL"
+  },
+  {
+    "caretMarker" : "|",
+    "domain" : "table-ddl",
+    "expected" : [
+      "ALTER TABLE \"public\".\"orders\" ADD COLUMN \"name\" text COLLATE \"C\";"
+    ],
+    "group" : "Add column",
+    "id" : "DDL-009",
+    "input" : "",
+    "options" : {
+      "collation" : "C",
+      "column" : "name",
+      "dialect" : "postgresql",
+      "op" : "addColumn",
+      "type" : "text"
+    },
+    "should" : "Collation, PostgreSQL",
+    "title" : "Collation, PostgreSQL"
+  },
+  {
+    "caretMarker" : "|",
+    "domain" : "table-ddl",
+    "expected" : [
+      "ALTER TABLE [dbo].[orders] ADD [note] nvarchar(200) NULL;"
+    ],
+    "group" : "Add column",
+    "id" : "DDL-010",
+    "input" : "",
+    "options" : {
+      "column" : "note",
+      "dialect" : "mssql",
+      "op" : "addColumn",
+      "type" : "nvarchar(200)"
+    },
+    "should" : "Plain column, SQL Server",
+    "title" : "Plain column, SQL Server"
+  },
+  {
+    "caretMarker" : "|",
+    "domain" : "table-ddl",
+    "expected" : [
+      "ALTER TABLE [dbo].[orders] ADD [status] nvarchar(20) NOT NULL DEFAULT 'new';"
+    ],
+    "group" : "Add column",
+    "id" : "DDL-011",
+    "input" : "",
+    "options" : {
+      "column" : "status",
+      "default" : "'new'",
+      "dialect" : "mssql",
+      "nullable" : "false",
+      "op" : "addColumn",
+      "type" : "nvarchar(20)"
+    },
+    "should" : "Not null with default, SQL Server",
+    "title" : "Not null with default, SQL Server"
+  },
+  {
+    "caretMarker" : "|",
+    "domain" : "table-ddl",
+    "expected" : [
+      "ALTER TABLE [dbo].[orders] ADD [id] int IDENTITY(1, 1) NOT NULL;"
+    ],
+    "group" : "Add column",
+    "id" : "DDL-012",
+    "input" : "",
+    "options" : {
+      "column" : "id",
+      "dialect" : "mssql",
+      "identity" : "1,1",
+      "nullable" : "false",
+      "op" : "addColumn",
+      "type" : "int"
+    },
+    "should" : "Identity, SQL Server",
+    "title" : "Identity, SQL Server"
+  },
+  {
+    "caretMarker" : "|",
+    "domain" : "table-ddl",
+    "expected" : [
+      "ALTER TABLE [dbo].[orders] ADD [total] AS (price * qty) PERSISTED;"
+    ],
+    "group" : "Add column",
+    "id" : "DDL-013",
+    "input" : "",
+    "options" : {
+      "column" : "total",
+      "dialect" : "mssql",
+      "expression" : "price * qty",
+      "op" : "addColumn",
+      "type" : "money"
+    },
+    "should" : "Computed column, SQL Server",
+    "title" : "Computed column, SQL Server"
+  },
+  {
+    "caretMarker" : "|",
+    "domain" : "table-ddl",
+    "expected" : [
+      "ALTER TABLE [dbo].[orders] ADD [name] nvarchar(50) COLLATE Latin1_General_CI_AS NULL;"
+    ],
+    "group" : "Add column",
+    "id" : "DDL-014",
+    "input" : "",
+    "options" : {
+      "collation" : "Latin1_General_CI_AS",
+      "column" : "name",
+      "dialect" : "mssql",
+      "op" : "addColumn",
+      "type" : "nvarchar(50)"
+    },
+    "should" : "Collation, SQL Server",
+    "title" : "Collation, SQL Server"
+  },
+  {
+    "caretMarker" : "|",
+    "domain" : "table-ddl",
+    "expected" : [
+      "ALTER TABLE `shop`.`orders` ADD COLUMN `note` varchar(200);"
+    ],
+    "group" : "Add column",
+    "id" : "DDL-015",
+    "input" : "",
+    "options" : {
+      "column" : "note",
+      "dialect" : "mysql",
+      "op" : "addColumn",
+      "type" : "varchar(200)"
+    },
+    "should" : "Plain column, MySQL",
+    "title" : "Plain column, MySQL"
+  },
+  {
+    "caretMarker" : "|",
+    "domain" : "table-ddl",
+    "expected" : [
+      "ALTER TABLE `shop`.`orders` ADD COLUMN `status` varchar(20) NOT NULL DEFAULT 'new';"
+    ],
+    "group" : "Add column",
+    "id" : "DDL-016",
+    "input" : "",
+    "options" : {
+      "column" : "status",
+      "default" : "'new'",
+      "dialect" : "mysql",
+      "nullable" : "false",
+      "op" : "addColumn",
+      "type" : "varchar(20)"
+    },
+    "should" : "Not null with default, MySQL",
+    "title" : "Not null with default, MySQL"
+  },
+  {
+    "caretMarker" : "|",
+    "domain" : "table-ddl",
+    "expected" : [
+      "ALTER TABLE `shop`.`orders` ADD COLUMN `id` int NOT NULL AUTO_INCREMENT;"
+    ],
+    "group" : "Add column",
+    "id" : "DDL-017",
+    "input" : "",
+    "options" : {
+      "column" : "id",
+      "dialect" : "mysql",
+      "identity" : "1,1",
+      "nullable" : "false",
+      "op" : "addColumn",
+      "type" : "int"
+    },
+    "should" : "Auto increment, MySQL",
+    "title" : "Auto increment, MySQL"
+  },
+  {
+    "caretMarker" : "|",
+    "domain" : "table-ddl",
+    "expected" : [
+      "ALTER TABLE \"public\".\"orders\" ADD COLUMN \"a\"\"b\" text;"
+    ],
+    "group" : "Add column",
+    "id" : "DDL-018",
+    "input" : "",
+    "options" : {
+      "column" : "a\"b",
+      "dialect" : "postgresql",
+      "op" : "addColumn",
+      "type" : "text"
+    },
+    "should" : "A name with a quote is escaped",
+    "title" : "A name with a quote is escaped"
+  },
+  {
+    "caretMarker" : "|",
+    "domain" : "table-ddl",
+    "expected" : [
+      "ALTER TABLE \"public\".\"orders\" DROP COLUMN \"note\";"
+    ],
+    "group" : "Drop and rename column",
+    "id" : "DDL-019",
+    "input" : "",
+    "knownIssue" : "Adds CASCADE, which also drops dependent views and constraints without saying so. Whether it should is the owner's to decide",
+    "options" : {
+      "column" : "note",
+      "dialect" : "postgresql",
+      "op" : "dropColumn"
+    },
+    "should" : "Dropping a column does not silently drop the views and constraints that use it",
+    "title" : "Drop column, PostgreSQL"
+  },
+  {
+    "caretMarker" : "|",
+    "domain" : "table-ddl",
+    "expected" : [
+      "ALTER TABLE [dbo].[orders] DROP COLUMN [note];"
+    ],
+    "group" : "Drop and rename column",
+    "id" : "DDL-020",
+    "input" : "",
+    "options" : {
+      "column" : "note",
+      "dialect" : "mssql",
+      "op" : "dropColumn"
+    },
+    "should" : "Drop column, SQL Server",
+    "title" : "Drop column, SQL Server"
+  },
+  {
+    "caretMarker" : "|",
+    "domain" : "table-ddl",
+    "expected" : [
+      "ALTER TABLE `shop`.`orders` DROP COLUMN `note`;"
+    ],
+    "group" : "Drop and rename column",
+    "id" : "DDL-021",
+    "input" : "",
+    "options" : {
+      "column" : "note",
+      "dialect" : "mysql",
+      "op" : "dropColumn"
+    },
+    "should" : "Drop column, MySQL",
+    "title" : "Drop column, MySQL"
+  },
+  {
+    "caretMarker" : "|",
+    "domain" : "table-ddl",
+    "expected" : [
+      "ALTER TABLE \"public\".\"orders\" RENAME COLUMN \"status\" TO \"state\";"
+    ],
+    "group" : "Drop and rename column",
+    "id" : "DDL-022",
+    "input" : "",
+    "options" : {
+      "column" : "status",
+      "dialect" : "postgresql",
+      "op" : "renameColumn",
+      "to" : "state"
+    },
+    "should" : "Rename column, PostgreSQL",
+    "title" : "Rename column, PostgreSQL"
+  },
+  {
+    "caretMarker" : "|",
+    "domain" : "table-ddl",
+    "expected" : [
+      "ALTER TABLE `shop`.`orders` RENAME COLUMN `status` TO `state`;"
+    ],
+    "group" : "Drop and rename column",
+    "id" : "DDL-023",
+    "input" : "",
+    "options" : {
+      "column" : "status",
+      "dialect" : "mysql",
+      "op" : "renameColumn",
+      "to" : "state"
+    },
+    "should" : "Rename column, MySQL",
+    "title" : "Rename column, MySQL"
+  },
+  {
+    "caretMarker" : "|",
+    "domain" : "table-ddl",
+    "expected" : [
+      "EXEC sp_rename 'dbo.orders.status', 'state', 'COLUMN';"
+    ],
+    "group" : "Drop and rename column",
+    "id" : "DDL-024",
+    "input" : "",
+    "options" : {
+      "column" : "status",
+      "dialect" : "mssql",
+      "op" : "renameColumn",
+      "to" : "state"
+    },
+    "should" : "Rename column, SQL Server",
+    "title" : "Rename column, SQL Server"
+  },
+  {
+    "caretMarker" : "|",
+    "domain" : "table-ddl",
+    "expected" : [
+      "EXEC sp_rename 'dbo.orders.it''s', 'its', 'COLUMN';"
+    ],
+    "group" : "Drop and rename column",
+    "id" : "DDL-025",
+    "input" : "",
+    "options" : {
+      "column" : "it's",
+      "dialect" : "mssql",
+      "op" : "renameColumn",
+      "to" : "its"
+    },
+    "should" : "A quote in a name is doubled inside the string",
+    "title" : "Rename with an apostrophe in the name, SQL Server"
+  },
+  {
+    "caretMarker" : "|",
+    "domain" : "table-ddl",
+    "expected" : [
+      "ALTER TABLE \"public\".\"orders\" ALTER COLUMN \"total\" TYPE numeric(12,2);"
+    ],
+    "group" : "Change a column",
+    "id" : "DDL-026",
+    "input" : "",
+    "options" : {
+      "column" : "total",
+      "dialect" : "postgresql",
+      "op" : "alterColumnType",
+      "type" : "numeric(12,2)"
+    },
+    "should" : "Change type, PostgreSQL",
+    "title" : "Change type, PostgreSQL"
+  },
+  {
+    "caretMarker" : "|",
+    "domain" : "table-ddl",
+    "expected" : [
+      "ALTER TABLE [dbo].[orders] ALTER COLUMN [total] decimal(12,2) NOT NULL;"
+    ],
+    "group" : "Change a column",
+    "id" : "DDL-027",
+    "input" : "",
+    "options" : {
+      "column" : "total",
+      "dialect" : "mssql",
+      "nullable" : "false",
+      "op" : "alterColumnType",
+      "type" : "decimal(12,2)"
+    },
+    "should" : "Change type, SQL Server",
+    "title" : "Change type, SQL Server"
+  },
+  {
+    "caretMarker" : "|",
+    "domain" : "table-ddl",
+    "expected" : [
+      "ALTER TABLE `shop`.`orders` MODIFY COLUMN `total` decimal(12,2) NULL;"
+    ],
+    "group" : "Change a column",
+    "id" : "DDL-028",
+    "input" : "",
+    "options" : {
+      "column" : "total",
+      "dialect" : "mysql",
+      "op" : "alterColumnType",
+      "type" : "decimal(12,2)"
+    },
+    "should" : "Change type, MySQL",
+    "title" : "Change type, MySQL"
+  },
+  {
+    "caretMarker" : "|",
+    "domain" : "table-ddl",
+    "expected" : [
+      "ALTER TABLE \"public\".\"orders\" ALTER COLUMN \"note\" DROP NOT NULL;"
+    ],
+    "group" : "Change a column",
+    "id" : "DDL-029",
+    "input" : "",
+    "options" : {
+      "column" : "note",
+      "dialect" : "postgresql",
+      "nullable" : "true",
+      "op" : "alterColumnNullability"
+    },
+    "should" : "Allow NULL, PostgreSQL",
+    "title" : "Allow NULL, PostgreSQL"
+  },
+  {
+    "caretMarker" : "|",
+    "domain" : "table-ddl",
+    "expected" : [
+      "ALTER TABLE \"public\".\"orders\" ALTER COLUMN \"note\" SET NOT NULL;"
+    ],
+    "group" : "Change a column",
+    "id" : "DDL-030",
+    "input" : "",
+    "options" : {
+      "column" : "note",
+      "dialect" : "postgresql",
+      "nullable" : "false",
+      "op" : "alterColumnNullability"
+    },
+    "should" : "Disallow NULL, PostgreSQL",
+    "title" : "Disallow NULL, PostgreSQL"
+  },
+  {
+    "caretMarker" : "|",
+    "domain" : "table-ddl",
+    "expected" : [
+      "ALTER TABLE [dbo].[orders] ALTER COLUMN [note] nvarchar(200) NOT NULL;"
+    ],
+    "group" : "Change a column",
+    "id" : "DDL-031",
+    "input" : "",
+    "options" : {
+      "column" : "note",
+      "dialect" : "mssql",
+      "nullable" : "false",
+      "op" : "alterColumnNullability",
+      "type" : "nvarchar(200)"
+    },
+    "should" : "Disallow NULL, SQL Server",
+    "title" : "Disallow NULL, SQL Server"
+  },
+  {
+    "caretMarker" : "|",
+    "domain" : "table-ddl",
+    "expected" : [
+      "ALTER TABLE \"public\".\"orders\" ALTER COLUMN \"status\" SET DEFAULT 'new';"
+    ],
+    "group" : "Change a column",
+    "id" : "DDL-032",
+    "input" : "",
+    "options" : {
+      "column" : "status",
+      "default" : "'new'",
+      "dialect" : "postgresql",
+      "op" : "setDefault"
+    },
+    "should" : "Set default, PostgreSQL",
+    "title" : "Set default, PostgreSQL"
+  },
+  {
+    "caretMarker" : "|",
+    "domain" : "table-ddl",
+    "expected" : [
+      "ALTER TABLE `shop`.`orders` ALTER COLUMN `status` DROP DEFAULT;"
+    ],
+    "group" : "Change a column",
+    "id" : "DDL-033",
+    "input" : "",
+    "options" : {
+      "column" : "status",
+      "dialect" : "mysql",
+      "op" : "dropDefault"
+    },
+    "should" : "Drop default, MySQL",
+    "title" : "Drop default, MySQL"
+  },
+  {
+    "caretMarker" : "|",
+    "domain" : "table-ddl",
+    "expected" : [
+      "ALTER TABLE [dbo].[orders] ADD CONSTRAINT [DF_orders_status] DEFAULT 'new' FOR [status];"
+    ],
+    "group" : "Change a column",
+    "id" : "DDL-034",
+    "input" : "",
+    "options" : {
+      "column" : "status",
+      "default" : "'new'",
+      "dialect" : "mssql",
+      "op" : "setDefault"
+    },
+    "should" : "Two tables with a status column do not get the same constraint name (names are unique per schema)",
+    "title" : "Set default names the constraint after the table and column, SQL Server"
+  },
+  {
+    "caretMarker" : "|",
+    "domain" : "table-ddl",
+    "expected" : [
+      "ALTER TABLE \"public\".\"orders\" ADD CONSTRAINT \"pk_orders\" PRIMARY KEY (\"id\");"
+    ],
+    "group" : "Keys and constraints",
+    "id" : "DDL-035",
+    "input" : "",
+    "options" : {
+      "columns" : "id",
+      "dialect" : "postgresql",
+      "name" : "pk_orders",
+      "op" : "addPrimaryKey"
+    },
+    "should" : "Primary key, PostgreSQL",
+    "title" : "Primary key, PostgreSQL"
+  },
+  {
+    "caretMarker" : "|",
+    "domain" : "table-ddl",
+    "expected" : [
+      "ALTER TABLE [dbo].[orders] ADD CONSTRAINT [pk_orders] PRIMARY KEY ([a], [b]);"
+    ],
+    "group" : "Keys and constraints",
+    "id" : "DDL-036",
+    "input" : "",
+    "options" : {
+      "columns" : "a,b",
+      "dialect" : "mssql",
+      "name" : "pk_orders",
+      "op" : "addPrimaryKey"
+    },
+    "should" : "Primary key on two columns, SQL Server",
+    "title" : "Primary key on two columns, SQL Server"
+  },
+  {
+    "caretMarker" : "|",
+    "domain" : "table-ddl",
+    "expected" : [
+      "ALTER TABLE `shop`.`orders` ADD PRIMARY KEY (`id`);"
+    ],
+    "group" : "Keys and constraints",
+    "id" : "DDL-037",
+    "input" : "",
+    "options" : {
+      "columns" : "id",
+      "dialect" : "mysql",
+      "name" : "pk_orders",
+      "op" : "addPrimaryKey"
+    },
+    "should" : "Primary key, MySQL has no name",
+    "title" : "Primary key, MySQL has no name"
+  },
+  {
+    "caretMarker" : "|",
+    "domain" : "table-ddl",
+    "expected" : [
+      "ALTER TABLE \"public\".\"orders\" ADD CONSTRAINT \"pk_orders\" PRIMARY KEY (\"id\") DEFERRABLE INITIALLY DEFERRED;"
+    ],
+    "group" : "Keys and constraints",
+    "id" : "DDL-038",
+    "input" : "",
+    "options" : {
+      "columns" : "id",
+      "deferrable" : "true",
+      "deferred" : "true",
+      "dialect" : "postgresql",
+      "name" : "pk_orders",
+      "op" : "addPrimaryKey"
+    },
+    "should" : "Deferrable primary key, PostgreSQL",
+    "title" : "Deferrable primary key, PostgreSQL"
+  },
+  {
+    "caretMarker" : "|",
+    "domain" : "table-ddl",
+    "expected" : [
+      "ALTER TABLE \"public\".\"orders\" ADD CONSTRAINT \"uq_email\" UNIQUE (\"email\");"
+    ],
+    "group" : "Keys and constraints",
+    "id" : "DDL-039",
+    "input" : "",
+    "options" : {
+      "columns" : "email",
+      "dialect" : "postgresql",
+      "name" : "uq_email",
+      "op" : "addUnique"
+    },
+    "should" : "Unique, PostgreSQL",
+    "title" : "Unique, PostgreSQL"
+  },
+  {
+    "caretMarker" : "|",
+    "domain" : "table-ddl",
+    "expected" : [
+      "ALTER TABLE [dbo].[orders] ADD CONSTRAINT [ck_total] CHECK (total >= 0);"
+    ],
+    "group" : "Keys and constraints",
+    "id" : "DDL-040",
+    "input" : "",
+    "options" : {
+      "dialect" : "mssql",
+      "expression" : "total >= 0",
+      "name" : "ck_total",
+      "op" : "addCheck"
+    },
+    "should" : "Check, SQL Server",
+    "title" : "Check, SQL Server"
+  },
+  {
+    "caretMarker" : "|",
+    "domain" : "table-ddl",
+    "expected" : [
+      "ALTER TABLE \"public\".\"orders\" DROP CONSTRAINT \"uq_email\";"
+    ],
+    "group" : "Keys and constraints",
+    "id" : "DDL-041",
+    "input" : "",
+    "options" : {
+      "dialect" : "postgresql",
+      "name" : "uq_email",
+      "op" : "dropConstraint"
+    },
+    "should" : "Drop constraint, PostgreSQL",
+    "title" : "Drop constraint, PostgreSQL"
+  },
+  {
+    "caretMarker" : "|",
+    "domain" : "table-ddl",
+    "expected" : [
+      "ALTER TABLE [dbo].[orders] DROP CONSTRAINT [uq_email];"
+    ],
+    "group" : "Keys and constraints",
+    "id" : "DDL-042",
+    "input" : "",
+    "options" : {
+      "dialect" : "mssql",
+      "name" : "uq_email",
+      "op" : "dropConstraint"
+    },
+    "should" : "Drop constraint, SQL Server",
+    "title" : "Drop constraint, SQL Server"
+  },
+  {
+    "caretMarker" : "|",
+    "domain" : "table-ddl",
+    "expected" : [
+      "ALTER TABLE `shop`.`orders` DROP PRIMARY KEY;"
+    ],
+    "group" : "Keys and constraints",
+    "id" : "DDL-043",
+    "input" : "",
+    "options" : {
+      "dialect" : "mysql",
+      "name" : "PRIMARY",
+      "op" : "dropConstraint"
+    },
+    "should" : "Drop the primary key, MySQL",
+    "title" : "Drop the primary key, MySQL"
+  },
+  {
+    "caretMarker" : "|",
+    "domain" : "table-ddl",
+    "expected" : [
+      "ALTER TABLE `shop`.`orders` DROP FOREIGN KEY `fk_customer`;"
+    ],
+    "group" : "Keys and constraints",
+    "id" : "DDL-044",
+    "input" : "",
+    "options" : {
+      "dialect" : "mysql",
+      "name" : "fk_customer",
+      "op" : "dropConstraint"
+    },
+    "should" : "Dropping a foreign key in MySQL uses DROP FOREIGN KEY; a unique or check constraint needs DROP INDEX or DROP CHECK",
+    "title" : "Drop a foreign key, MySQL"
+  },
+  {
+    "caretMarker" : "|",
+    "domain" : "table-ddl",
+    "expected" : [
+      "ALTER TABLE \"public\".\"orders\" ADD CONSTRAINT \"fk_customer\" FOREIGN KEY (\"customer_id\") REFERENCES \"public\".\"customers\" (\"id\") ON UPDATE NO ACTION ON DELETE CASCADE;"
+    ],
+    "group" : "Keys and constraints",
+    "id" : "DDL-045",
+    "input" : "",
+    "options" : {
+      "columns" : "customer_id",
+      "dialect" : "postgresql",
+      "name" : "fk_customer",
+      "onDelete" : "CASCADE",
+      "onUpdate" : "NO ACTION",
+      "op" : "addForeignKey",
+      "refColumns" : "id",
+      "refTable" : "customers"
+    },
+    "should" : "Foreign key with actions, PostgreSQL",
+    "title" : "Foreign key with actions, PostgreSQL"
+  },
+  {
+    "caretMarker" : "|",
+    "domain" : "table-ddl",
+    "expected" : [
+      "ALTER TABLE [dbo].[orders] ADD CONSTRAINT [fk_customer] FOREIGN KEY ([customer_id]) REFERENCES [dbo].[customers] ([id]);"
+    ],
+    "group" : "Keys and constraints",
+    "id" : "DDL-046",
+    "input" : "",
+    "options" : {
+      "columns" : "customer_id",
+      "dialect" : "mssql",
+      "name" : "fk_customer",
+      "op" : "addForeignKey",
+      "refColumns" : "id",
+      "refTable" : "customers"
+    },
+    "should" : "Foreign key, SQL Server",
+    "title" : "Foreign key, SQL Server"
+  },
+  {
+    "caretMarker" : "|",
+    "domain" : "table-ddl",
+    "expected" : [
+      "ALTER TABLE `shop`.`orders` ADD CONSTRAINT `fk_customer` FOREIGN KEY (`customer_id`) REFERENCES `crm`.`customers` (`id`);"
+    ],
+    "group" : "Keys and constraints",
+    "id" : "DDL-047",
+    "input" : "",
+    "options" : {
+      "columns" : "customer_id",
+      "dialect" : "mysql",
+      "name" : "fk_customer",
+      "op" : "addForeignKey",
+      "refColumns" : "id",
+      "refSchema" : "crm",
+      "refTable" : "customers"
+    },
+    "should" : "Foreign key across schemas, MySQL",
+    "title" : "Foreign key across schemas, MySQL"
+  },
+  {
+    "caretMarker" : "|",
+    "domain" : "table-ddl",
+    "expected" : [
+      "CREATE INDEX \"ix_orders_date\" ON \"public\".\"orders\" (\"created_at\" DESC);"
+    ],
+    "group" : "Indexes",
+    "id" : "DDL-048",
+    "input" : "",
+    "options" : {
+      "columns" : "created_at DESC",
+      "dialect" : "postgresql",
+      "name" : "ix_orders_date",
+      "op" : "createIndex"
+    },
+    "should" : "Index, PostgreSQL",
+    "title" : "Index, PostgreSQL"
+  },
+  {
+    "caretMarker" : "|",
+    "domain" : "table-ddl",
+    "expected" : [
+      "CREATE UNIQUE INDEX [ix_orders_email] ON [dbo].[orders] ([email] ASC) INCLUDE ([name]) WHERE email IS NOT NULL;"
+    ],
+    "group" : "Indexes",
+    "id" : "DDL-049",
+    "input" : "",
+    "options" : {
+      "columns" : "email",
+      "dialect" : "mssql",
+      "filter" : "email IS NOT NULL",
+      "include" : "name",
+      "name" : "ix_orders_email",
+      "op" : "createIndex",
+      "unique" : "true"
+    },
+    "should" : "Unique index with include and filter, SQL Server",
+    "title" : "Unique index with include and filter, SQL Server"
+  },
+  {
+    "caretMarker" : "|",
+    "domain" : "table-ddl",
+    "expected" : [
+      "CREATE INDEX \"ix_orders_doc\" ON \"public\".\"orders\" USING gin (\"doc\" ASC);"
+    ],
+    "group" : "Indexes",
+    "id" : "DDL-050",
+    "input" : "",
+    "options" : {
+      "columns" : "doc",
+      "dialect" : "postgresql",
+      "indexType" : "GIN",
+      "name" : "ix_orders_doc",
+      "op" : "createIndex"
+    },
+    "should" : "GIN index, PostgreSQL",
+    "title" : "GIN index, PostgreSQL"
+  },
+  {
+    "caretMarker" : "|",
+    "domain" : "table-ddl",
+    "expected" : [
+      "CREATE INDEX \"ix_a\" ON \"public\".\"orders\" (\"a\" ASC);"
+    ],
+    "group" : "Indexes",
+    "id" : "DDL-051",
+    "input" : "",
+    "options" : {
+      "columns" : "a",
+      "dialect" : "postgresql",
+      "indexType" : "btree",
+      "name" : "ix_a",
+      "op" : "createIndex"
+    },
+    "should" : "A plain btree index has no USING, PostgreSQL",
+    "title" : "A plain btree index has no USING, PostgreSQL"
+  },
+  {
+    "caretMarker" : "|",
+    "domain" : "table-ddl",
+    "expected" : [
+      "CREATE FULLTEXT INDEX `ft_body` ON `shop`.`orders` (`body` ASC);"
+    ],
+    "group" : "Indexes",
+    "id" : "DDL-052",
+    "input" : "",
+    "options" : {
+      "columns" : "body",
+      "dialect" : "mysql",
+      "indexType" : "fulltext",
+      "name" : "ft_body",
+      "op" : "createIndex"
+    },
+    "should" : "Fulltext index, MySQL",
+    "title" : "Fulltext index, MySQL"
+  },
+  {
+    "caretMarker" : "|",
+    "domain" : "table-ddl",
+    "expected" : [
+      "DROP INDEX IF EXISTS \"public\".\"ix_a\";"
+    ],
+    "group" : "Indexes",
+    "id" : "DDL-053",
+    "input" : "",
+    "options" : {
+      "dialect" : "postgresql",
+      "name" : "ix_a",
+      "op" : "dropIndex"
+    },
+    "should" : "Drop index, PostgreSQL",
+    "title" : "Drop index, PostgreSQL"
+  },
+  {
+    "caretMarker" : "|",
+    "domain" : "table-ddl",
+    "expected" : [
+      "DROP INDEX [ix_a] ON [dbo].[orders];"
+    ],
+    "group" : "Indexes",
+    "id" : "DDL-054",
+    "input" : "",
+    "options" : {
+      "dialect" : "mssql",
+      "name" : "ix_a",
+      "op" : "dropIndex"
+    },
+    "should" : "Drop index, SQL Server",
+    "title" : "Drop index, SQL Server"
+  },
+  {
+    "caretMarker" : "|",
+    "domain" : "table-ddl",
+    "expected" : [
+      "DROP INDEX `ix_a` ON `shop`.`orders`;"
+    ],
+    "group" : "Indexes",
+    "id" : "DDL-055",
+    "input" : "",
+    "options" : {
+      "dialect" : "mysql",
+      "name" : "ix_a",
+      "op" : "dropIndex"
+    },
+    "should" : "Drop index, MySQL",
+    "title" : "Drop index, MySQL"
+  },
+  {
+    "caretMarker" : "|",
+    "domain" : "table-ddl",
+    "expected" : [
+      "ALTER TABLE \"public\".\"orders\" SET (fillfactor = 70);"
+    ],
+    "group" : "Table properties",
+    "id" : "DDL-056",
+    "input" : "",
+    "options" : {
+      "dialect" : "postgresql",
+      "op" : "tableProperties",
+      "properties" : "fillfactor = 70"
+    },
+    "should" : "Storage parameter, PostgreSQL",
+    "title" : "Storage parameter, PostgreSQL"
+  },
+  {
+    "caretMarker" : "|",
+    "domain" : "table-ddl",
+    "expected" : [
+
+    ],
+    "group" : "Table properties",
+    "id" : "DDL-057",
+    "input" : "",
+    "options" : {
+      "dialect" : "postgresql",
+      "op" : "tableProperties"
+    },
+    "should" : "No properties, PostgreSQL",
+    "title" : "No properties, PostgreSQL"
+  },
+  {
+    "caretMarker" : "|",
+    "domain" : "table-ddl",
+    "expected" : [
+      "ALTER TABLE [dbo].[orders] REBUILD WITH (DATA_COMPRESSION = PAGE);"
+    ],
+    "group" : "Table properties",
+    "id" : "DDL-058",
+    "input" : "",
+    "options" : {
+      "dialect" : "mssql",
+      "op" : "tableProperties",
+      "properties" : "DATA_COMPRESSION = PAGE"
+    },
+    "should" : "Compression, SQL Server",
+    "title" : "Compression, SQL Server"
+  },
+  {
+    "caretMarker" : "|",
+    "domain" : "table-ddl",
+    "expected" : [
+      "ALTER TABLE `shop`.`orders` ENGINE = InnoDB, COMMENT = 'orders';"
+    ],
+    "group" : "Table properties",
+    "id" : "DDL-059",
+    "input" : "",
+    "options" : {
+      "dialect" : "mysql",
+      "op" : "tableProperties",
+      "properties" : "ENGINE = InnoDB, COMMENT = 'orders'"
+    },
+    "should" : "Engine and comment, MySQL",
+    "title" : "Engine and comment, MySQL"
+  },
+  {
+    "caretMarker" : "|",
+    "domain" : "table-ddl",
+    "expected" : [
+      "ALTER TABLE \"public\".\"Order Items\" DROP COLUMN \"x\";"
+    ],
+    "group" : "Names",
+    "id" : "DDL-060",
+    "input" : "",
+    "knownIssue" : "Adds CASCADE; see the drop column scenario",
+    "options" : {
+      "column" : "x",
+      "dialect" : "postgresql",
+      "op" : "dropColumn",
+      "table" : "Order Items"
+    },
+    "should" : "A table with a space, PostgreSQL",
+    "title" : "A table with a space, PostgreSQL"
+  },
+  {
+    "caretMarker" : "|",
+    "domain" : "table-ddl",
+    "expected" : [
+      "ALTER TABLE [dbo].[a]]b] DROP COLUMN [x];"
+    ],
+    "group" : "Names",
+    "id" : "DDL-061",
+    "input" : "",
+    "options" : {
+      "column" : "x",
+      "dialect" : "mssql",
+      "op" : "dropColumn",
+      "table" : "a]b"
+    },
+    "should" : "A table with a closing bracket, SQL Server",
+    "title" : "A table with a closing bracket, SQL Server"
+  },
+  {
+    "caretMarker" : "|",
+    "domain" : "table-ddl",
+    "expected" : [
+      "ALTER TABLE `shop`.`a``b` DROP COLUMN `x`;"
+    ],
+    "group" : "Names",
+    "id" : "DDL-062",
+    "input" : "",
+    "options" : {
+      "column" : "x",
+      "dialect" : "mysql",
+      "op" : "dropColumn",
+      "table" : "a`b"
+    },
+    "should" : "A table with a backtick, MySQL",
+    "title" : "A table with a backtick, MySQL"
+  }
+]

@@ -5,7 +5,7 @@ import Foundation
 public enum ScenarioDomains {
     public static let all: [ScenarioDomain] = [
         statements, statementAtCaret, goBatches, sqlcmd,
-        errorLine, runNote, connectionLoss, tablePreview, gridSelection, jsonOutline,
+        errorLine, runNote, connectionLoss, tablePreview, gridSelection, jsonOutline, tableDDL,
     ]
 
     public static func domain(id: String) -> ScenarioDomain? { all.first { $0.id == id } }
@@ -138,5 +138,71 @@ public enum ScenarioDomains {
             return out
         }
         return lines(value.toOutlineNode(), path: "$", depth: 0)
+    }
+
+    public static let tableDDL = ScenarioDomain(
+        id: "table-ddl", title: "Table DDL",
+        summary: "The statements the table editor writes for each change, per database.",
+        inputLabel: "Not used. Options: dialect (postgresql, mssql, mysql), schema, table, op and the op's fields (column, to, type, nullable, default, expression, identity, collation, name, columns, include, unique, filter, indexType, refSchema, refTable, refColumns, onUpdate, onDelete, deferrable, deferred, properties)",
+        expectedLabel: "One statement"
+    ) { scenario in
+        let o = scenario.options
+        let dialect = o["dialect"] ?? "postgresql"
+        let schema = o["schema"] ?? (dialect == "mssql" ? "dbo" : dialect == "mysql" ? "shop" : "public")
+        let generator: SQLDialectGenerator = switch dialect {
+        case "mssql": SQLServerDialectGenerator(schema: schema, database: "")
+        case "mysql": MySQLDialectGenerator(schema: schema)
+        default: PostgreSQLDialectGenerator(schema: schema)
+        }
+        let table = generator.qualifiedTable(schema: schema, table: o["table"] ?? "orders")
+        func list(_ key: String) -> [String] {
+            (o[key] ?? "").split(separator: ",").map { $0.trimmingCharacters(in: .whitespaces) }.filter { !$0.isEmpty }
+        }
+        let column = o["column"] ?? "status"
+        let name = o["name"] ?? "c1"
+        let nullable = o["nullable"] != "false"
+        let deferrable = o["deferrable"] == "true"
+        let deferred = o["deferred"] == "true"
+        switch o["op"] ?? "" {
+        case "begin": return [generator.beginTransaction()]
+        case "commit": return [generator.commitTransaction()]
+        case "rollback": return [generator.rollbackTransaction()]
+        case "dropColumn": return [generator.dropColumn(table: table, column: column)]
+        case "renameColumn": return [generator.renameColumn(table: table, from: column, to: o["to"] ?? "state")]
+        case "addColumn":
+            let identity: (seed: Int, increment: Int, generation: String?)? = list("identity").isEmpty ? nil : {
+                let parts = list("identity")
+                return (Int(parts[0]) ?? 1, parts.count > 1 ? Int(parts[1]) ?? 1 : 1, parts.count > 2 ? parts[2] : nil)
+            }()
+            return [generator.addColumn(table: table, name: column, dataType: o["type"] ?? "text", isNullable: nullable,
+                                        defaultValue: o["default"], generatedExpression: o["expression"], identity: identity, collation: o["collation"])]
+        case "alterColumnType": return [generator.alterColumnType(table: table, column: column, newType: o["type"] ?? "bigint", isNullable: nullable)]
+        case "alterColumnNullability": return [generator.alterColumnNullability(table: table, column: column, isNullable: nullable, currentType: o["type"] ?? "text")]
+        case "setDefault": return [generator.alterColumnSetDefault(table: table, column: column, defaultValue: o["default"] ?? "0")]
+        case "dropDefault": return [generator.alterColumnDropDefault(table: table, column: column)]
+        case "addPrimaryKey": return [generator.addPrimaryKey(table: table, name: name, columns: list("columns"), isDeferrable: deferrable, isInitiallyDeferred: deferred)]
+        case "dropConstraint": return [generator.dropConstraint(table: table, name: name)]
+        case "createIndex":
+            let columns = list("columns").map { entry -> (name: String, sort: String) in
+                let parts = entry.split(separator: " ", maxSplits: 1).map(String.init)
+                return (parts[0], parts.count > 1 ? parts[1] : "ASC")
+            }
+            return [generator.createIndex(table: table, name: name, columns: columns, includeColumns: list("include"),
+                                          isUnique: o["unique"] == "true", filter: o["filter"], indexType: o["indexType"])]
+        case "dropIndex": return [generator.dropIndex(schema: schema, name: name, table: table)]
+        case "addUnique": return [generator.addUniqueConstraint(table: table, name: name, columns: list("columns"), isDeferrable: deferrable, isInitiallyDeferred: deferred)]
+        case "addCheck": return [generator.addCheckConstraint(table: table, name: name, expression: o["expression"] ?? "true")]
+        case "addForeignKey":
+            return [generator.addForeignKey(table: table, name: name, columns: list("columns"), referencedSchema: o["refSchema"] ?? schema,
+                                            referencedTable: o["refTable"] ?? "customers", referencedColumns: list("refColumns"),
+                                            onUpdate: o["onUpdate"], onDelete: o["onDelete"], isDeferrable: deferrable, isInitiallyDeferred: deferred)]
+        case "tableProperties":
+            let pairs = list("properties").map { entry -> (key: String, value: String) in
+                let parts = entry.split(separator: "=", maxSplits: 1).map { $0.trimmingCharacters(in: .whitespaces) }
+                return (parts[0], parts.count > 1 ? parts[1] : "")
+            }
+            return generator.alterTableProperties(table: table, properties: pairs)
+        default: return ["(unknown op)"]
+        }
     }
 }
