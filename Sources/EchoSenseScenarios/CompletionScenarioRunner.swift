@@ -102,7 +102,7 @@ public struct CompletionScenarioRunner: Sendable {
 
     /// The engine's answer for the scenario, without comparing it with anything.
     public func complete(_ scenario: CompletionScenario, structure: EchoSenseDatabaseStructure) -> ScenarioActual {
-        let (text, caret) = scenario.textAndCaret
+        var (text, caret) = scenario.textAndCaret
         let engine = SQLAutoCompletionEngine()
         let type = Self.databaseType(scenario.dialect)
         let database = liveStructure == nil ? ScenarioSchemas.databaseName(id: scenario.schema) : structure.databases.first?.name
@@ -112,6 +112,22 @@ public struct CompletionScenarioRunner: Sendable {
         engine.updatePreferences(SQLCompletionPreferences(
             includeHistory: false, includeSystemSchemas: scenario.options.includeSystemSchemas,
             qualifyTableInsertions: scenario.options.qualifyTableInsertions, autoJoinOnClause: true))
+        if let title = scenario.afterAccepting {
+            // The user picks a suggestion first; the engine is told, as the editor tells it.
+            let before = engine.completions(in: text, at: caret)
+            let wanted = title.isEmpty ? before.suggestions.first : before.suggestions.first(where: { Self.unquoted($0.title) == Self.unquoted(title) })
+            if let picked = wanted {
+                let accepted = SQLEditorAcceptance.accept(picked, from: before, in: text)
+                engine.recordSelection(picked, from: before)
+                text = accepted.text
+                caret = accepted.caret
+                if let typed = scenario.thenTyped, !typed.isEmpty {
+                    let ns = text as NSString
+                    text = ns.replacingCharacters(in: NSRange(location: caret, length: 0), with: typed)
+                    caret += (typed as NSString).length
+                }
+            }
+        }
         let automatic = engine.completions(in: text, at: caret)
         let manual = engine.manualCompletions(in: text, at: caret)
         // What the editor does: typing asks only for some characters; a manual trigger always asks.

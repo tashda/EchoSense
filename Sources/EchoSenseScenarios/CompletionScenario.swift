@@ -30,6 +30,12 @@ public struct CompletionScenario: Codable, Sendable, Identifiable, Hashable {
     /// Where it came from, such as "AUTOCOMPLETE_SPEC.md 1.4".
     public var source: String?
     public var notes: String?
+    /// Accept this suggestion (by title; empty for the first) at the caret before the scenario is
+    /// evaluated, as the editor does when the user picks it. What is checked is what happens next: the
+    /// engine's post-commit suppression stays silent at the same place.
+    public var afterAccepting: String?
+    /// Text typed at the caret after that (for example " " or "R"), to check what re-enables completion.
+    public var thenTyped: String?
     /// Set while the scenario is known to fail today; the reason, or the ticket. Tests then expect the
     /// failure and turn red when it starts to pass, so the flag is removed.
     public var knownIssue: String?
@@ -41,8 +47,10 @@ public struct CompletionScenario: Codable, Sendable, Identifiable, Hashable {
         dialect: ScenarioDialect = .postgresql, schema: String = ScenarioSchemas.specID,
         sql: String, caretMarker: String = "|", trigger: ScenarioTrigger = .typing,
         options: ScenarioOptions = .init(), echoSense: EchoSenseExpectation? = nil, echo: EchoExpectation? = nil,
+        afterAccepting: String? = nil, thenTyped: String? = nil,
         source: String? = nil, notes: String? = nil, knownIssue: String? = nil, review: ScenarioReview = .imported
     ) {
+        self.afterAccepting = afterAccepting; self.thenTyped = thenTyped
         self.id = id; self.group = group; self.title = title; self.should = should
         self.dialect = dialect; self.schema = schema; self.sql = sql; self.caretMarker = caretMarker
         self.trigger = trigger; self.options = options; self.echoSense = echoSense; self.echo = echo
@@ -60,7 +68,7 @@ public struct CompletionScenario: Codable, Sendable, Identifiable, Hashable {
 
     // Decoding tolerates files written by hand or by an older version.
     private enum CodingKeys: String, CodingKey {
-        case id, group, title, should, dialect, schema, sql, caretMarker, trigger, options, echoSense, echo, source, notes, knownIssue, review
+        case id, group, title, should, dialect, schema, sql, caretMarker, trigger, options, echoSense, echo, afterAccepting, thenTyped, source, notes, knownIssue, review
     }
 
     public init(from decoder: Decoder) throws {
@@ -77,6 +85,8 @@ public struct CompletionScenario: Codable, Sendable, Identifiable, Hashable {
         options = try c.decodeIfPresent(ScenarioOptions.self, forKey: .options) ?? .init()
         echoSense = try c.decodeIfPresent(EchoSenseExpectation.self, forKey: .echoSense)
         echo = try c.decodeIfPresent(EchoExpectation.self, forKey: .echo)
+        afterAccepting = try c.decodeIfPresent(String.self, forKey: .afterAccepting)
+        thenTyped = try c.decodeIfPresent(String.self, forKey: .thenTyped)
         source = try c.decodeIfPresent(String.self, forKey: .source)
         notes = try c.decodeIfPresent(String.self, forKey: .notes)
         knownIssue = try c.decodeIfPresent(String.self, forKey: .knownIssue)

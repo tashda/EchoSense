@@ -1,5 +1,69 @@
 [
   {
+    "afterAccepting" : "users",
+    "caretMarker" : "|",
+    "dialect" : "postgresql",
+    "echoSense" : {
+      "excludes" : [
+
+      ],
+      "insertText" : {
+
+      },
+      "items" : [
+
+      ],
+      "order" : "exact",
+      "outcome" : "silent"
+    },
+    "group" : "Suppression Rules",
+    "id" : "SPEC-17.1",
+    "knownIssue" : "Fails today: Expected silence while typing, but it offered users, active_users, user_stats.",
+    "options" : {
+      "includeSystemSchemas" : false,
+      "qualifyTableInsertions" : false
+    },
+    "review" : "imported",
+    "schema" : "spec",
+    "should" : "After accepting a suggestion, at the same position and clause the popup does not reopen.",
+    "source" : "AUTOCOMPLETE_SPEC.md 17.1",
+    "sql" : "SELECT * FROM |",
+    "title" : "Post-commit: same position stays quiet",
+    "trigger" : "typing"
+  },
+  {
+    "afterAccepting" : "users",
+    "caretMarker" : "|",
+    "dialect" : "postgresql",
+    "echoSense" : {
+      "excludes" : [
+
+      ],
+      "insertText" : {
+
+      },
+      "items" : [
+
+      ],
+      "order" : "exact",
+      "outcome" : "silent"
+    },
+    "group" : "Suppression Rules",
+    "id" : "SPEC-17.1b",
+    "options" : {
+      "includeSystemSchemas" : false,
+      "qualifyTableInsertions" : false
+    },
+    "review" : "imported",
+    "schema" : "spec",
+    "should" : "User types a space after the accepted name: stay suppressed.",
+    "source" : "AUTOCOMPLETE_SPEC.md 17.1",
+    "sql" : "SELECT * FROM |",
+    "thenTyped" : " ",
+    "title" : "Post-commit: a space after the accepted name stays quiet",
+    "trigger" : "typing"
+  },
+  {
     "caretMarker" : "|",
     "dialect" : "postgresql",
     "echoSense" : {
