@@ -175,7 +175,7 @@ public struct CompletionScenarioRunner: Sendable {
     }
 
     /// A title without identifier quoting: "name", `name` and [name] are name.
-    static func unquoted(_ title: String) -> String {
+    public static func unquoted(_ title: String) -> String {
         guard title.count >= 2 else { return title }
         let pairs: [(Character, Character)] = [("\"", "\""), ("`", "`"), ("[", "]")]
         for (open, close) in pairs where title.first == open && title.last == close { return String(title.dropFirst().dropLast()) }
