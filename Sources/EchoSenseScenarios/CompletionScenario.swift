@@ -39,7 +39,7 @@ public struct CompletionScenario: Codable, Sendable, Identifiable, Hashable {
     /// Set while the scenario is known to fail today; the reason, or the ticket. Tests then expect the
     /// failure and turn red when it starts to pass, so the flag is removed.
     public var knownIssue: String?
-    /// `imported` until the owner has read it and agrees, then `approved`.
+    /// `imported` until the owner has read it: `approved` when it is right, `flagged` when it needs a change.
     public var review: ScenarioReview
 
     public init(
@@ -125,7 +125,12 @@ public struct ScenarioOptions: Codable, Sendable, Hashable {
 }
 
 public enum ScenarioReview: String, Codable, Sendable, Hashable, CaseIterable {
-    case imported, approved
+    /// Not read by the owner yet.
+    case imported
+    /// The owner agrees this is what should happen (whether or not EchoSense does it yet).
+    case approved
+    /// The owner says the expectation is wrong; `notes` says why. For an agent to fix.
+    case flagged
 }
 
 /// What the completion engine should return at the caret.

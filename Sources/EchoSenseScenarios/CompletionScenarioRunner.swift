@@ -161,69 +161,17 @@ public struct CompletionScenarioRunner: Sendable {
         switch dialect { case .postgresql: .postgresql; case .mssql: .microsoftSQL; case .mysql: .mysql; case .sqlite: .sqlite }
     }
 
-    /// Compares one expectation with what came back.
-    public static func compare(_ expected: EchoSenseExpectation, actual rawActual: ScenarioActual, trigger: ScenarioTrigger) -> ScenarioVerdict {
-        var reasons: [String] = []
-        // Titles are compared without identifier quoting: "name" and name are the same suggestion. What
-        // gets inserted (with its quotes) is checked by `insertText`.
-        var actual = rawActual
-        actual.titles = rawActual.titles.map(unquoted)
-        actual.manualTitles = rawActual.manualTitles.map(unquoted)
-        actual.engineTitles = rawActual.engineTitles.map(unquoted)
-        actual.insertText = Dictionary(rawActual.insertText.map { (unquoted($0.key), $0.value) }, uniquingKeysWith: { first, _ in first })
-        switch expected.outcome {
-        case .nothing:
-            if !actual.titles.isEmpty { reasons.append("Expected nothing, but it offered \(list(actual.titles)).") }
-            if !actual.manualTitles.isEmpty { reasons.append("Expected nothing even when triggered by hand, but that offered \(list(actual.manualTitles)).") }
-        case .silent:
-            if !actual.titles.isEmpty { reasons.append("Expected silence while typing, but it offered \(list(actual.titles)).") }
-        case .suggests:
-            if actual.titles.isEmpty {
-                reasons.append(actual.engineTitles.isEmpty
-                    ? "Expected suggestions, but EchoSense offered nothing."
-                    : "Expected suggestions, but the popup doesn't open. \(actual.triggerNote) EchoSense would offer \(list(actual.engineTitles)).")
-            }
-            switch expected.order {
-            case .exact:
-                if actual.titles != expected.items { reasons.append(differences(expected.items, actual.titles)) }
-            case .leading:
-                if Array(actual.titles.prefix(expected.items.count)) != expected.items {
-                    reasons.append("Expected these first, in order: \(list(expected.items)). Got: \(list(Array(actual.titles.prefix(max(expected.items.count, 1))))).")
-                }
-            case .includes:
-                let missing = expected.items.filter { !actual.titles.contains($0) }
-                if !missing.isEmpty { reasons.append("Missing: \(list(missing)).") }
-            }
-        }
-        let present = expected.excludes.filter { actual.titles.contains($0) }
-        if !present.isEmpty { reasons.append("Should not offer: \(list(present)).") }
-        for (title, text) in expected.insertText.sorted(by: { $0.key < $1.key }) {
-            if let got = actual.insertText[title] {
-                if got != text { reasons.append("“\(title)” should insert “\(text)”, but inserts “\(got)”.") }
-            } else {
-                reasons.append("“\(title)” should insert “\(text)”, but it isn't offered.")
-            }
-        }
-        return reasons.isEmpty ? .pass : .fail(reasons)
+    /// Compares one expectation with what came back: every check it makes (`checks(_:actual:trigger:)`) must hold.
+    public static func compare(_ expected: EchoSenseExpectation, actual: ScenarioActual, trigger: ScenarioTrigger) -> ScenarioVerdict {
+        verdict(checks(expected, actual: actual, trigger: trigger))
     }
 
     /// Compares what the editor should do with what it does: the popup, the selected suggestion and the text after accepting.
     public static func compare(_ expected: EchoExpectation, actual: ScenarioActual) -> EchoVerdict {
-        var reasons: [String] = []
-        if let popup = expected.popup, (popup == .shown) != actual.popupShown {
-            reasons.append(popup == .shown ? "Expected the popup to open. \(actual.triggerNote)" : "Expected no popup, but it opens with \(list(actual.titles)).")
+        switch verdict(checks(expected, actual: actual)) {
+        case .fail(let reasons): .fail(reasons)
+        default: .pass
         }
-        if let selected = expected.selected {
-            let first = actual.titles.first.map(unquoted)
-            if first != unquoted(selected) { reasons.append("Expected “\(selected)” to be selected, but \(first.map { "“\($0)” is" } ?? "nothing is").") }
-        }
-        if let after = expected.textAfterAccepting {
-            let got = expected.accept.flatMap { $0.isEmpty ? nil : actual.textAfterAcceptingByTitle[unquoted($0)] } ?? actual.textAfterAccepting
-            if after != got {
-                reasons.append("Expected the text after accepting\(expected.accept.map { $0.isEmpty ? "" : " “\($0)”" } ?? "") to be “\(after.replacingOccurrences(of: "\n", with: "⏎"))”, but it is “\((got ?? "not offered").replacingOccurrences(of: "\n", with: "⏎"))”.")
-            }
-        }
-        return reasons.isEmpty ? .pass : .fail(reasons)
     }
 
     /// A title without identifier quoting: "name", `name` and [name] are name.
@@ -234,18 +182,8 @@ public struct CompletionScenarioRunner: Sendable {
         return title
     }
 
-    private static func list(_ titles: [String]) -> String {
+    static func list(_ titles: [String]) -> String {
         titles.isEmpty ? "nothing" : titles.prefix(12).joined(separator: ", ") + (titles.count > 12 ? " and \(titles.count - 12) more" : "")
-    }
-
-    private static func differences(_ expected: [String], _ actual: [String]) -> String {
-        let missing = expected.filter { !actual.contains($0) }
-        let extra = actual.filter { !expected.contains($0) }
-        var parts: [String] = []
-        if !missing.isEmpty { parts.append("missing \(list(missing))") }
-        if !extra.isEmpty { parts.append("unexpected \(list(extra))") }
-        if parts.isEmpty { parts.append("same items, different order") }
-        return "Expected \(list(expected)); \(parts.joined(separator: ", "))."
     }
 }
 
