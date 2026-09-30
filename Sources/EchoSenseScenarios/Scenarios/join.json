@@ -1,243 +1,264 @@
 [
   {
-    "caretMarker": "|",
-    "dialect": "postgresql",
-    "echoSense": {
-      "excludes": [
+    "caretMarker" : "|",
+    "dialect" : "postgresql",
+    "echoSense" : {
+      "excludes" : [
         "users"
       ],
-      "insertText": {
-        "departments": "departments d ON u.department_id = d.id",
-        "orders": "orders o ON u.id = o.user_id"
+      "insertText" : {
+        "departments" : "departments d ON u.department_id = d.id",
+        "orders" : "orders o ON u.id = o.user_id"
       },
-      "items": [
+      "items" : [
         "orders",
         "departments"
       ],
-      "order": "leading",
-      "outcome": "suggests"
+      "order" : "leading",
+      "outcome" : "suggests"
     },
-    "group": "JOIN",
-    "id": "SPEC-3.1",
-    "knownIssue": "Fails today: Expected these first, in order: orders, departments. Got: departments, orders.",
-    "options": {
-      "includeSystemSchemas": false,
-      "qualifyTableInsertions": false
+    "group" : "JOIN",
+    "id" : "SPEC-3.1",
+    "knownIssue" : "Fails today: Expected these first, in order: orders, departments. Got: departments, orders.",
+    "options" : {
+      "includeSystemSchemas" : false,
+      "qualifyTableInsertions" : false
     },
-    "review": "imported",
-    "schema": "spec",
-    "should": "=> [FK-based join targets first, then regular tables]\n- `orders` with auto ON clause: insert text `orders o ON u.id = o.user_id`\n- `departments` with auto ON clause: insert text `departments d ON u.department_id = d.id`\n- Then remaining tables without ON clause\n- Tables already in scope (`users`) excluded from join targets\n- FK join auto-ON is a toggleable setting",
-    "source": "AUTOCOMPLETE_SPEC.md 3.1",
-    "sql": "SELECT * FROM users u JOIN |",
-    "title": "JOIN target — FK suggestions immediately",
-    "trigger": "typing"
+    "review" : "imported",
+    "schema" : "spec",
+    "should" : "=> [FK-based join targets first, then regular tables]\n- `orders` with auto ON clause: insert text `orders o ON u.id = o.user_id`\n- `departments` with auto ON clause: insert text `departments d ON u.department_id = d.id`\n- Then remaining tables without ON clause\n- Tables already in scope (`users`) excluded from join targets\n- FK join auto-ON is a toggleable setting",
+    "source" : "AUTOCOMPLETE_SPEC.md 3.1",
+    "sql" : "SELECT * FROM users u JOIN |",
+    "title" : "JOIN target — FK suggestions immediately",
+    "trigger" : "typing"
   },
   {
-    "caretMarker": "|",
-    "dialect": "postgresql",
-    "echoSense": {
-      "excludes": [],
-      "insertText": {
-        "orders": "orders o ON u.id = o.user_id"
+    "caretMarker" : "|",
+    "dialect" : "postgresql",
+    "echoSense" : {
+      "excludes" : [
+
+      ],
+      "insertText" : {
+        "orders" : "orders o ON u.id = o.user_id"
       },
-      "items": [
+      "items" : [
         "orders"
       ],
-      "order": "leading",
-      "outcome": "suggests"
+      "order" : "leading",
+      "outcome" : "suggests"
     },
-    "group": "JOIN",
-    "id": "SPEC-3.2",
-    "knownIssue": "Fails today: Expected suggestions, but EchoSense offered nothing.",
-    "options": {
-      "includeSystemSchemas": false,
-      "qualifyTableInsertions": false
+    "group" : "JOIN",
+    "id" : "SPEC-3.2",
+    "knownIssue" : "Fails today: Expected suggestions, but EchoSense offered nothing.",
+    "options" : {
+      "includeSystemSchemas" : false,
+      "qualifyTableInsertions" : false
     },
-    "review": "imported",
-    "schema": "spec",
-    "should": "=> [orders (with ON clause)]",
-    "source": "AUTOCOMPLETE_SPEC.md 3.2",
-    "sql": "SELECT * FROM users u JOIN or|",
-    "title": "JOIN target with partial typing",
-    "trigger": "typing"
+    "review" : "imported",
+    "schema" : "spec",
+    "should" : "=> [orders (with ON clause)]",
+    "source" : "AUTOCOMPLETE_SPEC.md 3.2",
+    "sql" : "SELECT * FROM users u JOIN or|",
+    "title" : "JOIN target with partial typing",
+    "trigger" : "typing"
   },
   {
-    "caretMarker": "|",
-    "dialect": "postgresql",
-    "echoSense": {
-      "excludes": [
+    "caretMarker" : "|",
+    "dialect" : "postgresql",
+    "echoSense" : {
+      "excludes" : [
         "users",
         "orders"
       ],
-      "insertText": {},
-      "items": [
+      "insertText" : {
+
+      },
+      "items" : [
         "products",
         "categories",
         "departments"
       ],
-      "order": "includes",
-      "outcome": "suggests"
+      "order" : "includes",
+      "outcome" : "suggests"
     },
-    "group": "JOIN",
-    "id": "SPEC-3.3",
-    "options": {
-      "includeSystemSchemas": false,
-      "qualifyTableInsertions": false
+    "group" : "JOIN",
+    "id" : "SPEC-3.3",
+    "options" : {
+      "includeSystemSchemas" : false,
+      "qualifyTableInsertions" : false
     },
-    "review": "imported",
-    "schema": "spec",
-    "should": "- `users` and `orders` excluded from suggestions\n- Remaining tables shown",
-    "source": "AUTOCOMPLETE_SPEC.md 3.3",
-    "sql": "SELECT * FROM users u JOIN orders o ON u.id = o.user_id JOIN |",
-    "title": "Multiple JOINs — already-joined tables excluded",
-    "trigger": "typing"
+    "review" : "imported",
+    "schema" : "spec",
+    "should" : "- `users` and `orders` excluded from suggestions\n- Remaining tables shown",
+    "source" : "AUTOCOMPLETE_SPEC.md 3.3",
+    "sql" : "SELECT * FROM users u JOIN orders o ON u.id = o.user_id JOIN |",
+    "title" : "Multiple JOINs — already-joined tables excluded",
+    "trigger" : "typing"
   },
   {
-    "caretMarker": "|",
-    "dialect": "postgresql",
-    "echoSense": {
-      "excludes": [
+    "caretMarker" : "|",
+    "dialect" : "postgresql",
+    "echoSense" : {
+      "excludes" : [
         "users"
       ],
-      "insertText": {
-        "departments": "departments d ON u.department_id = d.id",
-        "orders": "orders o ON u.id = o.user_id"
+      "insertText" : {
+        "departments" : "departments d ON u.department_id = d.id",
+        "orders" : "orders o ON u.id = o.user_id"
       },
-      "items": [
+      "items" : [
         "orders",
         "departments"
       ],
-      "order": "leading",
-      "outcome": "suggests"
+      "order" : "leading",
+      "outcome" : "suggests"
     },
-    "group": "JOIN",
-    "id": "SPEC-3.4",
-    "knownIssue": "Fails today: Expected these first, in order: orders, departments. Got: departments, orders.",
-    "options": {
-      "includeSystemSchemas": false,
-      "qualifyTableInsertions": false
+    "group" : "JOIN",
+    "id" : "SPEC-3.4",
+    "knownIssue" : "Fails today: Expected these first, in order: orders, departments. Got: departments, orders.",
+    "options" : {
+      "includeSystemSchemas" : false,
+      "qualifyTableInsertions" : false
     },
-    "review": "imported",
-    "schema": "spec",
-    "should": "=> [same as regular JOIN]",
-    "source": "AUTOCOMPLETE_SPEC.md 3.4",
-    "sql": "SELECT * FROM users u LEFT JOIN |",
-    "title": "LEFT/RIGHT/FULL JOIN — same as regular JOIN",
-    "trigger": "typing"
+    "review" : "imported",
+    "schema" : "spec",
+    "should" : "=> [same as regular JOIN]",
+    "source" : "AUTOCOMPLETE_SPEC.md 3.4",
+    "sql" : "SELECT * FROM users u LEFT JOIN |",
+    "title" : "LEFT/RIGHT/FULL JOIN — same as regular JOIN",
+    "trigger" : "typing"
   },
   {
-    "caretMarker": "|",
-    "dialect": "postgresql",
-    "echoSense": {
-      "excludes": [],
-      "insertText": {},
-      "items": [
+    "caretMarker" : "|",
+    "dialect" : "postgresql",
+    "echoSense" : {
+      "excludes" : [
+
+      ],
+      "insertText" : {
+
+      },
+      "items" : [
         "u.id = o.user_id"
       ],
-      "order": "leading",
-      "outcome": "suggests"
+      "order" : "leading",
+      "outcome" : "suggests"
     },
-    "group": "JOIN",
-    "id": "SPEC-3.5",
-    "knownIssue": "Fails today: Expected suggestions, but the popup doesn't open. A space only asks EchoSense after FROM, JOIN, UPDATE, CALL, EXEC or INTO. EchoSense would offer o.user_id = u.id, o.id, o.created_at, u.id, user_id, \"status\", total, u.created_at, department_id, \"name\", email, $1 and 48 more.",
-    "options": {
-      "includeSystemSchemas": false,
-      "qualifyTableInsertions": false
+    "group" : "JOIN",
+    "id" : "SPEC-3.5",
+    "knownIssue" : "Fails today: Expected suggestions, but the popup doesn't open. A space only asks EchoSense after FROM, JOIN, UPDATE, CALL, EXEC or INTO. EchoSense would offer o.user_id = u.id, o.id, o.created_at, u.id, user_id, \"status\", total, u.created_at, department_id, \"name\", email, $1 and 48 more.",
+    "options" : {
+      "includeSystemSchemas" : false,
+      "qualifyTableInsertions" : false
     },
-    "review": "imported",
-    "schema": "spec",
-    "should": "=> [u.id = o.user_id (FK-based), then columns from both tables]",
-    "source": "AUTOCOMPLETE_SPEC.md 3.5",
-    "sql": "SELECT * FROM users u JOIN orders o ON |",
-    "title": "JOIN ON — FK condition suggestions",
-    "trigger": "typing"
+    "review" : "imported",
+    "schema" : "spec",
+    "should" : "=> [u.id = o.user_id (FK-based), then columns from both tables]",
+    "source" : "AUTOCOMPLETE_SPEC.md 3.5",
+    "sql" : "SELECT * FROM users u JOIN orders o ON |",
+    "title" : "JOIN ON — FK condition suggestions",
+    "trigger" : "typing"
   },
   {
-    "caretMarker": "|",
-    "dialect": "postgresql",
-    "echoSense": {
-      "excludes": [],
-      "insertText": {},
-      "items": [
+    "caretMarker" : "|",
+    "dialect" : "postgresql",
+    "echoSense" : {
+      "excludes" : [
+
+      ],
+      "insertText" : {
+
+      },
+      "items" : [
         "id",
         "name",
         "email",
         "created_at",
         "department_id"
       ],
-      "order": "leading",
-      "outcome": "suggests"
+      "order" : "leading",
+      "outcome" : "suggests"
     },
-    "group": "JOIN",
-    "id": "SPEC-3.6",
-    "knownIssue": "Fails today: Expected these first, in order: id, name, email, created_at, department_id. Got: id, department_id, \"name\", created_at, email.",
-    "options": {
-      "includeSystemSchemas": false,
-      "qualifyTableInsertions": false
+    "group" : "JOIN",
+    "id" : "SPEC-3.6",
+    "knownIssue" : "Fails today: Expected these first, in order: id, name, email, created_at, department_id. Got: id, department_id, \"name\", created_at, email.",
+    "options" : {
+      "includeSystemSchemas" : false,
+      "qualifyTableInsertions" : false
     },
-    "review": "imported",
-    "schema": "spec",
-    "should": "=> [id, name, email, created_at, department_id]` — Columns from `users`.",
-    "source": "AUTOCOMPLETE_SPEC.md 3.6",
-    "sql": "SELECT * FROM users u JOIN orders o ON u.|",
-    "title": "JOIN ON with alias dot",
-    "trigger": "typing"
+    "review" : "imported",
+    "schema" : "spec",
+    "should" : "=> [id, name, email, created_at, department_id]` — Columns from `users`.",
+    "source" : "AUTOCOMPLETE_SPEC.md 3.6",
+    "sql" : "SELECT * FROM users u JOIN orders o ON u.|",
+    "title" : "JOIN ON with alias dot",
+    "trigger" : "typing"
   },
   {
-    "caretMarker": "|",
-    "dialect": "postgresql",
-    "echoSense": {
-      "excludes": [],
-      "insertText": {},
-      "items": [
+    "caretMarker" : "|",
+    "dialect" : "postgresql",
+    "echoSense" : {
+      "excludes" : [
+
+      ],
+      "insertText" : {
+
+      },
+      "items" : [
         "u1.id",
         "u1.name",
         "u2.id",
         "u2.name"
       ],
-      "order": "includes",
-      "outcome": "suggests"
+      "order" : "includes",
+      "outcome" : "suggests"
     },
-    "group": "JOIN",
-    "id": "SPEC-3.7",
-    "knownIssue": "Fails today: Expected suggestions, but the popup doesn't open. A space only asks EchoSense after FROM, JOIN, UPDATE, CALL, EXEC or INTO. EchoSense would offer u1.id, u2.id, u1.department_id, u2.department_id, u1.\"name\", u1.created_at, u1.email, u2.\"name\", u2.created_at, u2.email, $1, ABS and 48 more.",
-    "options": {
-      "includeSystemSchemas": false,
-      "qualifyTableInsertions": false
+    "group" : "JOIN",
+    "id" : "SPEC-3.7",
+    "knownIssue" : "Fails today: Expected suggestions, but the popup doesn't open. A space only asks EchoSense after FROM, JOIN, UPDATE, CALL, EXEC or INTO. EchoSense would offer u1.id, u2.id, u1.department_id, u2.department_id, u1.\"name\", u1.created_at, u1.email, u2.\"name\", u2.created_at, u2.email, $1, ABS and 48 more.",
+    "options" : {
+      "includeSystemSchemas" : false,
+      "qualifyTableInsertions" : false
     },
-    "review": "imported",
-    "schema": "spec",
-    "should": "=> [u1.id, u1.name, ..., u2.id, u2.name, ...]` — All columns qualified with alias. No auto-generated condition.",
-    "source": "AUTOCOMPLETE_SPEC.md 3.7",
-    "sql": "SELECT * FROM users u1 JOIN users u2 ON |",
-    "title": "Self-join — qualified columns only, no auto-condition",
-    "trigger": "typing"
+    "review" : "imported",
+    "schema" : "spec",
+    "should" : "=> [u1.id, u1.name, ..., u2.id, u2.name, ...]` — All columns qualified with alias. No auto-generated condition.",
+    "source" : "AUTOCOMPLETE_SPEC.md 3.7",
+    "sql" : "SELECT * FROM users u1 JOIN users u2 ON |",
+    "title" : "Self-join — qualified columns only, no auto-condition",
+    "trigger" : "typing"
   },
   {
-    "caretMarker": "|",
-    "dialect": "mssql",
-    "echoSense": {
-      "excludes": [],
-      "items": [
+    "caretMarker" : "|",
+    "dialect" : "mssql",
+    "echoSense" : {
+      "excludes" : [
+
+      ],
+      "insertText" : {
+
+      },
+      "items" : [
         "users",
         "orders"
       ],
-      "order": "includes",
-      "outcome": "suggests"
+      "order" : "includes",
+      "outcome" : "suggests"
     },
-    "group": "JOIN",
-    "id": "SPEC-3.8",
-    "knownIssue": "Engine offers nothing after CROSS APPLY / OUTER APPLY; spec says it behaves like a JOIN target",
-    "options": {
-      "includeSystemSchemas": false,
-      "qualifyTableInsertions": false
+    "group" : "JOIN",
+    "id" : "SPEC-3.8",
+    "knownIssue" : "Engine offers nothing after CROSS APPLY / OUTER APPLY; spec says it behaves like a JOIN target",
+    "options" : {
+      "includeSystemSchemas" : false,
+      "qualifyTableInsertions" : false
     },
-    "review": "imported",
-    "schema": "spec",
-    "should": "=> [tables/functions]` — Behaves like JOIN target.",
-    "source": "AUTOCOMPLETE_SPEC.md 3.8",
-    "sql": "-- MSSQL\nSELECT * FROM users u CROSS APPLY |",
-    "title": "CROSS APPLY / OUTER APPLY (MSSQL)",
-    "trigger": "typing"
+    "review" : "imported",
+    "schema" : "spec",
+    "should" : "=> [tables/functions]` — Behaves like JOIN target.",
+    "source" : "AUTOCOMPLETE_SPEC.md 3.8",
+    "sql" : "-- MSSQL\nSELECT * FROM users u CROSS APPLY |",
+    "title" : "CROSS APPLY / OUTER APPLY (MSSQL)",
+    "trigger" : "typing"
   }
 ]
