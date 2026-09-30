@@ -1,6 +1,9 @@
 [
   {
     "caretMarker" : "|",
+    "comments" : [
+
+    ],
     "dialect" : "postgresql",
     "echoSense" : {
       "excludes" : [
@@ -15,7 +18,7 @@
         "total",
         "status"
       ],
-      "order" : "includes",
+      "order" : "leading",
       "outcome" : "suggests"
     },
     "group" : "Multi-Statement & Set Operations",
@@ -26,6 +29,9 @@
       "qualifyTableInsertions" : false
     },
     "review" : "imported",
+    "rules" : [
+
+    ],
     "schema" : "spec",
     "should" : "Second statement suggests `orders` columns, not `users`.",
     "source" : "AUTOCOMPLETE_SPEC.md 20.1",
@@ -35,6 +41,9 @@
   },
   {
     "caretMarker" : "|",
+    "comments" : [
+
+    ],
     "dialect" : "postgresql",
     "echoSense" : {
       "excludes" : [
@@ -49,7 +58,7 @@
         "total",
         "status"
       ],
-      "order" : "includes",
+      "order" : "leading",
       "outcome" : "suggests"
     },
     "group" : "Multi-Statement & Set Operations",
@@ -60,6 +69,9 @@
       "qualifyTableInsertions" : false
     },
     "review" : "imported",
+    "rules" : [
+
+    ],
     "schema" : "spec",
     "should" : "Fresh SELECT context — suggests `orders` columns.",
     "source" : "AUTOCOMPLETE_SPEC.md 20.2",

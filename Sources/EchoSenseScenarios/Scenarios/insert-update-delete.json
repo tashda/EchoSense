@@ -1,6 +1,9 @@
 [
   {
     "caretMarker" : "|",
+    "comments" : [
+
+    ],
     "dialect" : "postgresql",
     "echoSense" : {
       "excludes" : [
@@ -26,6 +29,9 @@
       "qualifyTableInsertions" : false
     },
     "review" : "imported",
+    "rules" : [
+
+    ],
     "schema" : "spec",
     "should" : "=> [name, email, created_at, department_id]\n- Auto-increment/serial/identity columns (`id`) deprioritized (shown last or excluded).",
     "source" : "AUTOCOMPLETE_SPEC.md 6.1",
@@ -35,6 +41,9 @@
   },
   {
     "caretMarker" : "|",
+    "comments" : [
+
+    ],
     "dialect" : "postgresql",
     "echoSense" : {
       "excludes" : [
@@ -56,6 +65,9 @@
       "qualifyTableInsertions" : false
     },
     "review" : "imported",
+    "rules" : [
+
+    ],
     "schema" : "spec",
     "should" : "=> SILENT` — User typing literal values.",
     "source" : "AUTOCOMPLETE_SPEC.md 6.2",
@@ -65,6 +77,9 @@
   },
   {
     "caretMarker" : "|",
+    "comments" : [
+
+    ],
     "dialect" : "postgresql",
     "echoSense" : {
       "excludes" : [
@@ -80,7 +95,7 @@
         "created_at",
         "department_id"
       ],
-      "order" : "includes",
+      "order" : "leading",
       "outcome" : "suggests"
     },
     "group" : "INSERT / UPDATE / DELETE",
@@ -91,6 +106,9 @@
       "qualifyTableInsertions" : false
     },
     "review" : "imported",
+    "rules" : [
+
+    ],
     "schema" : "spec",
     "should" : "=> [columns from users]",
     "source" : "AUTOCOMPLETE_SPEC.md 6.3",
@@ -100,6 +118,9 @@
   },
   {
     "caretMarker" : "|",
+    "comments" : [
+
+    ],
     "dialect" : "postgresql",
     "echoSense" : {
       "excludes" : [
@@ -121,6 +142,9 @@
       "qualifyTableInsertions" : false
     },
     "review" : "imported",
+    "rules" : [
+
+    ],
     "schema" : "spec",
     "should" : "=> SILENT` — Same rule as WHERE right-hand side.",
     "source" : "AUTOCOMPLETE_SPEC.md 6.4",
@@ -130,6 +154,9 @@
   },
   {
     "caretMarker" : "|",
+    "comments" : [
+
+    ],
     "dialect" : "postgresql",
     "echoSense" : {
       "excludes" : [
@@ -145,7 +172,7 @@
         "created_at",
         "department_id"
       ],
-      "order" : "includes",
+      "order" : "leading",
       "outcome" : "suggests"
     },
     "group" : "INSERT / UPDATE / DELETE",
@@ -156,6 +183,9 @@
       "qualifyTableInsertions" : false
     },
     "review" : "imported",
+    "rules" : [
+
+    ],
     "schema" : "spec",
     "should" : "=> [columns from users]",
     "source" : "AUTOCOMPLETE_SPEC.md 6.5",
@@ -165,6 +195,9 @@
   },
   {
     "caretMarker" : "|",
+    "comments" : [
+
+    ],
     "dialect" : "postgresql",
     "echoSense" : {
       "excludes" : [
@@ -180,7 +213,7 @@
         "created_at",
         "department_id"
       ],
-      "order" : "includes",
+      "order" : "leading",
       "outcome" : "suggests"
     },
     "group" : "INSERT / UPDATE / DELETE",
@@ -191,6 +224,9 @@
       "qualifyTableInsertions" : false
     },
     "review" : "imported",
+    "rules" : [
+
+    ],
     "schema" : "spec",
     "should" : "=> [columns from users, functions]",
     "source" : "AUTOCOMPLETE_SPEC.md 6.6",

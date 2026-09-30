@@ -1,6 +1,9 @@
 [
   {
     "caretMarker" : "|",
+    "comments" : [
+
+    ],
     "dialect" : "postgresql",
     "echoSense" : {
       "excludes" : [
@@ -22,6 +25,9 @@
       "qualifyTableInsertions" : false
     },
     "review" : "imported",
+    "rules" : [
+
+    ],
     "schema" : "spec",
     "should" : "=> NONE",
     "source" : "AUTOCOMPLETE_SPEC.md 26.1",
@@ -31,6 +37,9 @@
   },
   {
     "caretMarker" : "|",
+    "comments" : [
+
+    ],
     "dialect" : "postgresql",
     "echoSense" : {
       "excludes" : [
@@ -52,6 +61,9 @@
       "qualifyTableInsertions" : false
     },
     "review" : "imported",
+    "rules" : [
+
+    ],
     "schema" : "spec",
     "should" : "=> NONE` — Inside string, no crash.",
     "source" : "AUTOCOMPLETE_SPEC.md 26.4",
@@ -61,6 +73,9 @@
   },
   {
     "caretMarker" : "|",
+    "comments" : [
+
+    ],
     "dialect" : "postgresql",
     "echoSense" : {
       "excludes" : [
@@ -82,6 +97,9 @@
       "qualifyTableInsertions" : false
     },
     "review" : "imported",
+    "rules" : [
+
+    ],
     "schema" : "spec",
     "should" : "=> SILENT` — Silent after open paren, suggestions on typing.",
     "source" : "AUTOCOMPLETE_SPEC.md 26.5",
@@ -91,6 +109,9 @@
   },
   {
     "caretMarker" : "|",
+    "comments" : [
+
+    ],
     "dialect" : "postgresql",
     "echoSense" : {
       "excludes" : [
@@ -103,7 +124,7 @@
         "id",
         "value"
       ],
-      "order" : "includes",
+      "order" : "leading",
       "outcome" : "suggests"
     },
     "group" : "Edge Cases",
@@ -113,6 +134,9 @@
       "qualifyTableInsertions" : false
     },
     "review" : "imported",
+    "rules" : [
+
+    ],
     "schema" : "quoting",
     "should" : "Resolves quoted identifier, shows columns.",
     "source" : "AUTOCOMPLETE_SPEC.md 26.7",
@@ -122,6 +146,9 @@
   },
   {
     "caretMarker" : "|",
+    "comments" : [
+
+    ],
     "dialect" : "postgresql",
     "echoSense" : {
       "excludes" : [
@@ -144,6 +171,9 @@
       "qualifyTableInsertions" : false
     },
     "review" : "imported",
+    "rules" : [
+
+    ],
     "schema" : "spec",
     "should" : "=> NONE` — No tables in scope for the subquery's SELECT yet... wait, `orders` IS in scope.\nActually: `=> [columns from orders]` since `FROM orders` gives context.",
     "source" : "AUTOCOMPLETE_SPEC.md 26.9",

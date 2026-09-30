@@ -1,6 +1,9 @@
 [
   {
     "caretMarker" : "|",
+    "comments" : [
+
+    ],
     "dialect" : "mssql",
     "echoSense" : {
       "excludes" : [
@@ -13,7 +16,7 @@
         "id",
         "value"
       ],
-      "order" : "includes",
+      "order" : "leading",
       "outcome" : "suggests"
     },
     "group" : "MSSQL-Specific",
@@ -23,6 +26,9 @@
       "qualifyTableInsertions" : false
     },
     "review" : "imported",
+    "rules" : [
+
+    ],
     "schema" : "quoting",
     "should" : "Resolves `[Order]` and shows its columns.",
     "source" : "AUTOCOMPLETE_SPEC.md 23.1",

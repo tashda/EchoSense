@@ -1,6 +1,9 @@
 [
   {
     "caretMarker" : "|",
+    "comments" : [
+
+    ],
     "dialect" : "postgresql",
     "echoSense" : {
       "excludes" : [
@@ -18,7 +21,7 @@
         "users",
         "my_table"
       ],
-      "order" : "includes",
+      "order" : "leading",
       "outcome" : "suggests"
     },
     "group" : "Identifier Quoting",
@@ -29,6 +32,9 @@
       "qualifyTableInsertions" : false
     },
     "review" : "imported",
+    "rules" : [
+
+    ],
     "schema" : "quoting",
     "should" : "`order` and `UserData` insert quoted; `users` and `my_table` do not (15.1 to 15.3).",
     "source" : "AUTOCOMPLETE_SPEC.md",
@@ -38,6 +44,9 @@
   },
   {
     "caretMarker" : "|",
+    "comments" : [
+
+    ],
     "dialect" : "mssql",
     "echoSense" : {
       "excludes" : [
@@ -49,7 +58,7 @@
       "items" : [
         "order"
       ],
-      "order" : "includes",
+      "order" : "leading",
       "outcome" : "suggests"
     },
     "group" : "Identifier Quoting",
@@ -60,6 +69,9 @@
       "qualifyTableInsertions" : false
     },
     "review" : "imported",
+    "rules" : [
+
+    ],
     "schema" : "quoting",
     "should" : "`[order]` in SQL Server (15.2).",
     "source" : "AUTOCOMPLETE_SPEC.md",
@@ -69,6 +81,9 @@
   },
   {
     "caretMarker" : "|",
+    "comments" : [
+
+    ],
     "dialect" : "postgresql",
     "echoSense" : {
       "excludes" : [
@@ -80,7 +95,7 @@
       "items" : [
         "my table"
       ],
-      "order" : "includes",
+      "order" : "leading",
       "outcome" : "suggests"
     },
     "group" : "Identifier Quoting",
@@ -90,6 +105,9 @@
       "qualifyTableInsertions" : false
     },
     "review" : "imported",
+    "rules" : [
+
+    ],
     "schema" : "quoting",
     "should" : "`\"my table\"` in PostgreSQL (15.1).",
     "source" : "AUTOCOMPLETE_SPEC.md",
@@ -99,6 +117,9 @@
   },
   {
     "caretMarker" : "|",
+    "comments" : [
+
+    ],
     "dialect" : "postgresql",
     "echo" : {
       "accept" : "UserData",
@@ -112,6 +133,9 @@
       "qualifyTableInsertions" : false
     },
     "review" : "imported",
+    "rules" : [
+
+    ],
     "schema" : "quoting",
     "should" : "Typing `\"Us` and accepting `UserData` keeps the quotes.",
     "source" : "AUTOCOMPLETE_SPEC.md",

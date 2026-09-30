@@ -1,6 +1,9 @@
 [
   {
     "caretMarker" : "|",
+    "comments" : [
+
+    ],
     "dialect" : "postgresql",
     "echoSense" : {
       "excludes" : [
@@ -14,16 +17,20 @@
         "COALESCE",
         "CONCAT"
       ],
-      "order" : "includes",
+      "order" : "leading",
       "outcome" : "suggests"
     },
     "group" : "Functions",
     "id" : "SPEC-11.1",
+    "knownIssue" : "Fails today: Expected these first, in this order: COUNT, COALESCE, CONCAT. Now: COUNT is #1, COALESCE is #3, CONCAT is #2.",
     "options" : {
       "includeSystemSchemas" : false,
       "qualifyTableInsertions" : false
     },
     "review" : "imported",
+    "rules" : [
+
+    ],
     "schema" : "spec",
     "should" : "=> [columns matching \"CO\" first, then COUNT(), COALESCE(), CONCAT()]",
     "source" : "AUTOCOMPLETE_SPEC.md 11.1",
@@ -33,6 +40,9 @@
   },
   {
     "caretMarker" : "|",
+    "comments" : [
+
+    ],
     "dialect" : "postgresql",
     "echoSense" : {
       "excludes" : [
@@ -54,6 +64,9 @@
       "qualifyTableInsertions" : false
     },
     "review" : "imported",
+    "rules" : [
+
+    ],
     "schema" : "spec",
     "should" : "=> [LOWER()]",
     "source" : "AUTOCOMPLETE_SPEC.md 11.3",
@@ -63,6 +76,9 @@
   },
   {
     "caretMarker" : "|",
+    "comments" : [
+
+    ],
     "dialect" : "postgresql",
     "echoSense" : {
       "excludes" : [
@@ -84,6 +100,9 @@
       "qualifyTableInsertions" : false
     },
     "review" : "imported",
+    "rules" : [
+
+    ],
     "schema" : "spec",
     "should" : "=> [COUNT()]` — Aggregates ranked highest in HAVING.",
     "source" : "AUTOCOMPLETE_SPEC.md 11.4",
@@ -93,6 +112,9 @@
   },
   {
     "caretMarker" : "|",
+    "comments" : [
+
+    ],
     "dialect" : "postgresql",
     "echoSense" : {
       "excludes" : [
@@ -106,7 +128,7 @@
       "items" : [
 
       ],
-      "order" : "includes",
+      "order" : "leading",
       "outcome" : "suggests"
     },
     "group" : "Functions",
@@ -116,6 +138,9 @@
       "qualifyTableInsertions" : false
     },
     "review" : "imported",
+    "rules" : [
+
+    ],
     "schema" : "spec",
     "should" : "Functions do NOT appear in FROM context.",
     "source" : "AUTOCOMPLETE_SPEC.md 11.6",
@@ -125,6 +150,9 @@
   },
   {
     "caretMarker" : "|",
+    "comments" : [
+
+    ],
     "dialect" : "postgresql",
     "echoSense" : {
       "excludes" : [
@@ -136,7 +164,7 @@
       "items" : [
         "calculate_tax"
       ],
-      "order" : "includes",
+      "order" : "leading",
       "outcome" : "suggests"
     },
     "group" : "Functions",
@@ -146,6 +174,9 @@
       "qualifyTableInsertions" : false
     },
     "review" : "imported",
+    "rules" : [
+
+    ],
     "schema" : "spec",
     "should" : "=> [calculate_tax()]` — User-defined functions from schema.",
     "source" : "AUTOCOMPLETE_SPEC.md 11.7",

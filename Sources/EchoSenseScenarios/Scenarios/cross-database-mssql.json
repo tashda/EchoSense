@@ -1,6 +1,9 @@
 [
   {
     "caretMarker" : "|",
+    "comments" : [
+
+    ],
     "dialect" : "postgresql",
     "echoSense" : {
       "excludes" : [
@@ -12,16 +15,20 @@
       "items" : [
         "users"
       ],
-      "order" : "includes",
+      "order" : "leading",
       "outcome" : "suggests"
     },
     "group" : "Cross-Database (MSSQL)",
     "id" : "SPEC-24.1",
+    "knownIssue" : "Fails today: Expected these first, in this order: users. Now: users is #7.",
     "options" : {
       "includeSystemSchemas" : false,
       "qualifyTableInsertions" : false
     },
     "review" : "imported",
+    "rules" : [
+      "RULE-001"
+    ],
     "schema" : "spec",
     "should" : "No database names shown.",
     "source" : "AUTOCOMPLETE_SPEC.md 24.1",
@@ -31,6 +38,9 @@
   },
   {
     "caretMarker" : "|",
+    "comments" : [
+
+    ],
     "dialect" : "mssql",
     "echoSense" : {
       "excludes" : [
@@ -43,7 +53,7 @@
         "invoices",
         "customers"
       ],
-      "order" : "includes",
+      "order" : "leading",
       "outcome" : "suggests"
     },
     "group" : "Cross-Database (MSSQL)",
@@ -54,6 +64,9 @@
       "qualifyTableInsertions" : false
     },
     "review" : "imported",
+    "rules" : [
+
+    ],
     "schema" : "spec",
     "should" : "- EchoSense lazy-loads metadata for `otherdb`\n- Returns status: Loading → Loaded / Not Found\n- Once loaded, shows tables (insert text: `otherdb.dbo.tablename`)",
     "source" : "AUTOCOMPLETE_SPEC.md 24.2",
@@ -63,6 +76,9 @@
   },
   {
     "caretMarker" : "|",
+    "comments" : [
+
+    ],
     "dialect" : "mssql",
     "echoSense" : {
       "excludes" : [
@@ -75,16 +91,20 @@
         "invoices",
         "customers"
       ],
-      "order" : "includes",
+      "order" : "leading",
       "outcome" : "suggests"
     },
     "group" : "Cross-Database (MSSQL)",
     "id" : "SPEC-24.3",
+    "knownIssue" : "Fails today: Expected these first, in this order: invoices, customers. Now: invoices is #2, customers is #1.",
     "options" : {
       "includeSystemSchemas" : false,
       "qualifyTableInsertions" : false
     },
     "review" : "imported",
+    "rules" : [
+
+    ],
     "schema" : "spec",
     "should" : "=> [tables from otherdb.dbo]",
     "source" : "AUTOCOMPLETE_SPEC.md 24.3",

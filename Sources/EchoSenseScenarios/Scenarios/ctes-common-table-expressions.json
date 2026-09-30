@@ -1,6 +1,9 @@
 [
   {
     "caretMarker" : "|",
+    "comments" : [
+
+    ],
     "dialect" : "postgresql",
     "echoSense" : {
       "excludes" : [
@@ -24,6 +27,9 @@
       "qualifyTableInsertions" : false
     },
     "review" : "imported",
+    "rules" : [
+
+    ],
     "schema" : "spec",
     "should" : "=> [id, name]` — CTE columns from explicit list.",
     "source" : "AUTOCOMPLETE_SPEC.md 7.1",
@@ -33,6 +39,9 @@
   },
   {
     "caretMarker" : "|",
+    "comments" : [
+
+    ],
     "dialect" : "postgresql",
     "echoSense" : {
       "excludes" : [
@@ -56,6 +65,9 @@
       "qualifyTableInsertions" : false
     },
     "review" : "imported",
+    "rules" : [
+
+    ],
     "schema" : "spec",
     "should" : "=> [id, name]` — Columns inferred from inner SELECT.",
     "source" : "AUTOCOMPLETE_SPEC.md 7.2",
@@ -65,6 +77,9 @@
   },
   {
     "caretMarker" : "|",
+    "comments" : [
+
+    ],
     "dialect" : "postgresql",
     "echoSense" : {
       "excludes" : [
@@ -88,6 +103,9 @@
       "qualifyTableInsertions" : false
     },
     "review" : "imported",
+    "rules" : [
+
+    ],
     "schema" : "spec",
     "should" : "=> [user_id, user_name]` — Aliased column names.",
     "source" : "AUTOCOMPLETE_SPEC.md 7.3",
@@ -97,6 +115,9 @@
   },
   {
     "caretMarker" : "|",
+    "comments" : [
+
+    ],
     "dialect" : "postgresql",
     "echoSense" : {
       "excludes" : [
@@ -123,6 +144,9 @@
       "qualifyTableInsertions" : false
     },
     "review" : "imported",
+    "rules" : [
+
+    ],
     "schema" : "spec",
     "should" : "=> [id, name, email, created_at, department_id]` — Resolved from `users` metadata.",
     "source" : "AUTOCOMPLETE_SPEC.md 7.4",
@@ -132,6 +156,9 @@
   },
   {
     "caretMarker" : "|",
+    "comments" : [
+
+    ],
     "dialect" : "postgresql",
     "echoSense" : {
       "excludes" : [
@@ -145,7 +172,7 @@
         "users",
         "orders"
       ],
-      "order" : "includes",
+      "order" : "leading",
       "outcome" : "suggests"
     },
     "group" : "CTEs (Common Table Expressions)",
@@ -156,6 +183,9 @@
       "qualifyTableInsertions" : false
     },
     "review" : "imported",
+    "rules" : [
+
+    ],
     "schema" : "spec",
     "should" : "=> [active, users, orders, ...]` — CTE name appears as a table option.",
     "source" : "AUTOCOMPLETE_SPEC.md 7.5",
@@ -165,6 +195,9 @@
   },
   {
     "caretMarker" : "|",
+    "comments" : [
+
+    ],
     "dialect" : "postgresql",
     "echoSense" : {
       "excludes" : [
@@ -188,6 +221,9 @@
       "qualifyTableInsertions" : false
     },
     "review" : "imported",
+    "rules" : [
+
+    ],
     "schema" : "spec",
     "should" : "=> [id, name]",
     "source" : "AUTOCOMPLETE_SPEC.md 7.6",
@@ -197,6 +233,9 @@
   },
   {
     "caretMarker" : "|",
+    "comments" : [
+
+    ],
     "dialect" : "postgresql",
     "echoSense" : {
       "excludes" : [
@@ -211,7 +250,7 @@
         "name",
         "total"
       ],
-      "order" : "includes",
+      "order" : "leading",
       "outcome" : "suggests"
     },
     "group" : "CTEs (Common Table Expressions)",
@@ -222,6 +261,9 @@
       "qualifyTableInsertions" : false
     },
     "review" : "imported",
+    "rules" : [
+
+    ],
     "schema" : "spec",
     "should" : "- `id` exists in both → qualified: `a.id`, `r.id`\n- `name` unique → unqualified: `name`\n- `total` unique → unqualified: `total`",
     "source" : "AUTOCOMPLETE_SPEC.md 7.7",
@@ -231,6 +273,9 @@
   },
   {
     "caretMarker" : "|",
+    "comments" : [
+
+    ],
     "dialect" : "postgresql",
     "echoSense" : {
       "excludes" : [
@@ -254,6 +299,9 @@
       "qualifyTableInsertions" : false
     },
     "review" : "imported",
+    "rules" : [
+
+    ],
     "schema" : "spec",
     "should" : "=> [Id, Name]` — Case-insensitive lookup, preserves original casing.",
     "source" : "AUTOCOMPLETE_SPEC.md 7.8",
@@ -263,6 +311,9 @@
   },
   {
     "caretMarker" : "|",
+    "comments" : [
+
+    ],
     "dialect" : "postgresql",
     "echoSense" : {
       "excludes" : [
@@ -280,16 +331,20 @@
         "categories",
         "departments"
       ],
-      "order" : "includes",
+      "order" : "leading",
       "outcome" : "suggests"
     },
     "group" : "CTEs (Common Table Expressions)",
     "id" : "SPEC-7.9",
+    "knownIssue" : "Fails today: Expected these first, in this order: users, orders, products, categories, departments. Now: users is #13, orders is #11, products is #12, categories is #9, departments is #10.",
     "options" : {
       "includeSystemSchemas" : false,
       "qualifyTableInsertions" : false
     },
     "review" : "imported",
+    "rules" : [
+
+    ],
     "schema" : "spec",
     "should" : "=> [tables]` — CTE doesn't change INSERT behavior.",
     "source" : "AUTOCOMPLETE_SPEC.md 7.9",

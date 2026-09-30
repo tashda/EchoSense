@@ -1,6 +1,9 @@
 [
   {
     "caretMarker" : "|",
+    "comments" : [
+
+    ],
     "dialect" : "postgresql",
     "echoSense" : {
       "excludes" : [
@@ -16,7 +19,7 @@
         "created_at",
         "department_id"
       ],
-      "order" : "includes",
+      "order" : "leading",
       "outcome" : "suggests"
     },
     "group" : "Insert Text Behavior",
@@ -27,6 +30,9 @@
       "qualifyTableInsertions" : false
     },
     "review" : "imported",
+    "rules" : [
+
+    ],
     "schema" : "spec",
     "should" : "Suggestion insert text is `name`, not `u.name`. The `u.` is already typed.",
     "source" : "AUTOCOMPLETE_SPEC.md 16.4",

@@ -55,24 +55,17 @@ public struct ScenarioCheck: Sendable, Hashable, Identifiable {
     public var problem: Problem?
     /// Why it doesn't hold, in one sentence. Nil when it holds.
     public var failure: String?
+    /// The shared rule it comes from (`ScenarioRule.id`); nil for the scenario's own checks.
+    public var rule: String?
 
     public var passed: Bool { problem == nil }
 
-    public init(id: String, subject: Subject = .echoSense, statement: String, problem: Problem? = nil, failure: String? = nil) {
-        self.id = id; self.subject = subject; self.statement = statement; self.problem = problem; self.failure = failure
+    public init(id: String, subject: Subject = .echoSense, statement: String, problem: Problem? = nil, failure: String? = nil, rule: String? = nil) {
+        self.id = id; self.subject = subject; self.statement = statement; self.problem = problem; self.failure = failure; self.rule = rule
     }
 }
 
 public extension ScenarioResult {
-    /// Every check the scenario's expectations make, EchoSense's first, then the editor's. Empty when
-    /// the scenario has no expectation yet or could not run.
-    var checks: [ScenarioCheck] {
-        guard let actual else { return [] }
-        let engine = scenario.echoSense.map { CompletionScenarioRunner.checks($0, actual: actual, trigger: scenario.trigger) } ?? []
-        let editor = scenario.echo.map { CompletionScenarioRunner.checks($0, actual: actual) } ?? []
-        return engine + editor
-    }
-
     /// What is wrong, in a few words, for a list row: "missing id, name · offered status". Nil when
     /// nothing is. Problems of the same kind are merged.
     var briefProblem: String? {

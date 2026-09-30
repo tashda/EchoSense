@@ -89,6 +89,58 @@ public extension CompletionScenarioRunner {
         return checks
     }
 
+    /// What a shared rule checks: titles and kinds it forbids, and the order kinds must rank in.
+    static func checks(_ rule: ScenarioRule, actual rawActual: ScenarioActual) -> [ScenarioCheck] {
+        let titles = rawActual.titles.map(unquoted)
+        let kinds = Dictionary(rawActual.kinds.map { (unquoted($0.key), $0.value) }, uniquingKeysWith: { first, _ in first })
+        var checks: [ScenarioCheck] = []
+        for title in rule.excludes {
+            let offered = titles.contains(title)
+            checks.append(ScenarioCheck(
+                id: "rule:\(rule.id):never:\(title)", statement: "never offers `\(title)`",
+                problem: offered ? .unwanted([title]) : nil, failure: offered ? "Should not offer: \(title) (rule \(rule.id))." : nil, rule: rule.id))
+        }
+        for kind in rule.excludedKinds {
+            let offending = titles.filter { kinds[$0] == kind }
+            checks.append(ScenarioCheck(
+                id: "rule:\(rule.id):never-kind:\(kind)", statement: "never offers a \(kindName(kind))",
+                problem: offending.isEmpty ? nil : .unwanted(offending),
+                failure: offending.isEmpty ? nil : "Offers \(kindName(kind, plural: true)) \(list(offending)), which rule \(rule.id) forbids.", rule: rule.id))
+        }
+        if rule.kindOrder.count > 1 {
+            // Walk the popup: a suggestion of an earlier kind after one of a later kind breaks the order.
+            var latest: (index: Int, title: String)?
+            var broken: (early: String, late: String)?
+            for title in titles {
+                guard let kind = kinds[title], let index = rule.kindOrder.firstIndex(of: kind) else { continue }
+                if let current = latest, index < current.index { broken = (title, current.title); break }
+                if latest == nil || index > latest!.index { latest = (index, title) }
+            }
+            let order = rule.kindOrder.map { kindName($0, plural: true) }
+            checks.append(ScenarioCheck(
+                id: "rule:\(rule.id):kind-order", statement: "\(order.joined(separator: " before "))",
+                problem: broken == nil ? nil : .wrongOrder,
+                failure: broken.map { "`\($0.early)` (\(kindName(kinds[$0.early] ?? ""))) comes after `\($0.late)` (\(kindName(kinds[$0.late] ?? ""))); rule \(rule.id) wants \(order.joined(separator: " before "))." },
+                rule: rule.id))
+        }
+        return checks
+    }
+
+    /// A kind for reading: "materializedView" is "materialized view".
+    static func kindName(_ kind: String, plural: Bool = false) -> String {
+        let spaced = kind.reduce(into: "") { text, character in
+            if character.isUppercase { text += " " + character.lowercased() } else { text.append(character) }
+        }
+        return plural ? spaced + "s" : spaced
+    }
+
+    /// "`a` is #3, `b` isn't offered".
+    static func ranks(_ items: [String], in titles: [String]) -> String {
+        items.prefix(6).map { item in
+            titles.firstIndex(of: item).map { "\(item) is #\($0 + 1)" } ?? "\(item) isn't offered"
+        }.joined(separator: ", ") + (items.count > 6 ? " and \(items.count - 6) more" : "")
+    }
+
     /// Every check that doesn't hold, as a verdict.
     static func verdict(_ checks: [ScenarioCheck]) -> ScenarioVerdict {
         let failures = checks.compactMap(\.failure)
@@ -136,7 +188,7 @@ public extension CompletionScenarioRunner {
             return [ScenarioCheck(
                 id: "first", statement: items.count == 1 ? "offers \(shown) first" : "offers \(shown) first, in this order",
                 problem: holds ? nil : .wrongOrder,
-                failure: holds ? nil : "Expected these first, in order: \(list(items)). Got: \(list(Array(titles.prefix(max(items.count, 1))))).")]
+                failure: holds ? nil : "Expected these first, in this order: \(list(items)). Now: \(ranks(items, in: titles)).")]
         case .exact:
             let extra = titles.filter { !items.contains($0) }
             var checks = [ScenarioCheck(

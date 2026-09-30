@@ -1,6 +1,9 @@
 [
   {
     "caretMarker" : "|",
+    "comments" : [
+
+    ],
     "dialect" : "postgresql",
     "echoSense" : {
       "excludes" : [
@@ -13,7 +16,7 @@
       "items" : [
         "STRING_AGG"
       ],
-      "order" : "includes",
+      "order" : "leading",
       "outcome" : "suggests"
     },
     "group" : "Functions by Dialect",
@@ -23,6 +26,9 @@
       "qualifyTableInsertions" : false
     },
     "review" : "imported",
+    "rules" : [
+
+    ],
     "schema" : "spec",
     "should" : "PostgreSQL offers `STRING_AGG`, `ARRAY_AGG`, `UNNEST`; not `STUFF` or `ISNULL` (11.5).",
     "source" : "AUTOCOMPLETE_SPEC.md",
@@ -32,6 +38,9 @@
   },
   {
     "caretMarker" : "|",
+    "comments" : [
+
+    ],
     "dialect" : "mssql",
     "echoSense" : {
       "excludes" : [
@@ -44,7 +53,7 @@
       "items" : [
         "ISNULL"
       ],
-      "order" : "includes",
+      "order" : "leading",
       "outcome" : "suggests"
     },
     "group" : "Functions by Dialect",
@@ -54,6 +63,9 @@
       "qualifyTableInsertions" : false
     },
     "review" : "imported",
+    "rules" : [
+
+    ],
     "schema" : "spec",
     "should" : "SQL Server offers `ISNULL`, `STUFF`, `CONVERT`; not `IFNULL` or `UNNEST` (11.5).",
     "source" : "AUTOCOMPLETE_SPEC.md",
@@ -63,6 +75,9 @@
   },
   {
     "caretMarker" : "|",
+    "comments" : [
+
+    ],
     "dialect" : "mssql",
     "echoSense" : {
       "excludes" : [
@@ -84,6 +99,9 @@
       "qualifyTableInsertions" : false
     },
     "review" : "imported",
+    "rules" : [
+
+    ],
     "schema" : "spec",
     "should" : "`ARRAY_AGG` is PostgreSQL only: SQL Server does not offer it (11.5).",
     "source" : "AUTOCOMPLETE_SPEC.md",

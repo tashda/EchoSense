@@ -1,6 +1,9 @@
 [
   {
     "caretMarker" : "|",
+    "comments" : [
+
+    ],
     "dialect" : "postgresql",
     "echoSense" : {
       "excludes" : [
@@ -22,6 +25,9 @@
       "qualifyTableInsertions" : false
     },
     "review" : "imported",
+    "rules" : [
+
+    ],
     "schema" : "spec",
     "should" : "=> NONE` — Typing `SEL` does NOT suggest `SELECT`.",
     "source" : "AUTOCOMPLETE_SPEC.md 13.1",
@@ -31,6 +37,9 @@
   },
   {
     "caretMarker" : "|",
+    "comments" : [
+
+    ],
     "dialect" : "postgresql",
     "echoSense" : {
       "excludes" : [
@@ -52,6 +61,9 @@
       "qualifyTableInsertions" : false
     },
     "review" : "imported",
+    "rules" : [
+
+    ],
     "schema" : "spec",
     "should" : "=> NONE",
     "source" : "AUTOCOMPLETE_SPEC.md 13.1",
@@ -61,6 +73,9 @@
   },
   {
     "caretMarker" : "|",
+    "comments" : [
+
+    ],
     "dialect" : "postgresql",
     "echoSense" : {
       "excludes" : [
@@ -83,6 +98,9 @@
       "qualifyTableInsertions" : false
     },
     "review" : "imported",
+    "rules" : [
+
+    ],
     "schema" : "spec",
     "should" : "=> [WHERE]` — Contextual match after new line.",
     "source" : "AUTOCOMPLETE_SPEC.md 13.2",
@@ -92,6 +110,9 @@
   },
   {
     "caretMarker" : "|",
+    "comments" : [
+
+    ],
     "dialect" : "postgresql",
     "echoSense" : {
       "excludes" : [
@@ -114,6 +135,9 @@
       "qualifyTableInsertions" : false
     },
     "review" : "imported",
+    "rules" : [
+
+    ],
     "schema" : "spec",
     "should" : "=> [INNER JOIN]",
     "source" : "AUTOCOMPLETE_SPEC.md 13.2",
@@ -123,6 +147,9 @@
   },
   {
     "caretMarker" : "|",
+    "comments" : [
+
+    ],
     "dialect" : "postgresql",
     "echoSense" : {
       "excludes" : [
@@ -145,6 +172,9 @@
       "qualifyTableInsertions" : false
     },
     "review" : "imported",
+    "rules" : [
+
+    ],
     "schema" : "spec",
     "should" : "=> NONE` — User might be typing an alias.",
     "source" : "AUTOCOMPLETE_SPEC.md 13.3",
@@ -154,6 +184,9 @@
   },
   {
     "caretMarker" : "|",
+    "comments" : [
+
+    ],
     "dialect" : "postgresql",
     "echoSense" : {
       "excludes" : [
@@ -179,6 +212,9 @@
       "qualifyTableInsertions" : false
     },
     "review" : "imported",
+    "rules" : [
+
+    ],
     "schema" : "spec",
     "should" : "=> [ASC, DESC, NULLS FIRST, NULLS LAST]` — Auto-suggested after ORDER BY column.",
     "source" : "AUTOCOMPLETE_SPEC.md 13.5",
@@ -188,6 +224,9 @@
   },
   {
     "caretMarker" : "|",
+    "comments" : [
+
+    ],
     "dialect" : "postgresql",
     "echoSense" : {
       "excludes" : [
@@ -202,7 +241,7 @@
         "IS NULL",
         "IS NOT NULL"
       ],
-      "order" : "includes",
+      "order" : "leading",
       "outcome" : "suggests"
     },
     "group" : "Keywords",
@@ -213,6 +252,9 @@
       "qualifyTableInsertions" : false
     },
     "review" : "imported",
+    "rules" : [
+
+    ],
     "schema" : "spec",
     "should" : "=> [ILIKE (PostgreSQL), IN, IS NULL, IS NOT NULL]",
     "source" : "AUTOCOMPLETE_SPEC.md 13.6",

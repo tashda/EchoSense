@@ -37,7 +37,7 @@ let package = Package(
         .target(
             name: "EchoSenseScenarios",
             dependencies: ["EchoSense"],
-            resources: [.copy("Scenarios"), .copy("DomainScenarios")],
+            resources: [.copy("Scenarios"), .copy("DomainScenarios"), .copy("Rules")],
             swiftSettings: [.swiftLanguageMode(.v6)]
         ),
         .executableTarget(

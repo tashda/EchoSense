@@ -1,6 +1,9 @@
 [
   {
     "caretMarker" : "|",
+    "comments" : [
+
+    ],
     "dialect" : "postgresql",
     "echoSense" : {
       "excludes" : [
@@ -23,6 +26,9 @@
       "qualifyTableInsertions" : false
     },
     "review" : "imported",
+    "rules" : [
+
+    ],
     "schema" : "spec",
     "should" : "=> [department_id (top), then remaining columns]\n- Columns that appear in the SELECT list are ranked first.",
     "source" : "AUTOCOMPLETE_SPEC.md 5.1",
@@ -32,6 +38,9 @@
   },
   {
     "caretMarker" : "|",
+    "comments" : [
+
+    ],
     "dialect" : "postgresql",
     "echoSense" : {
       "excludes" : [
@@ -55,6 +64,9 @@
       "qualifyTableInsertions" : false
     },
     "review" : "imported",
+    "rules" : [
+
+    ],
     "schema" : "spec",
     "should" : "=> [name (top), email (top), then remaining columns]",
     "source" : "AUTOCOMPLETE_SPEC.md 5.2",
@@ -64,6 +76,9 @@
   },
   {
     "caretMarker" : "|",
+    "comments" : [
+
+    ],
     "dialect" : "postgresql",
     "echo" : {
       "popup" : "shown",
@@ -90,6 +105,9 @@
       "qualifyTableInsertions" : false
     },
     "review" : "imported",
+    "rules" : [
+
+    ],
     "schema" : "spec",
     "should" : "=> [name]",
     "source" : "AUTOCOMPLETE_SPEC.md 5.3",
@@ -99,6 +117,9 @@
   },
   {
     "caretMarker" : "|",
+    "comments" : [
+
+    ],
     "dialect" : "postgresql",
     "echoSense" : {
       "excludes" : [
@@ -124,6 +145,9 @@
       "qualifyTableInsertions" : false
     },
     "review" : "imported",
+    "rules" : [
+
+    ],
     "schema" : "spec",
     "should" : "=> [ASC, DESC, NULLS FIRST, NULLS LAST]` — Exception to space-after-identifier rule.",
     "source" : "AUTOCOMPLETE_SPEC.md 5.4",
@@ -133,6 +157,9 @@
   },
   {
     "caretMarker" : "|",
+    "comments" : [
+
+    ],
     "dialect" : "postgresql",
     "echoSense" : {
       "excludes" : [
@@ -148,7 +175,7 @@
         "created_at",
         "department_id"
       ],
-      "order" : "includes",
+      "order" : "leading",
       "outcome" : "suggests"
     },
     "group" : "GROUP BY / ORDER BY / HAVING",
@@ -159,6 +186,9 @@
       "qualifyTableInsertions" : false
     },
     "review" : "imported",
+    "rules" : [
+
+    ],
     "schema" : "spec",
     "should" : "=> [columns from users]` — Immediately.",
     "source" : "AUTOCOMPLETE_SPEC.md 5.5",
@@ -168,6 +198,9 @@
   },
   {
     "caretMarker" : "|",
+    "comments" : [
+
+    ],
     "dialect" : "postgresql",
     "echoSense" : {
       "excludes" : [
@@ -194,6 +227,9 @@
       "qualifyTableInsertions" : false
     },
     "review" : "imported",
+    "rules" : [
+
+    ],
     "schema" : "spec",
     "should" : "Order:\n1. Aggregate functions (`COUNT(`, `SUM(`, `AVG(`, `MIN(`, `MAX(`)\n2. Columns from tables in scope\n3. Other functions",
     "source" : "AUTOCOMPLETE_SPEC.md 5.6",

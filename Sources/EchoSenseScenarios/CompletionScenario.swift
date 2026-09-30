@@ -41,6 +41,13 @@ public struct CompletionScenario: Codable, Sendable, Identifiable, Hashable {
     public var knownIssue: String?
     /// `imported` until the owner has read it: `approved` when it is right, `flagged` when it needs a change.
     public var review: ScenarioReview
+    /// Shared rules this scenario follows (`ScenarioRule` ids); their checks are added to its own.
+    public var rules: [String]
+    /// The conversation about this scenario between the owner and agents, oldest first.
+    public var comments: [ScenarioComment]
+
+    /// True while the owner's message is the last one: an agent should read and answer it.
+    public var waitsForAgent: Bool { comments.last?.author == .owner }
 
     public init(
         id: String, group: String, title: String, should: String = "",
@@ -48,8 +55,10 @@ public struct CompletionScenario: Codable, Sendable, Identifiable, Hashable {
         sql: String, caretMarker: String = "|", trigger: ScenarioTrigger = .typing,
         options: ScenarioOptions = .init(), echoSense: EchoSenseExpectation? = nil, echo: EchoExpectation? = nil,
         afterAccepting: String? = nil, thenTyped: String? = nil,
-        source: String? = nil, notes: String? = nil, knownIssue: String? = nil, review: ScenarioReview = .imported
+        source: String? = nil, notes: String? = nil, knownIssue: String? = nil, review: ScenarioReview = .imported,
+        rules: [String] = [], comments: [ScenarioComment] = []
     ) {
+        self.rules = rules; self.comments = comments
         self.afterAccepting = afterAccepting; self.thenTyped = thenTyped
         self.id = id; self.group = group; self.title = title; self.should = should
         self.dialect = dialect; self.schema = schema; self.sql = sql; self.caretMarker = caretMarker
@@ -68,7 +77,7 @@ public struct CompletionScenario: Codable, Sendable, Identifiable, Hashable {
 
     // Decoding tolerates files written by hand or by an older version.
     private enum CodingKeys: String, CodingKey {
-        case id, group, title, should, dialect, schema, sql, caretMarker, trigger, options, echoSense, echo, afterAccepting, thenTyped, source, notes, knownIssue, review
+        case id, group, title, should, dialect, schema, sql, caretMarker, trigger, options, echoSense, echo, afterAccepting, thenTyped, source, notes, knownIssue, review, rules, comments
     }
 
     public init(from decoder: Decoder) throws {
@@ -91,6 +100,8 @@ public struct CompletionScenario: Codable, Sendable, Identifiable, Hashable {
         notes = try c.decodeIfPresent(String.self, forKey: .notes)
         knownIssue = try c.decodeIfPresent(String.self, forKey: .knownIssue)
         review = try c.decodeIfPresent(ScenarioReview.self, forKey: .review) ?? .imported
+        rules = try c.decodeIfPresent([String].self, forKey: .rules) ?? []
+        comments = try c.decodeIfPresent([ScenarioComment].self, forKey: .comments) ?? []
     }
 }
 
@@ -150,7 +161,8 @@ public struct EchoSenseExpectation: Codable, Sendable, Hashable {
         case exact
         /// These come first, in this order; more may follow.
         case leading
-        /// All of these are in the result, in any order; more may be too.
+        /// All of these are in the result, in any order; more may be too. Not offered for new
+        /// scenarios: order always matters (the owner's rule), so use `leading`.
         case includes
     }
 
@@ -163,7 +175,7 @@ public struct EchoSenseExpectation: Codable, Sendable, Hashable {
     /// Insert text per title, where it matters ("name" rather than "u.name" after "u.").
     public var insertText: [String: String]
 
-    public init(outcome: Outcome, items: [String] = [], order: Order = .exact, excludes: [String] = [], insertText: [String: String] = [:]) {
+    public init(outcome: Outcome, items: [String] = [], order: Order = .leading, excludes: [String] = [], insertText: [String: String] = [:]) {
         self.outcome = outcome; self.items = items; self.order = order; self.excludes = excludes; self.insertText = insertText
     }
 

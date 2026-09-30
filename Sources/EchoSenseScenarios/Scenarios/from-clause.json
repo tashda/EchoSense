@@ -1,6 +1,9 @@
 [
   {
     "caretMarker" : "|",
+    "comments" : [
+
+    ],
     "dialect" : "postgresql",
     "echoSense" : {
       "excludes" : [
@@ -19,16 +22,20 @@
         "user_stats",
         "analytics"
       ],
-      "order" : "includes",
+      "order" : "leading",
       "outcome" : "suggests"
     },
     "group" : "FROM Clause",
     "id" : "SPEC-2.1",
+    "knownIssue" : "Fails today: Expected these first, in this order: users, orders, products, categories, departments, active_users, user_stats, analytics. Now: users is #7, orders is #4, products is #5, categories is #2, departments is #3, active_users is #1 and 2 more.",
     "options" : {
       "includeSystemSchemas" : false,
       "qualifyTableInsertions" : false
     },
     "review" : "imported",
+    "rules" : [
+
+    ],
     "schema" : "spec",
     "should" : "=> [tables/views/materialized views from all schemas, schema names]\n- History-boosted items first\n- Default schema tables above non-default schema tables\n- Tables and materialized views ranked slightly above views\n- Schemas ranked equally with tables\n- Schema suggestions insert with trailing dot (`analytics.`)",
     "source" : "AUTOCOMPLETE_SPEC.md 2.1",
@@ -38,6 +45,9 @@
   },
   {
     "caretMarker" : "|",
+    "comments" : [
+
+    ],
     "dialect" : "postgresql",
     "echo" : {
       "popup" : "shown",
@@ -63,6 +73,9 @@
       "qualifyTableInsertions" : false
     },
     "review" : "imported",
+    "rules" : [
+
+    ],
     "schema" : "spec",
     "should" : "=> [users]` — Prefix match.",
     "source" : "AUTOCOMPLETE_SPEC.md 2.2",
@@ -72,6 +85,9 @@
   },
   {
     "caretMarker" : "|",
+    "comments" : [
+
+    ],
     "dialect" : "postgresql",
     "echoSense" : {
       "excludes" : [
@@ -94,6 +110,9 @@
       "qualifyTableInsertions" : false
     },
     "review" : "imported",
+    "rules" : [
+
+    ],
     "schema" : "spec",
     "should" : "=> [events, metrics]` — Tables/views from `analytics` schema only.",
     "source" : "AUTOCOMPLETE_SPEC.md 2.3",
@@ -103,6 +122,9 @@
   },
   {
     "caretMarker" : "|",
+    "comments" : [
+
+    ],
     "dialect" : "postgresql",
     "echoSense" : {
       "excludes" : [
@@ -124,6 +146,9 @@
       "qualifyTableInsertions" : false
     },
     "review" : "imported",
+    "rules" : [
+
+    ],
     "schema" : "spec",
     "should" : "=> [events]",
     "source" : "AUTOCOMPLETE_SPEC.md 2.4",
@@ -133,6 +158,9 @@
   },
   {
     "caretMarker" : "|",
+    "comments" : [
+
+    ],
     "dialect" : "postgresql",
     "echoSense" : {
       "excludes" : [
@@ -147,7 +175,7 @@
         "categories",
         "departments"
       ],
-      "order" : "includes",
+      "order" : "leading",
       "outcome" : "suggests"
     },
     "group" : "FROM Clause",
@@ -158,6 +186,9 @@
       "qualifyTableInsertions" : false
     },
     "review" : "imported",
+    "rules" : [
+
+    ],
     "schema" : "spec",
     "should" : "=> [tables/views]` — Immediately show tables.",
     "source" : "AUTOCOMPLETE_SPEC.md 2.5",
@@ -167,6 +198,9 @@
   },
   {
     "caretMarker" : "|",
+    "comments" : [
+
+    ],
     "dialect" : "postgresql",
     "echoSense" : {
       "excludes" : [
@@ -188,6 +222,9 @@
       "qualifyTableInsertions" : false
     },
     "review" : "imported",
+    "rules" : [
+
+    ],
     "schema" : "spec",
     "should" : "=> SILENT` — User may be typing an alias. No suggestions at all.",
     "source" : "AUTOCOMPLETE_SPEC.md 2.6",
@@ -197,6 +234,9 @@
   },
   {
     "caretMarker" : "|",
+    "comments" : [
+
+    ],
     "dialect" : "postgresql",
     "echoSense" : {
       "excludes" : [
@@ -218,6 +258,9 @@
       "qualifyTableInsertions" : false
     },
     "review" : "imported",
+    "rules" : [
+
+    ],
     "schema" : "spec",
     "should" : "=> SILENT` — Even on new line, wait for user input.",
     "source" : "AUTOCOMPLETE_SPEC.md 2.7",
@@ -227,6 +270,9 @@
   },
   {
     "caretMarker" : "|",
+    "comments" : [
+
+    ],
     "dialect" : "postgresql",
     "echoSense" : {
       "excludes" : [
@@ -249,6 +295,9 @@
       "qualifyTableInsertions" : false
     },
     "review" : "imported",
+    "rules" : [
+
+    ],
     "schema" : "spec",
     "should" : "=> [WHERE]` — Contextual keyword match.",
     "source" : "AUTOCOMPLETE_SPEC.md 2.7",
@@ -258,6 +307,9 @@
   },
   {
     "caretMarker" : "|",
+    "comments" : [
+
+    ],
     "dialect" : "postgresql",
     "echoSense" : {
       "excludes" : [
@@ -280,6 +332,9 @@
       "qualifyTableInsertions" : false
     },
     "review" : "imported",
+    "rules" : [
+
+    ],
     "schema" : "spec",
     "should" : "=> [JOIN]",
     "source" : "AUTOCOMPLETE_SPEC.md 2.7",
@@ -289,6 +344,9 @@
   },
   {
     "caretMarker" : "|",
+    "comments" : [
+
+    ],
     "dialect" : "postgresql",
     "echoSense" : {
       "excludes" : [
@@ -311,6 +369,9 @@
       "qualifyTableInsertions" : false
     },
     "review" : "imported",
+    "rules" : [
+
+    ],
     "schema" : "spec",
     "should" : "=> [INNER JOIN]",
     "source" : "AUTOCOMPLETE_SPEC.md 2.7",
@@ -320,6 +381,9 @@
   },
   {
     "caretMarker" : "|",
+    "comments" : [
+
+    ],
     "dialect" : "postgresql",
     "echoSense" : {
       "excludes" : [
@@ -336,16 +400,20 @@
         "categories",
         "departments"
       ],
-      "order" : "includes",
+      "order" : "leading",
       "outcome" : "suggests"
     },
     "group" : "FROM Clause",
     "id" : "SPEC-2.8",
+    "knownIssue" : "Fails today: Expected these first, in this order: users, orders, products, categories, departments. Now: users is #5, orders is #3, products is #4, categories is #1, departments is #2.",
     "options" : {
       "includeSystemSchemas" : false,
       "qualifyTableInsertions" : false
     },
     "review" : "imported",
+    "rules" : [
+
+    ],
     "schema" : "spec",
     "should" : "=> [tables]` — Only tables (not views).",
     "source" : "AUTOCOMPLETE_SPEC.md 2.8",
@@ -355,6 +423,9 @@
   },
   {
     "caretMarker" : "|",
+    "comments" : [
+
+    ],
     "dialect" : "postgresql",
     "echoSense" : {
       "excludes" : [
@@ -371,7 +442,7 @@
         "categories",
         "departments"
       ],
-      "order" : "includes",
+      "order" : "leading",
       "outcome" : "suggests"
     },
     "group" : "FROM Clause",
@@ -382,6 +453,9 @@
       "qualifyTableInsertions" : false
     },
     "review" : "imported",
+    "rules" : [
+
+    ],
     "schema" : "spec",
     "should" : "=> [tables]",
     "source" : "AUTOCOMPLETE_SPEC.md 2.9",
@@ -391,6 +465,9 @@
   },
   {
     "caretMarker" : "|",
+    "comments" : [
+
+    ],
     "dialect" : "postgresql",
     "echoSense" : {
       "excludes" : [
@@ -407,7 +484,7 @@
         "categories",
         "departments"
       ],
-      "order" : "includes",
+      "order" : "leading",
       "outcome" : "suggests"
     },
     "group" : "FROM Clause",
@@ -418,6 +495,9 @@
       "qualifyTableInsertions" : false
     },
     "review" : "imported",
+    "rules" : [
+
+    ],
     "schema" : "spec",
     "should" : "=> [tables]",
     "source" : "AUTOCOMPLETE_SPEC.md 2.10",

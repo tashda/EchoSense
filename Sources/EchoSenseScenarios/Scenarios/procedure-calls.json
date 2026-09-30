@@ -1,6 +1,9 @@
 [
   {
     "caretMarker" : "|",
+    "comments" : [
+
+    ],
     "dialect" : "mssql",
     "echoSense" : {
       "excludes" : [
@@ -13,7 +16,7 @@
         "get_user_orders",
         "archive_orders"
       ],
-      "order" : "includes",
+      "order" : "leading",
       "outcome" : "suggests"
     },
     "group" : "Procedure Calls",
@@ -24,6 +27,9 @@
       "qualifyTableInsertions" : false
     },
     "review" : "imported",
+    "rules" : [
+
+    ],
     "schema" : "spec",
     "should" : "=> [stored procedures/functions]",
     "source" : "AUTOCOMPLETE_SPEC.md 21.1",
@@ -33,6 +39,9 @@
   },
   {
     "caretMarker" : "|",
+    "comments" : [
+
+    ],
     "dialect" : "postgresql",
     "echoSense" : {
       "excludes" : [
@@ -45,7 +54,7 @@
         "get_user_orders",
         "archive_orders"
       ],
-      "order" : "includes",
+      "order" : "leading",
       "outcome" : "suggests"
     },
     "group" : "Procedure Calls",
@@ -56,6 +65,9 @@
       "qualifyTableInsertions" : false
     },
     "review" : "imported",
+    "rules" : [
+
+    ],
     "schema" : "spec",
     "should" : "=> [stored procedures/functions]",
     "source" : "AUTOCOMPLETE_SPEC.md 21.2",

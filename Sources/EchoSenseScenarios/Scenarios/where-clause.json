@@ -1,6 +1,9 @@
 [
   {
     "caretMarker" : "|",
+    "comments" : [
+
+    ],
     "dialect" : "postgresql",
     "echoSense" : {
       "excludes" : [
@@ -16,7 +19,7 @@
         "created_at",
         "department_id"
       ],
-      "order" : "includes",
+      "order" : "leading",
       "outcome" : "suggests"
     },
     "group" : "WHERE Clause",
@@ -27,6 +30,9 @@
       "qualifyTableInsertions" : false
     },
     "review" : "imported",
+    "rules" : [
+
+    ],
     "schema" : "spec",
     "should" : "=> [columns from users, functions]` — Columns ranked first.",
     "source" : "AUTOCOMPLETE_SPEC.md 4.1",
@@ -36,6 +42,9 @@
   },
   {
     "caretMarker" : "|",
+    "comments" : [
+
+    ],
     "dialect" : "postgresql",
     "echo" : {
       "popup" : "shown",
@@ -62,6 +71,9 @@
       "qualifyTableInsertions" : false
     },
     "review" : "imported",
+    "rules" : [
+
+    ],
     "schema" : "spec",
     "should" : "=> [name]",
     "source" : "AUTOCOMPLETE_SPEC.md 4.2",
@@ -71,6 +83,9 @@
   },
   {
     "caretMarker" : "|",
+    "comments" : [
+
+    ],
     "dialect" : "postgresql",
     "echoSense" : {
       "excludes" : [
@@ -92,6 +107,9 @@
       "qualifyTableInsertions" : false
     },
     "review" : "imported",
+    "rules" : [
+
+    ],
     "schema" : "spec",
     "should" : "=> SILENT` — User most likely typing a literal value.\nOn manual trigger: show columns from other tables (if any) first, then functions, then same-table columns, then parameters.",
     "source" : "AUTOCOMPLETE_SPEC.md 4.3",
@@ -101,6 +119,9 @@
   },
   {
     "caretMarker" : "|",
+    "comments" : [
+
+    ],
     "dialect" : "postgresql",
     "echoSense" : {
       "excludes" : [
@@ -116,7 +137,7 @@
         "created_at",
         "department_id"
       ],
-      "order" : "includes",
+      "order" : "leading",
       "outcome" : "suggests"
     },
     "group" : "WHERE Clause",
@@ -127,6 +148,9 @@
       "qualifyTableInsertions" : false
     },
     "review" : "imported",
+    "rules" : [
+
+    ],
     "schema" : "spec",
     "should" : "=> [columns from users, functions]",
     "source" : "AUTOCOMPLETE_SPEC.md 4.4",
@@ -136,6 +160,9 @@
   },
   {
     "caretMarker" : "|",
+    "comments" : [
+
+    ],
     "dialect" : "postgresql",
     "echoSense" : {
       "excludes" : [
@@ -156,7 +183,7 @@
         "u.created_at",
         "o.created_at"
       ],
-      "order" : "includes",
+      "order" : "leading",
       "outcome" : "suggests"
     },
     "group" : "WHERE Clause",
@@ -167,6 +194,9 @@
       "qualifyTableInsertions" : false
     },
     "review" : "imported",
+    "rules" : [
+
+    ],
     "schema" : "spec",
     "should" : "Same rules as SELECT: unique columns unqualified, ambiguous columns qualified.",
     "source" : "AUTOCOMPLETE_SPEC.md 4.5",
@@ -176,6 +206,9 @@
   },
   {
     "caretMarker" : "|",
+    "comments" : [
+
+    ],
     "dialect" : "postgresql",
     "echoSense" : {
       "excludes" : [
@@ -202,6 +235,9 @@
       "qualifyTableInsertions" : false
     },
     "review" : "imported",
+    "rules" : [
+
+    ],
     "schema" : "spec",
     "should" : "=> [id, name, email, created_at, department_id]` — Only `users` columns.",
     "source" : "AUTOCOMPLETE_SPEC.md 4.6",
@@ -211,6 +247,9 @@
   },
   {
     "caretMarker" : "|",
+    "comments" : [
+
+    ],
     "dialect" : "postgresql",
     "echoSense" : {
       "excludes" : [
@@ -233,6 +272,9 @@
       "qualifyTableInsertions" : false
     },
     "review" : "imported",
+    "rules" : [
+
+    ],
     "schema" : "spec",
     "should" : "=> [$1]` — PostgreSQL parameter. Only shown when `$` is typed.",
     "source" : "AUTOCOMPLETE_SPEC.md 4.7",
@@ -242,6 +284,9 @@
   },
   {
     "caretMarker" : "|",
+    "comments" : [
+
+    ],
     "dialect" : "mssql",
     "echoSense" : {
       "excludes" : [
@@ -264,6 +309,9 @@
       "qualifyTableInsertions" : false
     },
     "review" : "imported",
+    "rules" : [
+
+    ],
     "schema" : "spec",
     "should" : "=> [@p1]` — MSSQL parameter. Only shown when `@` is typed.",
     "source" : "AUTOCOMPLETE_SPEC.md 4.7",
@@ -273,6 +321,9 @@
   },
   {
     "caretMarker" : "|",
+    "comments" : [
+
+    ],
     "dialect" : "postgresql",
     "echoSense" : {
       "excludes" : [
@@ -294,6 +345,9 @@
       "qualifyTableInsertions" : false
     },
     "review" : "imported",
+    "rules" : [
+
+    ],
     "schema" : "spec",
     "should" : "=> SILENT` — User might type literals.",
     "source" : "AUTOCOMPLETE_SPEC.md 4.8",
@@ -303,6 +357,9 @@
   },
   {
     "caretMarker" : "|",
+    "comments" : [
+
+    ],
     "dialect" : "postgresql",
     "echoSense" : {
       "excludes" : [
@@ -324,6 +381,9 @@
       "qualifyTableInsertions" : false
     },
     "review" : "imported",
+    "rules" : [
+
+    ],
     "schema" : "spec",
     "should" : "=> [name]` — Column suggestion once user types.",
     "source" : "AUTOCOMPLETE_SPEC.md 4.8",
@@ -333,6 +393,9 @@
   },
   {
     "caretMarker" : "|",
+    "comments" : [
+
+    ],
     "dialect" : "postgresql",
     "echoSense" : {
       "excludes" : [
@@ -349,16 +412,20 @@
         "status",
         "created_at"
       ],
-      "order" : "includes",
+      "order" : "leading",
       "outcome" : "suggests"
     },
     "group" : "WHERE Clause",
     "id" : "SPEC-4.9",
+    "knownIssue" : "Fails today: Expected these first, in this order: id, user_id, total, status, created_at. Now: id is #1, user_id is #2, total is #5, status is #3, created_at is #4.",
     "options" : {
       "includeSystemSchemas" : false,
       "qualifyTableInsertions" : false
     },
     "review" : "imported",
+    "rules" : [
+
+    ],
     "schema" : "spec",
     "should" : "=> [columns from orders]",
     "source" : "AUTOCOMPLETE_SPEC.md 4.9",
@@ -368,6 +435,9 @@
   },
   {
     "caretMarker" : "|",
+    "comments" : [
+
+    ],
     "dialect" : "postgresql",
     "echoSense" : {
       "excludes" : [
@@ -389,6 +459,9 @@
       "qualifyTableInsertions" : false
     },
     "review" : "imported",
+    "rules" : [
+
+    ],
     "schema" : "spec",
     "should" : "=> SILENT` — Same line after identifier.",
     "source" : "AUTOCOMPLETE_SPEC.md 4.10",
@@ -398,6 +471,9 @@
   },
   {
     "caretMarker" : "|",
+    "comments" : [
+
+    ],
     "dialect" : "postgresql",
     "echoSense" : {
       "excludes" : [
@@ -412,7 +488,7 @@
         "IS NULL",
         "IS NOT NULL"
       ],
-      "order" : "includes",
+      "order" : "leading",
       "outcome" : "suggests"
     },
     "group" : "WHERE Clause",
@@ -423,6 +499,9 @@
       "qualifyTableInsertions" : false
     },
     "review" : "imported",
+    "rules" : [
+
+    ],
     "schema" : "spec",
     "should" : "=> [ILIKE (PostgreSQL), IN, IS NULL, IS NOT NULL]` — Operator keywords on typing.",
     "source" : "AUTOCOMPLETE_SPEC.md 4.10",

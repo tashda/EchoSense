@@ -3,6 +3,8 @@ import Foundation
 
 // echosense-scenarios run [--failing] [--group "SELECT Clause"] [--id SPEC-1.4]
 // echosense-scenarios triage     mark failing scenarios as known issues, clear ones that now pass
+// echosense-scenarios comment <id> "text" [--reopen]   answer the owner in a scenario's thread
+//                    (--reopen sets its review back to not reviewed, so the owner looks again)
 // echosense-scenarios domains [--domain statements] [--failing]   the other kinds (statements, GO, ...)
 // echosense-scenarios domains-triage
 // They read and write Sources/EchoSenseScenarios/Scenarios in this checkout.
@@ -46,6 +48,14 @@ enum ScenarioCLI {
                 }
                 print("\n\(pass) pass, \(fail) fail, \(known) known issues, \(unchecked) without an expectation")
                 exit(fail == 0 ? 0 : 1)
+            case "comment":
+                guard args.count >= 2, let index = library.scenarios.firstIndex(where: { $0.id == args[0] }) else {
+                    print("Usage: echosense-scenarios comment <id> \"text\" [--reopen]"); exit(1)
+                }
+                library.scenarios[index].comments.append(ScenarioComment(author: .agent, text: args[1]))
+                if args.contains("--reopen") { library.scenarios[index].review = .imported }
+                try library.write(to: directory)
+                print("Answered \(args[0])\(args.contains("--reopen") ? " and set it back to not reviewed" : "").")
             case "triage":
                 var marked = 0, cleared = 0
                 for index in library.scenarios.indices {

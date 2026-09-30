@@ -1,0 +1,16 @@
+[
+  {
+    "excludedKinds" : [
+      "database"
+    ],
+    "excludes" : [
+
+    ],
+    "id" : "RULE-001",
+    "kindOrder" : [
+
+    ],
+    "should" : "Database names are never offered automatically; the user types them. (AUTOCOMPLETE_SPEC.md 24.1)",
+    "title" : "No database names"
+  }
+]
