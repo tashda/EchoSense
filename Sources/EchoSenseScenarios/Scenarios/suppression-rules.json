@@ -1,0 +1,184 @@
+[
+  {
+    "caretMarker" : "|",
+    "dialect" : "postgresql",
+    "echoSense" : {
+      "excludes" : [
+
+      ],
+      "insertText" : {
+
+      },
+      "items" : [
+
+      ],
+      "order" : "exact",
+      "outcome" : "none"
+    },
+    "group" : "Suppression Rules",
+    "id" : "SPEC-17.2",
+    "options" : {
+      "includeSystemSchemas" : false,
+      "qualifyTableInsertions" : false
+    },
+    "review" : "imported",
+    "schema" : "spec",
+    "should" : "=> NONE` — Complete reserved keyword suppresses.",
+    "source" : "AUTOCOMPLETE_SPEC.md 17.2",
+    "sql" : "SELECT|",
+    "title" : "Reserved keyword as complete token",
+    "trigger" : "typing"
+  },
+  {
+    "caretMarker" : "|",
+    "dialect" : "postgresql",
+    "echoSense" : {
+      "excludes" : [
+
+      ],
+      "insertText" : {
+
+      },
+      "items" : [
+
+      ],
+      "order" : "exact",
+      "outcome" : "silent"
+    },
+    "group" : "Suppression Rules",
+    "id" : "SPEC-17.3",
+    "options" : {
+      "includeSystemSchemas" : false,
+      "qualifyTableInsertions" : false
+    },
+    "review" : "imported",
+    "schema" : "spec",
+    "should" : "=> SILENT",
+    "source" : "AUTOCOMPLETE_SPEC.md 17.3",
+    "sql" : "SELECT * |",
+    "title" : "After star without manual trigger",
+    "trigger" : "typing"
+  },
+  {
+    "caretMarker" : "|",
+    "dialect" : "postgresql",
+    "echoSense" : {
+      "excludes" : [
+
+      ],
+      "insertText" : {
+
+      },
+      "items" : [
+
+      ],
+      "order" : "exact",
+      "outcome" : "none"
+    },
+    "group" : "Suppression Rules",
+    "id" : "SPEC-17.4",
+    "knownIssue" : "Fails today: Expected nothing even when triggered by hand, but that offered $1, ABS, AGE, ARRAY_AGG, ARRAY_APPEND, ARRAY_CAT, ARRAY_LENGTH, ARRAY_POSITION, ARRAY_REMOVE, AVG, BOOL_AND, BOOL_OR and 48 more.",
+    "options" : {
+      "includeSystemSchemas" : false,
+      "qualifyTableInsertions" : false
+    },
+    "review" : "imported",
+    "schema" : "spec",
+    "should" : "=> NONE` — Unless manual trigger (which shows empty if nothing relevant).",
+    "source" : "AUTOCOMPLETE_SPEC.md 17.4",
+    "sql" : "SELECT |",
+    "title" : "No tables in scope — empty SELECT",
+    "trigger" : "typing"
+  },
+  {
+    "caretMarker" : "|",
+    "dialect" : "postgresql",
+    "echoSense" : {
+      "excludes" : [
+
+      ],
+      "insertText" : {
+
+      },
+      "items" : [
+
+      ],
+      "order" : "exact",
+      "outcome" : "none"
+    },
+    "group" : "Suppression Rules",
+    "id" : "SPEC-17.5",
+    "options" : {
+      "includeSystemSchemas" : false,
+      "qualifyTableInsertions" : false
+    },
+    "review" : "imported",
+    "schema" : "spec",
+    "should" : "=> NONE",
+    "source" : "AUTOCOMPLETE_SPEC.md 17.5",
+    "sql" : "SELECT * FROM users -- WHERE |",
+    "title" : "Inside comments",
+    "trigger" : "typing"
+  },
+  {
+    "caretMarker" : "|",
+    "dialect" : "postgresql",
+    "echoSense" : {
+      "excludes" : [
+
+      ],
+      "insertText" : {
+
+      },
+      "items" : [
+
+      ],
+      "order" : "exact",
+      "outcome" : "none"
+    },
+    "group" : "Suppression Rules",
+    "id" : "SPEC-17.5b",
+    "options" : {
+      "includeSystemSchemas" : false,
+      "qualifyTableInsertions" : false
+    },
+    "review" : "imported",
+    "schema" : "spec",
+    "should" : "=> NONE",
+    "source" : "AUTOCOMPLETE_SPEC.md 17.5",
+    "sql" : "SELECT * FROM users /* WHERE | */",
+    "title" : "Inside comments",
+    "trigger" : "typing"
+  },
+  {
+    "caretMarker" : "|",
+    "dialect" : "postgresql",
+    "echoSense" : {
+      "excludes" : [
+
+      ],
+      "insertText" : {
+
+      },
+      "items" : [
+
+      ],
+      "order" : "exact",
+      "outcome" : "none"
+    },
+    "group" : "Suppression Rules",
+    "id" : "SPEC-17.6",
+    "knownIssue" : "Fails today: Expected nothing even when triggered by hand, but that offered TO_JSON, TO_JSONB, JSON_AGG, JSONB_AGG, JSON_TYPEOF, JSONB_TYPEOF, JSON_BUILD_ARRAY, JSON_BUILD_OBJECT, JSONB_BUILD_ARRAY, JSONB_BUILD_OBJECT, JSON_EXTRACT_PATH_TEXT, JSONB_EXTRACT_PATH_TEXT and 2 more.",
+    "options" : {
+      "includeSystemSchemas" : false,
+      "qualifyTableInsertions" : false
+    },
+    "review" : "imported",
+    "schema" : "spec",
+    "should" : "=> NONE",
+    "source" : "AUTOCOMPLETE_SPEC.md 17.6",
+    "sql" : "SELECT * FROM users WHERE name = 'Jo|",
+    "title" : "Inside string literals",
+    "trigger" : "typing"
+  }
+]

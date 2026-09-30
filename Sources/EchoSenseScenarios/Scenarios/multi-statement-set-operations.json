@@ -1,0 +1,36 @@
+[
+  {
+    "caretMarker" : "|",
+    "dialect" : "postgresql",
+    "group" : "Multi-Statement & Set Operations",
+    "id" : "SPEC-20.1",
+    "options" : {
+      "includeSystemSchemas" : false,
+      "qualifyTableInsertions" : false
+    },
+    "review" : "imported",
+    "schema" : "spec",
+    "should" : "Second statement suggests `orders` columns, not `users`.",
+    "source" : "AUTOCOMPLETE_SPEC.md 20.1",
+    "sql" : "SELECT * FROM users; SELECT | FROM orders",
+    "title" : "Semicolon resets context",
+    "trigger" : "typing"
+  },
+  {
+    "caretMarker" : "|",
+    "dialect" : "postgresql",
+    "group" : "Multi-Statement & Set Operations",
+    "id" : "SPEC-20.2",
+    "options" : {
+      "includeSystemSchemas" : false,
+      "qualifyTableInsertions" : false
+    },
+    "review" : "imported",
+    "schema" : "spec",
+    "should" : "Fresh SELECT context — suggests `orders` columns.",
+    "source" : "AUTOCOMPLETE_SPEC.md 20.2",
+    "sql" : "SELECT id FROM users UNION SELECT | FROM orders",
+    "title" : "UNION / INTERSECT / EXCEPT",
+    "trigger" : "typing"
+  }
+]

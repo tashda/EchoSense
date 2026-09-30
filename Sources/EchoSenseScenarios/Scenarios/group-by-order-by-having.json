@@ -1,0 +1,118 @@
+[
+  {
+    "caretMarker" : "|",
+    "dialect" : "postgresql",
+    "group" : "GROUP BY / ORDER BY / HAVING",
+    "id" : "SPEC-5.1",
+    "options" : {
+      "includeSystemSchemas" : false,
+      "qualifyTableInsertions" : false
+    },
+    "review" : "imported",
+    "schema" : "spec",
+    "should" : "=> [department_id (top), then remaining columns]\n- Columns that appear in the SELECT list are ranked first.",
+    "source" : "AUTOCOMPLETE_SPEC.md 5.1",
+    "sql" : "SELECT department_id, COUNT(*) FROM users GROUP BY |",
+    "title" : "GROUP BY — prioritize SELECT-list columns",
+    "trigger" : "typing"
+  },
+  {
+    "caretMarker" : "|",
+    "dialect" : "postgresql",
+    "group" : "GROUP BY / ORDER BY / HAVING",
+    "id" : "SPEC-5.2",
+    "options" : {
+      "includeSystemSchemas" : false,
+      "qualifyTableInsertions" : false
+    },
+    "review" : "imported",
+    "schema" : "spec",
+    "should" : "=> [name (top), email (top), then remaining columns]",
+    "source" : "AUTOCOMPLETE_SPEC.md 5.2",
+    "sql" : "SELECT name, email FROM users ORDER BY |",
+    "title" : "ORDER BY — prioritize SELECT-list columns",
+    "trigger" : "typing"
+  },
+  {
+    "caretMarker" : "|",
+    "dialect" : "postgresql",
+    "echoSense" : {
+      "excludes" : [
+
+      ],
+      "insertText" : {
+
+      },
+      "items" : [
+        "name"
+      ],
+      "order" : "leading",
+      "outcome" : "suggests"
+    },
+    "group" : "GROUP BY / ORDER BY / HAVING",
+    "id" : "SPEC-5.3",
+    "knownIssue" : "Fails today: Expected these first, in order: name. Got: \"name\".",
+    "options" : {
+      "includeSystemSchemas" : false,
+      "qualifyTableInsertions" : false
+    },
+    "review" : "imported",
+    "schema" : "spec",
+    "should" : "=> [name]",
+    "source" : "AUTOCOMPLETE_SPEC.md 5.3",
+    "sql" : "SELECT * FROM users ORDER BY na|",
+    "title" : "ORDER BY with partial typing",
+    "trigger" : "typing"
+  },
+  {
+    "caretMarker" : "|",
+    "dialect" : "postgresql",
+    "group" : "GROUP BY / ORDER BY / HAVING",
+    "id" : "SPEC-5.4",
+    "options" : {
+      "includeSystemSchemas" : false,
+      "qualifyTableInsertions" : false
+    },
+    "review" : "imported",
+    "schema" : "spec",
+    "should" : "=> [ASC, DESC, NULLS FIRST, NULLS LAST]` — Exception to space-after-identifier rule.",
+    "source" : "AUTOCOMPLETE_SPEC.md 5.4",
+    "sql" : "SELECT * FROM users ORDER BY name |",
+    "title" : "ORDER BY direction — auto-suggest after column",
+    "trigger" : "typing"
+  },
+  {
+    "caretMarker" : "|",
+    "dialect" : "postgresql",
+    "group" : "GROUP BY / ORDER BY / HAVING",
+    "id" : "SPEC-5.5",
+    "options" : {
+      "includeSystemSchemas" : false,
+      "qualifyTableInsertions" : false
+    },
+    "review" : "imported",
+    "schema" : "spec",
+    "should" : "=> [columns from users]` — Immediately.",
+    "source" : "AUTOCOMPLETE_SPEC.md 5.5",
+    "sql" : "SELECT * FROM users ORDER BY name ASC, |",
+    "title" : "ORDER BY after comma",
+    "trigger" : "typing"
+  },
+  {
+    "caretMarker" : "|",
+    "dialect" : "postgresql",
+    "group" : "GROUP BY / ORDER BY / HAVING",
+    "id" : "SPEC-5.6",
+    "options" : {
+      "includeSystemSchemas" : false,
+      "qualifyTableInsertions" : false
+    },
+    "review" : "imported",
+    "schema" : "spec",
+    "should" : "Order:\n1. Aggregate functions (`COUNT(`, `SUM(`, `AVG(`, `MIN(`, `MAX(`)\n2. Columns from tables in scope\n3. Other functions",
+    "source" : "AUTOCOMPLETE_SPEC.md 5.6",
+    "sql" : "SELECT department_id, COUNT(*) FROM users GROUP BY department_id HAVING |",
+    "title" : "HAVING — aggregates ranked highest",
+    "trigger" : "typing"
+  }
+]

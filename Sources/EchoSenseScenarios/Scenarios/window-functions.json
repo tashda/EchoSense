@@ -1,0 +1,53 @@
+[
+  {
+    "caretMarker" : "|",
+    "dialect" : "postgresql",
+    "group" : "Window Functions",
+    "id" : "SPEC-25.1",
+    "options" : {
+      "includeSystemSchemas" : false,
+      "qualifyTableInsertions" : false
+    },
+    "review" : "imported",
+    "schema" : "spec",
+    "should" : "=> [columns from users]",
+    "source" : "AUTOCOMPLETE_SPEC.md 25.1",
+    "sql" : "SELECT ROW_NUMBER() OVER (PARTITION BY | ) FROM users",
+    "title" : "PARTITION BY",
+    "trigger" : "typing"
+  },
+  {
+    "caretMarker" : "|",
+    "dialect" : "postgresql",
+    "group" : "Window Functions",
+    "id" : "SPEC-25.2",
+    "options" : {
+      "includeSystemSchemas" : false,
+      "qualifyTableInsertions" : false
+    },
+    "review" : "imported",
+    "schema" : "spec",
+    "should" : "=> [columns from users]",
+    "source" : "AUTOCOMPLETE_SPEC.md 25.2",
+    "sql" : "SELECT ROW_NUMBER() OVER (ORDER BY | ) FROM users",
+    "title" : "ORDER BY inside OVER",
+    "trigger" : "typing"
+  },
+  {
+    "caretMarker" : "|",
+    "dialect" : "postgresql",
+    "group" : "Window Functions",
+    "id" : "SPEC-25.3",
+    "options" : {
+      "includeSystemSchemas" : false,
+      "qualifyTableInsertions" : false
+    },
+    "review" : "imported",
+    "schema" : "spec",
+    "should" : "=> [columns from users]` — `id` NOT excluded (inside function, not top-level SELECT).",
+    "source" : "AUTOCOMPLETE_SPEC.md 25.3",
+    "sql" : "SELECT ROW_NUMBER() OVER (PARTITION BY id), | FROM users",
+    "title" : "After OVER closes — back to SELECT context",
+    "trigger" : "typing"
+  }
+]

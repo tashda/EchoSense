@@ -1,0 +1,311 @@
+[
+  {
+    "caretMarker" : "|",
+    "dialect" : "postgresql",
+    "group" : "WHERE Clause",
+    "id" : "SPEC-4.1",
+    "options" : {
+      "includeSystemSchemas" : false,
+      "qualifyTableInsertions" : false
+    },
+    "review" : "imported",
+    "schema" : "spec",
+    "should" : "=> [columns from users, functions]` — Columns ranked first.",
+    "source" : "AUTOCOMPLETE_SPEC.md 4.1",
+    "sql" : "SELECT * FROM users WHERE |",
+    "title" : "After WHERE — columns immediately",
+    "trigger" : "typing"
+  },
+  {
+    "caretMarker" : "|",
+    "dialect" : "postgresql",
+    "echoSense" : {
+      "excludes" : [
+
+      ],
+      "insertText" : {
+
+      },
+      "items" : [
+        "name"
+      ],
+      "order" : "leading",
+      "outcome" : "suggests"
+    },
+    "group" : "WHERE Clause",
+    "id" : "SPEC-4.2",
+    "knownIssue" : "Fails today: Expected these first, in order: name. Got: \"name\".",
+    "options" : {
+      "includeSystemSchemas" : false,
+      "qualifyTableInsertions" : false
+    },
+    "review" : "imported",
+    "schema" : "spec",
+    "should" : "=> [name]",
+    "source" : "AUTOCOMPLETE_SPEC.md 4.2",
+    "sql" : "SELECT * FROM users WHERE na|",
+    "title" : "WHERE with partial typing",
+    "trigger" : "typing"
+  },
+  {
+    "caretMarker" : "|",
+    "dialect" : "postgresql",
+    "echoSense" : {
+      "excludes" : [
+
+      ],
+      "insertText" : {
+
+      },
+      "items" : [
+
+      ],
+      "order" : "exact",
+      "outcome" : "silent"
+    },
+    "group" : "WHERE Clause",
+    "id" : "SPEC-4.3",
+    "knownIssue" : "Fails today: Expected silence while typing, but it offered id, department_id, \"name\", created_at, email, $1, ABS, AGE, ARRAY_AGG, ARRAY_APPEND, ARRAY_CAT, ARRAY_LENGTH and 48 more.",
+    "options" : {
+      "includeSystemSchemas" : false,
+      "qualifyTableInsertions" : false
+    },
+    "review" : "imported",
+    "schema" : "spec",
+    "should" : "=> SILENT` — User most likely typing a literal value.\nOn manual trigger: show columns from other tables (if any) first, then functions, then same-table columns, then parameters.",
+    "source" : "AUTOCOMPLETE_SPEC.md 4.3",
+    "sql" : "SELECT * FROM users WHERE name = |",
+    "title" : "Right-hand side of operator — SILENT",
+    "trigger" : "typing"
+  },
+  {
+    "caretMarker" : "|",
+    "dialect" : "postgresql",
+    "group" : "WHERE Clause",
+    "id" : "SPEC-4.4",
+    "options" : {
+      "includeSystemSchemas" : false,
+      "qualifyTableInsertions" : false
+    },
+    "review" : "imported",
+    "schema" : "spec",
+    "should" : "=> [columns from users, functions]",
+    "source" : "AUTOCOMPLETE_SPEC.md 4.4",
+    "sql" : "SELECT * FROM users WHERE name = 'foo' AND |",
+    "title" : "After AND/OR — columns immediately",
+    "trigger" : "typing"
+  },
+  {
+    "caretMarker" : "|",
+    "dialect" : "postgresql",
+    "group" : "WHERE Clause",
+    "id" : "SPEC-4.5",
+    "options" : {
+      "includeSystemSchemas" : false,
+      "qualifyTableInsertions" : false
+    },
+    "review" : "imported",
+    "schema" : "spec",
+    "should" : "Same rules as SELECT: unique columns unqualified, ambiguous columns qualified.",
+    "source" : "AUTOCOMPLETE_SPEC.md 4.5",
+    "sql" : "SELECT * FROM users u JOIN orders o ON u.id = o.user_id WHERE |",
+    "title" : "WHERE with multiple tables — smart qualification",
+    "trigger" : "typing"
+  },
+  {
+    "caretMarker" : "|",
+    "dialect" : "postgresql",
+    "echoSense" : {
+      "excludes" : [
+
+      ],
+      "insertText" : {
+
+      },
+      "items" : [
+        "id",
+        "name",
+        "email",
+        "created_at",
+        "department_id"
+      ],
+      "order" : "leading",
+      "outcome" : "suggests"
+    },
+    "group" : "WHERE Clause",
+    "id" : "SPEC-4.6",
+    "knownIssue" : "Fails today: Expected these first, in order: id, name, email, created_at, department_id. Got: id, department_id, \"name\", created_at, email.",
+    "options" : {
+      "includeSystemSchemas" : false,
+      "qualifyTableInsertions" : false
+    },
+    "review" : "imported",
+    "schema" : "spec",
+    "should" : "=> [id, name, email, created_at, department_id]` — Only `users` columns.",
+    "source" : "AUTOCOMPLETE_SPEC.md 4.6",
+    "sql" : "SELECT * FROM users u JOIN orders o ON u.id = o.user_id WHERE u.|",
+    "title" : "WHERE with alias dot",
+    "trigger" : "typing"
+  },
+  {
+    "caretMarker" : "|",
+    "dialect" : "postgresql",
+    "group" : "WHERE Clause",
+    "id" : "SPEC-4.7",
+    "options" : {
+      "includeSystemSchemas" : false,
+      "qualifyTableInsertions" : false
+    },
+    "review" : "imported",
+    "schema" : "spec",
+    "should" : "=> [$1]` — PostgreSQL parameter. Only shown when `$` is typed.",
+    "source" : "AUTOCOMPLETE_SPEC.md 4.7",
+    "sql" : "SELECT * FROM users WHERE id = $|",
+    "title" : "Parameters only on sigil",
+    "trigger" : "typing"
+  },
+  {
+    "caretMarker" : "|",
+    "dialect" : "mssql",
+    "group" : "WHERE Clause",
+    "id" : "SPEC-4.7b",
+    "options" : {
+      "includeSystemSchemas" : false,
+      "qualifyTableInsertions" : false
+    },
+    "review" : "imported",
+    "schema" : "spec",
+    "should" : "=> [@p1]` — MSSQL parameter. Only shown when `@` is typed.",
+    "source" : "AUTOCOMPLETE_SPEC.md 4.7",
+    "sql" : "-- MSSQL\nSELECT * FROM users WHERE id = @|",
+    "title" : "Parameters only on sigil",
+    "trigger" : "typing"
+  },
+  {
+    "caretMarker" : "|",
+    "dialect" : "postgresql",
+    "echoSense" : {
+      "excludes" : [
+
+      ],
+      "insertText" : {
+
+      },
+      "items" : [
+
+      ],
+      "order" : "exact",
+      "outcome" : "silent"
+    },
+    "group" : "WHERE Clause",
+    "id" : "SPEC-4.8",
+    "knownIssue" : "Fails today: Expected silence while typing, but it offered id, department_id, \"name\", created_at, email, $1, ABS, AGE, ARRAY_AGG, ARRAY_APPEND, ARRAY_CAT, ARRAY_LENGTH and 48 more.",
+    "options" : {
+      "includeSystemSchemas" : false,
+      "qualifyTableInsertions" : false
+    },
+    "review" : "imported",
+    "schema" : "spec",
+    "should" : "=> SILENT` — User might type literals.",
+    "source" : "AUTOCOMPLETE_SPEC.md 4.8",
+    "sql" : "SELECT * FROM users WHERE id IN (|",
+    "title" : "WHERE IN — silent after open paren",
+    "trigger" : "typing"
+  },
+  {
+    "caretMarker" : "|",
+    "dialect" : "postgresql",
+    "echoSense" : {
+      "excludes" : [
+
+      ],
+      "insertText" : {
+
+      },
+      "items" : [
+        "name"
+      ],
+      "order" : "leading",
+      "outcome" : "suggests"
+    },
+    "group" : "WHERE Clause",
+    "id" : "SPEC-4.8b",
+    "knownIssue" : "Fails today: Expected these first, in order: name. Got: \"name\".",
+    "options" : {
+      "includeSystemSchemas" : false,
+      "qualifyTableInsertions" : false
+    },
+    "review" : "imported",
+    "schema" : "spec",
+    "should" : "=> [name]` — Column suggestion once user types.",
+    "source" : "AUTOCOMPLETE_SPEC.md 4.8",
+    "sql" : "SELECT * FROM users WHERE id IN (na|",
+    "title" : "WHERE IN — silent after open paren",
+    "trigger" : "typing"
+  },
+  {
+    "caretMarker" : "|",
+    "dialect" : "postgresql",
+    "group" : "WHERE Clause",
+    "id" : "SPEC-4.9",
+    "options" : {
+      "includeSystemSchemas" : false,
+      "qualifyTableInsertions" : false
+    },
+    "review" : "imported",
+    "schema" : "spec",
+    "should" : "=> [columns from orders]",
+    "source" : "AUTOCOMPLETE_SPEC.md 4.9",
+    "sql" : "SELECT * FROM users u WHERE EXISTS (SELECT 1 FROM orders o WHERE o.|)",
+    "title" : "WHERE EXISTS subquery",
+    "trigger" : "typing"
+  },
+  {
+    "caretMarker" : "|",
+    "dialect" : "postgresql",
+    "echoSense" : {
+      "excludes" : [
+
+      ],
+      "insertText" : {
+
+      },
+      "items" : [
+
+      ],
+      "order" : "exact",
+      "outcome" : "silent"
+    },
+    "group" : "WHERE Clause",
+    "id" : "SPEC-4.10",
+    "knownIssue" : "Fails today: Expected silence while typing, but it offered id, department_id, \"name\", created_at, email, $1, ABS, AGE, ARRAY_AGG, ARRAY_APPEND, ARRAY_CAT, ARRAY_LENGTH and 48 more.",
+    "options" : {
+      "includeSystemSchemas" : false,
+      "qualifyTableInsertions" : false
+    },
+    "review" : "imported",
+    "schema" : "spec",
+    "should" : "=> SILENT` — Same line after identifier.",
+    "source" : "AUTOCOMPLETE_SPEC.md 4.10",
+    "sql" : "SELECT * FROM users WHERE name |",
+    "title" : "Operator keywords — only on typing, not after space",
+    "trigger" : "typing"
+  },
+  {
+    "caretMarker" : "|",
+    "dialect" : "postgresql",
+    "group" : "WHERE Clause",
+    "id" : "SPEC-4.10b",
+    "options" : {
+      "includeSystemSchemas" : false,
+      "qualifyTableInsertions" : false
+    },
+    "review" : "imported",
+    "schema" : "spec",
+    "should" : "=> [ILIKE (PostgreSQL), IN, IS NULL, IS NOT NULL]` — Operator keywords on typing.",
+    "source" : "AUTOCOMPLETE_SPEC.md 4.10",
+    "sql" : "SELECT * FROM users WHERE name I|",
+    "title" : "Operator keywords — only on typing, not after space",
+    "trigger" : "typing"
+  }
+]

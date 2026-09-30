@@ -12,6 +12,13 @@ let package = Package(
             name: "EchoSense",
             targets: ["EchoSense"]
         ),
+        // Scenarios: what EchoSense (and Echo's editor) should do at a place in some SQL, as data,
+        // plus a runner. Echo Labs shows them one by one; tests in this package and in Echo run them all.
+        .library(
+            name: "EchoSenseScenarios",
+            targets: ["EchoSenseScenarios"]
+        ),
+        .executable(name: "echosense-scenarios", targets: ["EchoSenseScenarioCLI"]),
     ],
     dependencies: [
         .package(url: "https://github.com/swiftlang/swift-docc-plugin", from: "1.4.3"),
@@ -25,6 +32,22 @@ let package = Package(
             dependencies: [
                 .product(name: "Logging", package: "swift-log"),
             ],
+            swiftSettings: [.swiftLanguageMode(.v6)]
+        ),
+        .target(
+            name: "EchoSenseScenarios",
+            dependencies: ["EchoSense"],
+            resources: [.copy("Scenarios")],
+            swiftSettings: [.swiftLanguageMode(.v6)]
+        ),
+        .executableTarget(
+            name: "EchoSenseScenarioCLI",
+            dependencies: ["EchoSenseScenarios"],
+            swiftSettings: [.swiftLanguageMode(.v6)]
+        ),
+        .testTarget(
+            name: "EchoSenseScenariosTests",
+            dependencies: ["EchoSenseScenarios", "EchoSense"],
             swiftSettings: [.swiftLanguageMode(.v6)]
         ),
         .testTarget(

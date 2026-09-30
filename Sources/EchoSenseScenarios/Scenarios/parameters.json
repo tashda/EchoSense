@@ -1,0 +1,19 @@
+[
+  {
+    "caretMarker" : "|",
+    "dialect" : "postgresql",
+    "group" : "Parameters",
+    "id" : "SPEC-12.2",
+    "options" : {
+      "includeSystemSchemas" : false,
+      "qualifyTableInsertions" : false
+    },
+    "review" : "imported",
+    "schema" : "spec",
+    "should" : "=> [$2]` — Next parameter number.",
+    "source" : "AUTOCOMPLETE_SPEC.md 12.2",
+    "sql" : "-- PostgreSQL\nSELECT * FROM users WHERE id = $1 AND name = $|",
+    "title" : "Parameter numbering auto-increments",
+    "trigger" : "typing"
+  }
+]

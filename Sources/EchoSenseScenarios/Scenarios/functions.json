@@ -1,0 +1,87 @@
+[
+  {
+    "caretMarker" : "|",
+    "dialect" : "postgresql",
+    "group" : "Functions",
+    "id" : "SPEC-11.1",
+    "options" : {
+      "includeSystemSchemas" : false,
+      "qualifyTableInsertions" : false
+    },
+    "review" : "imported",
+    "schema" : "spec",
+    "should" : "=> [columns matching \"CO\" first, then COUNT(), COALESCE(), CONCAT()]",
+    "source" : "AUTOCOMPLETE_SPEC.md 11.1",
+    "sql" : "SELECT CO| FROM users",
+    "title" : "Functions in SELECT — ranked below columns",
+    "trigger" : "typing"
+  },
+  {
+    "caretMarker" : "|",
+    "dialect" : "postgresql",
+    "group" : "Functions",
+    "id" : "SPEC-11.3",
+    "options" : {
+      "includeSystemSchemas" : false,
+      "qualifyTableInsertions" : false
+    },
+    "review" : "imported",
+    "schema" : "spec",
+    "should" : "=> [LOWER()]",
+    "source" : "AUTOCOMPLETE_SPEC.md 11.3",
+    "sql" : "SELECT * FROM users WHERE LOW|",
+    "title" : "Functions in WHERE",
+    "trigger" : "typing"
+  },
+  {
+    "caretMarker" : "|",
+    "dialect" : "postgresql",
+    "group" : "Functions",
+    "id" : "SPEC-11.4",
+    "options" : {
+      "includeSystemSchemas" : false,
+      "qualifyTableInsertions" : false
+    },
+    "review" : "imported",
+    "schema" : "spec",
+    "should" : "=> [COUNT()]` — Aggregates ranked highest in HAVING.",
+    "source" : "AUTOCOMPLETE_SPEC.md 11.4",
+    "sql" : "SELECT department_id FROM users GROUP BY department_id HAVING CO|",
+    "title" : "Functions in HAVING",
+    "trigger" : "typing"
+  },
+  {
+    "caretMarker" : "|",
+    "dialect" : "postgresql",
+    "group" : "Functions",
+    "id" : "SPEC-11.6",
+    "options" : {
+      "includeSystemSchemas" : false,
+      "qualifyTableInsertions" : false
+    },
+    "review" : "imported",
+    "schema" : "spec",
+    "should" : "Functions do NOT appear in FROM context.",
+    "source" : "AUTOCOMPLETE_SPEC.md 11.6",
+    "sql" : "SELECT * FROM CO|",
+    "title" : "Functions NOT in FROM clause",
+    "trigger" : "typing"
+  },
+  {
+    "caretMarker" : "|",
+    "dialect" : "postgresql",
+    "group" : "Functions",
+    "id" : "SPEC-11.7",
+    "options" : {
+      "includeSystemSchemas" : false,
+      "qualifyTableInsertions" : false
+    },
+    "review" : "imported",
+    "schema" : "spec",
+    "should" : "=> [calculate_tax()]` — User-defined functions from schema.",
+    "source" : "AUTOCOMPLETE_SPEC.md 11.7",
+    "sql" : "SELECT calc| FROM users",
+    "title" : "User-defined functions",
+    "trigger" : "typing"
+  }
+]

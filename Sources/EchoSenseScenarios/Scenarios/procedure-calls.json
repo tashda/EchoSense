@@ -1,0 +1,36 @@
+[
+  {
+    "caretMarker" : "|",
+    "dialect" : "mssql",
+    "group" : "Procedure Calls",
+    "id" : "SPEC-21.1",
+    "options" : {
+      "includeSystemSchemas" : false,
+      "qualifyTableInsertions" : false
+    },
+    "review" : "imported",
+    "schema" : "spec",
+    "should" : "=> [stored procedures/functions]",
+    "source" : "AUTOCOMPLETE_SPEC.md 21.1",
+    "sql" : "-- MSSQL\nEXEC |",
+    "title" : "EXEC (MSSQL)",
+    "trigger" : "typing"
+  },
+  {
+    "caretMarker" : "|",
+    "dialect" : "postgresql",
+    "group" : "Procedure Calls",
+    "id" : "SPEC-21.2",
+    "options" : {
+      "includeSystemSchemas" : false,
+      "qualifyTableInsertions" : false
+    },
+    "review" : "imported",
+    "schema" : "spec",
+    "should" : "=> [stored procedures/functions]",
+    "source" : "AUTOCOMPLETE_SPEC.md 21.2",
+    "sql" : "CALL |",
+    "title" : "CALL (PostgreSQL)",
+    "trigger" : "typing"
+  }
+]
