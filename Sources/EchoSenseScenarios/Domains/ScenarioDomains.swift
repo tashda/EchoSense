@@ -116,13 +116,14 @@ public enum ScenarioDomains {
 
     public static let gridSelection = ScenarioDomain(
         id: "grid-selection", title: "Grid selection",
-        summary: "What the results footer says about the selected cells: how many, the sum and the average.",
+        summary: "What the results footer says about the selected cells: the pill's count, then the popover's figures (round 41.2).",
         inputLabel: "One cell per line; a line holding only ∅ is NULL. Option: cellCount (when more cells are selected than listed)",
-        expectedLabel: "The footer text"
+        expectedLabel: "The pill, then one line per figure: label, a space, the value"
     ) { scenario in
         let cells: [String?] = scenario.input.components(separatedBy: "\n").map { $0 == "∅" ? nil : $0 }
         let count = Int(scenario.options["cellCount"] ?? "") ?? cells.count
-        return [GridSelectionSummary.summarize(cells, cellCount: count).text(locale: fixedLocale)]
+        let summary = GridSelectionSummary.summarize(cells, cellCount: count)
+        return [summary.text(locale: fixedLocale)] + summary.figures(locale: fixedLocale).map { "\($0.label) \($0.value)" }
     }
 
     public static let jsonOutline = ScenarioDomain(
