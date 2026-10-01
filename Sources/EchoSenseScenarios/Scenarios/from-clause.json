@@ -72,6 +72,58 @@
       "includeSystemSchemas" : false,
       "qualifyTableInsertions" : false
     },
+    "popup" : {
+      "groups" : [
+        {
+          "block" : {
+            "family" : "objects",
+            "keysOnly" : false,
+            "kinds" : [
+              "table"
+            ],
+            "notInQuery" : false,
+            "place" : "defaultSchema"
+          },
+          "include" : [
+
+          ],
+          "order" : [
+
+          ],
+          "typed" : true
+        },
+        {
+          "block" : {
+            "family" : "objects",
+            "keysOnly" : false,
+            "kinds" : [
+              "view",
+              "materializedView"
+            ],
+            "notInQuery" : false,
+            "place" : "defaultSchema"
+          },
+          "include" : [
+
+          ],
+          "order" : [
+
+          ],
+          "typed" : true
+        }
+      ],
+      "never" : [
+        {
+          "family" : "databases",
+          "keysOnly" : false,
+          "kinds" : [
+
+          ],
+          "notInQuery" : false
+        }
+      ],
+      "rest" : "any"
+    },
     "review" : "imported",
     "rules" : [
 

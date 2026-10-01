@@ -43,6 +43,12 @@ public struct CompletionScenario: Codable, Sendable, Identifiable, Hashable {
     public var review: ScenarioReview
     /// Shared rules this scenario follows (`ScenarioRule` ids); their checks are added to its own.
     public var rules: [String]
+    /// What the popup should hold, as groups of blocks. When set, it replaces the listed titles
+    /// (`echoSense.items`, `order`, `excludes`); `echoSense` still says suggests, nothing or silent,
+    /// and its insert text is still checked.
+    public var popup: PopupExpectation?
+    /// The query as the scenario reads it, stored only when the reader gets it wrong.
+    public var context: ScenarioContext?
     /// The conversation about this scenario between the owner and agents, oldest first.
     public var comments: [ScenarioComment]
 
@@ -56,9 +62,9 @@ public struct CompletionScenario: Codable, Sendable, Identifiable, Hashable {
         options: ScenarioOptions = .init(), echoSense: EchoSenseExpectation? = nil, echo: EchoExpectation? = nil,
         afterAccepting: String? = nil, thenTyped: String? = nil,
         source: String? = nil, notes: String? = nil, knownIssue: String? = nil, review: ScenarioReview = .imported,
-        rules: [String] = [], comments: [ScenarioComment] = []
+        rules: [String] = [], comments: [ScenarioComment] = [], popup: PopupExpectation? = nil, context: ScenarioContext? = nil
     ) {
-        self.rules = rules; self.comments = comments
+        self.rules = rules; self.comments = comments; self.popup = popup; self.context = context
         self.afterAccepting = afterAccepting; self.thenTyped = thenTyped
         self.id = id; self.group = group; self.title = title; self.should = should
         self.dialect = dialect; self.schema = schema; self.sql = sql; self.caretMarker = caretMarker
@@ -77,7 +83,7 @@ public struct CompletionScenario: Codable, Sendable, Identifiable, Hashable {
 
     // Decoding tolerates files written by hand or by an older version.
     private enum CodingKeys: String, CodingKey {
-        case id, group, title, should, dialect, schema, sql, caretMarker, trigger, options, echoSense, echo, afterAccepting, thenTyped, source, notes, knownIssue, review, rules, comments
+        case id, group, title, should, dialect, schema, sql, caretMarker, trigger, options, echoSense, echo, afterAccepting, thenTyped, source, notes, knownIssue, review, rules, comments, popup, context
     }
 
     public init(from decoder: Decoder) throws {
@@ -102,6 +108,8 @@ public struct CompletionScenario: Codable, Sendable, Identifiable, Hashable {
         review = try c.decodeIfPresent(ScenarioReview.self, forKey: .review) ?? .imported
         rules = try c.decodeIfPresent([String].self, forKey: .rules) ?? []
         comments = try c.decodeIfPresent([ScenarioComment].self, forKey: .comments) ?? []
+        popup = try c.decodeIfPresent(PopupExpectation.self, forKey: .popup)
+        context = try c.decodeIfPresent(ScenarioContext.self, forKey: .context)
     }
 }
 

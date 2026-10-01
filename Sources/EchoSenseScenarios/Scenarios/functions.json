@@ -2,7 +2,12 @@
   {
     "caretMarker" : "|",
     "comments" : [
-
+      {
+        "author" : "owner",
+        "date" : "2026-09-30T21:37:39Z",
+        "id" : "EBF7BEFA-6572-448C-82E9-98184D16E766",
+        "text" : "The order is wrong"
+      }
     ],
     "dialect" : "postgresql",
     "echoSense" : {
@@ -26,6 +31,69 @@
     "options" : {
       "includeSystemSchemas" : false,
       "qualifyTableInsertions" : false
+    },
+    "popup" : {
+      "groups" : [
+        {
+          "block" : {
+            "family" : "columns",
+            "keysOnly" : false,
+            "kinds" : [
+
+            ],
+            "notInQuery" : false,
+            "place" : "query"
+          },
+          "include" : [
+
+          ],
+          "order" : [
+
+          ],
+          "typed" : true
+        },
+        {
+          "block" : {
+            "family" : "functions",
+            "keysOnly" : false,
+            "kinds" : [
+
+            ],
+            "notInQuery" : false,
+            "place" : "aggregate"
+          },
+          "include" : [
+
+          ],
+          "order" : [
+
+          ],
+          "typed" : true
+        },
+        {
+          "block" : {
+            "family" : "functions",
+            "keysOnly" : false,
+            "kinds" : [
+
+            ],
+            "notInQuery" : false,
+            "place" : "builtIn"
+          },
+          "include" : [
+            "COALESCE",
+            "CONCAT"
+          ],
+          "order" : [
+
+          ],
+          "typed" : true
+        }
+      ],
+      "never" : [
+
+      ],
+      "rest" : "any"
     },
     "review" : "imported",
     "rules" : [

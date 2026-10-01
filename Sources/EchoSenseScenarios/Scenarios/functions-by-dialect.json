@@ -62,6 +62,58 @@
       "includeSystemSchemas" : false,
       "qualifyTableInsertions" : false
     },
+    "popup" : {
+      "groups" : [
+        {
+          "block" : {
+            "family" : "columns",
+            "keysOnly" : false,
+            "kinds" : [
+
+            ],
+            "notInQuery" : false,
+            "place" : "query"
+          },
+          "include" : [
+
+          ],
+          "order" : [
+
+          ],
+          "typed" : true
+        },
+        {
+          "block" : {
+            "family" : "functions",
+            "keysOnly" : false,
+            "kinds" : [
+
+            ],
+            "notInQuery" : false,
+            "place" : "builtIn"
+          },
+          "include" : [
+            "ISNULL"
+          ],
+          "order" : [
+
+          ],
+          "typed" : true
+        }
+      ],
+      "never" : [
+        {
+          "family" : "functions",
+          "keysOnly" : false,
+          "kinds" : [
+
+          ],
+          "notInQuery" : false,
+          "place" : "otherDialects"
+        }
+      ],
+      "rest" : "any"
+    },
     "review" : "imported",
     "rules" : [
 

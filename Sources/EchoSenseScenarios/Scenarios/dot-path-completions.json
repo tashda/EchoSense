@@ -70,6 +70,50 @@
       "includeSystemSchemas" : false,
       "qualifyTableInsertions" : false
     },
+    "popup" : {
+      "groups" : [
+        {
+          "block" : {
+            "family" : "columns",
+            "keysOnly" : true,
+            "kinds" : [
+
+            ],
+            "notInQuery" : false,
+            "place" : "beforeDot"
+          },
+          "include" : [
+
+          ],
+          "order" : [
+
+          ],
+          "typed" : false
+        },
+        {
+          "block" : {
+            "family" : "columns",
+            "keysOnly" : false,
+            "kinds" : [
+
+            ],
+            "notInQuery" : false,
+            "place" : "beforeDot"
+          },
+          "include" : [
+
+          ],
+          "order" : [
+
+          ],
+          "typed" : false
+        }
+      ],
+      "never" : [
+
+      ],
+      "rest" : "none"
+    },
     "review" : "imported",
     "rules" : [
 
@@ -103,9 +147,38 @@
     },
     "group" : "Dot Path Completions",
     "id" : "SPEC-9.3",
+    "knownIssue" : "Fails today: Also offers 44 keywords (ALTER, BY, CREATE, CROSS JOIN, …).",
     "options" : {
       "includeSystemSchemas" : false,
       "qualifyTableInsertions" : false
+    },
+    "popup" : {
+      "groups" : [
+        {
+          "block" : {
+            "family" : "objects",
+            "keysOnly" : false,
+            "kinds" : [
+              "table",
+              "view",
+              "materializedView"
+            ],
+            "notInQuery" : false,
+            "place" : "schemaBeforeDot"
+          },
+          "include" : [
+
+          ],
+          "order" : [
+
+          ],
+          "typed" : false
+        }
+      ],
+      "never" : [
+
+      ],
+      "rest" : "none"
     },
     "review" : "imported",
     "rules" : [

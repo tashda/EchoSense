@@ -27,6 +27,101 @@
       "includeSystemSchemas" : false,
       "qualifyTableInsertions" : false
     },
+    "popup" : {
+      "groups" : [
+        {
+          "block" : {
+            "family" : "objects",
+            "keysOnly" : false,
+            "kinds" : [
+              "table"
+            ],
+            "notInQuery" : false,
+            "place" : "linkedByForeignKey"
+          },
+          "include" : [
+
+          ],
+          "order" : [
+            "orders",
+            "departments"
+          ],
+          "typed" : false
+        },
+        {
+          "block" : {
+            "family" : "objects",
+            "keysOnly" : false,
+            "kinds" : [
+              "table",
+              "view",
+              "materializedView"
+            ],
+            "notInQuery" : true,
+            "place" : "defaultSchema"
+          },
+          "include" : [
+
+          ],
+          "order" : [
+
+          ],
+          "typed" : false
+        },
+        {
+          "block" : {
+            "family" : "schemas",
+            "keysOnly" : false,
+            "kinds" : [
+
+            ],
+            "notInQuery" : false,
+            "place" : "thisDatabase"
+          },
+          "include" : [
+
+          ],
+          "order" : [
+
+          ],
+          "typed" : false
+        },
+        {
+          "block" : {
+            "family" : "objects",
+            "keysOnly" : false,
+            "kinds" : [
+              "table",
+              "view",
+              "materializedView"
+            ],
+            "notInQuery" : false,
+            "place" : "otherSchemas"
+          },
+          "include" : [
+
+          ],
+          "order" : [
+
+          ],
+          "typed" : false
+        }
+      ],
+      "never" : [
+        {
+          "family" : "objects",
+          "keysOnly" : false,
+          "kinds" : [
+            "table",
+            "view",
+            "materializedView"
+          ],
+          "notInQuery" : false,
+          "place" : "inQuery"
+        }
+      ],
+      "rest" : "any"
+    },
     "review" : "imported",
     "rules" : [
 
@@ -103,6 +198,100 @@
     "options" : {
       "includeSystemSchemas" : false,
       "qualifyTableInsertions" : false
+    },
+    "popup" : {
+      "groups" : [
+        {
+          "block" : {
+            "family" : "objects",
+            "keysOnly" : false,
+            "kinds" : [
+              "table"
+            ],
+            "notInQuery" : false,
+            "place" : "linkedByForeignKey"
+          },
+          "include" : [
+
+          ],
+          "order" : [
+
+          ],
+          "typed" : false
+        },
+        {
+          "block" : {
+            "family" : "objects",
+            "keysOnly" : false,
+            "kinds" : [
+              "table",
+              "view",
+              "materializedView"
+            ],
+            "notInQuery" : true,
+            "place" : "defaultSchema"
+          },
+          "include" : [
+
+          ],
+          "order" : [
+
+          ],
+          "typed" : false
+        },
+        {
+          "block" : {
+            "family" : "schemas",
+            "keysOnly" : false,
+            "kinds" : [
+
+            ],
+            "notInQuery" : false,
+            "place" : "thisDatabase"
+          },
+          "include" : [
+
+          ],
+          "order" : [
+
+          ],
+          "typed" : false
+        },
+        {
+          "block" : {
+            "family" : "objects",
+            "keysOnly" : false,
+            "kinds" : [
+              "table",
+              "view",
+              "materializedView"
+            ],
+            "notInQuery" : false,
+            "place" : "otherSchemas"
+          },
+          "include" : [
+
+          ],
+          "order" : [
+
+          ],
+          "typed" : false
+        }
+      ],
+      "never" : [
+        {
+          "family" : "objects",
+          "keysOnly" : false,
+          "kinds" : [
+            "table",
+            "view",
+            "materializedView"
+          ],
+          "notInQuery" : false,
+          "place" : "inQuery"
+        }
+      ],
+      "rest" : "any"
     },
     "review" : "imported",
     "rules" : [

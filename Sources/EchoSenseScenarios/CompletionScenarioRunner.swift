@@ -27,6 +27,19 @@ public struct ScenarioActual: Codable, Sendable, Hashable {
     public var textAfterAcceptingByTitle: [String: String] = [:]
     /// The engine's priority per title (higher ranks earlier), to explain an order.
     public var priorities: [String: Int] = [:]
+    /// The popup row by row, repeats included (the dictionaries above keep one entry per title).
+    public var rows: [Row] = []
+
+    public struct Row: Codable, Sendable, Hashable {
+        public var title: String
+        /// As EchoSense names it: "table", "column", "function", "keyword", "join", ...
+        public var kind: String
+        public var insertText: String
+        public var priority: Int
+        public init(title: String, kind: String, insertText: String, priority: Int = 0) {
+            self.title = title; self.kind = kind; self.insertText = insertText; self.priority = priority
+        }
+    }
 
     /// Where a title is in the popup, from 1; nil when it isn't offered. Quoting is ignored.
     public func rank(of title: String) -> Int? {
@@ -68,6 +81,8 @@ public struct ScenarioResult: Sendable, Hashable, Identifiable {
     public var checks: [ScenarioCheck] = []
     /// The rules the scenario follows, as they were when it ran.
     public var rules: [ScenarioRule] = []
+    /// The query as the scenario reads it (what popup rules resolve against), and the resolver itself.
+    public var resolver: PopupResolver?
     public var id: String { scenario.id }
 
     /// Everything that disagrees, from EchoSense and from the editor rules.
@@ -112,15 +127,26 @@ public struct CompletionScenarioRunner: Sendable {
         }
         let actual = complete(scenario, structure: structure)
         let followed = scenario.rules.compactMap { rules[$0] }
-        var engineChecks = scenario.echoSense.map { Self.checks($0, actual: actual, trigger: scenario.trigger) } ?? []
+        let (text, caret) = scenario.textAndCaret
+        let database = liveStructure == nil ? ScenarioSchemas.databaseName(id: scenario.schema) : structure.databases.first?.name
+        let context = scenario.context ?? ScenarioContextReader.read(text, caret: caret, structure: structure, database: database)
+        let resolver = PopupResolver(context: context, structure: structure, dialect: scenario.dialect, database: database)
+        var engineChecks: [ScenarioCheck]
+        if let popup = scenario.popup, (scenario.echoSense?.outcome ?? .suggests) == .suggests {
+            engineChecks = [Self.popupCheck(titles: actual.titles, engineTitles: actual.engineTitles, triggerNote: actual.triggerNote)]
+                + resolver.checks(popup, rows: actual.rows)
+                + Self.insertChecks(scenario.echoSense?.insertText ?? [:], actual: actual)
+        } else {
+            engineChecks = scenario.echoSense.map { Self.checks($0, actual: actual, trigger: scenario.trigger) } ?? []
+        }
         for id in scenario.rules {
             engineChecks += rules[id].map { Self.checks($0, actual: actual) }
                 ?? [ScenarioCheck(id: "rule:\(id)", statement: "follows rule \(id)", problem: .editor("unknown rule \(id)"), failure: "Rule \(id) doesn't exist.", rule: id)]
         }
         let editorChecks = scenario.echo.map { Self.checks($0, actual: actual) } ?? []
-        let verdict = scenario.echoSense == nil && scenario.rules.isEmpty ? .unchecked : Self.verdict(engineChecks)
+        let verdict = scenario.echoSense == nil && scenario.popup == nil && scenario.rules.isEmpty ? .unchecked : Self.verdict(engineChecks)
         let echo: EchoVerdict = scenario.echo == nil ? .unchecked : { if case .fail(let reasons) = Self.verdict(editorChecks) { .fail(reasons) } else { .pass } }()
-        return ScenarioResult(scenario: scenario, actual: actual, verdict: verdict, echo: echo, checks: engineChecks + editorChecks, rules: followed)
+        return ScenarioResult(scenario: scenario, actual: actual, verdict: verdict, echo: echo, checks: engineChecks + editorChecks, rules: followed, resolver: resolver)
     }
 
     public func run(_ scenarios: [CompletionScenario]) -> [ScenarioResult] { scenarios.map(run) }
@@ -178,7 +204,8 @@ public struct CompletionScenarioRunner: Sendable {
             manualTitles: manual.suggestions.map(\.title), isMetadataLimited: response.isMetadataLimited,
             engineTitles: response.suggestions.map(\.title), popupShown: !asked.isEmpty, triggerNote: policy.reason,
             textAfterAccepting: accepted, textAfterAcceptingByTitle: acceptedByTitle,
-            priorities: Dictionary(asked.map { ($0.title, $0.priority) }, uniquingKeysWith: { first, _ in first }))
+            priorities: Dictionary(asked.map { ($0.title, $0.priority) }, uniquingKeysWith: { first, _ in first }),
+            rows: asked.map { ScenarioActual.Row(title: $0.title, kind: "\($0.kind)", insertText: $0.insertText, priority: $0.priority) })
     }
 
     public static func databaseType(_ dialect: ScenarioDialect) -> EchoSenseDatabaseType {

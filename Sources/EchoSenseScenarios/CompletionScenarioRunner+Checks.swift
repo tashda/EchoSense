@@ -44,7 +44,15 @@ public extension CompletionScenarioRunner {
                 failure: offered ? "Should not offer: \(title)." : nil))
         }
 
-        for (title, text) in expected.insertText.sorted(by: { $0.key < $1.key }) {
+        checks += insertChecks(expected.insertText, actual: rawActual)
+        return checks
+    }
+
+    /// Insert text per title: "`name` inserts `u.name`".
+    static func insertChecks(_ expected: [String: String], actual: ScenarioActual) -> [ScenarioCheck] {
+        let insertText = Dictionary(actual.insertText.map { (unquoted($0.key), $0.value) }, uniquingKeysWith: { first, _ in first })
+        var checks: [ScenarioCheck] = []
+        for (title, text) in expected.sorted(by: { $0.key < $1.key }) {
             let got = insertText[title]
             let failure: String? = switch got {
             case .some(let got) where got == text: nil
@@ -149,7 +157,7 @@ public extension CompletionScenarioRunner {
 
     // MARK: Pieces
 
-    private static func popupCheck(titles: [String], engineTitles: [String], triggerNote: String) -> ScenarioCheck {
+    static func popupCheck(titles: [String], engineTitles: [String], triggerNote: String) -> ScenarioCheck {
         guard titles.isEmpty else { return ScenarioCheck(id: "suggests", statement: "opens the popup with suggestions") }
         return engineTitles.isEmpty
             ? ScenarioCheck(id: "suggests", statement: "opens the popup with suggestions", problem: .nothingOffered,
