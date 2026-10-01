@@ -92,6 +92,18 @@ public struct GridSelectionSummary: Equatable, Sendable {
         cellCount == 1 ? "1 cell" : "\(cellCount.formatted(.number.locale(locale))) cells"
     }
 
+    /// The pill with the sum and/or average the user asked for in Settings (owner, after round
+    /// 41.2): "89 cells · Sum 34.6T · Avg 389B", in the locale's compact form; the exact figures stay
+    /// in the popover. Only the count when the cells aren't numbers.
+    public func pillText(showsSum: Bool, showsAverage: Bool, locale: Locale = .autoupdatingCurrent) -> String {
+        var parts = [text(locale: locale)]
+        guard isNumeric else { return parts.joined() }
+        let compact = Decimal.FormatStyle.number.notation(.compactName).precision(.significantDigits(1...3)).locale(locale)
+        if showsSum { parts.append("Sum \(sum.formatted(compact))") }
+        if showsAverage, let average { parts.append("Avg \(average.formatted(compact))") }
+        return parts.joined(separator: " · ")
+    }
+
     /// One line of the popover: a label and its exact value as shown.
     public struct Figure: Equatable, Sendable, Identifiable {
         public let label: String

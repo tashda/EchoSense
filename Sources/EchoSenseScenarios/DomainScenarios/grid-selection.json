@@ -408,5 +408,71 @@
     },
     "should" : "Median of an even count is the mean of the middle two, whatever the order",
     "title" : "Median, even count"
+  },
+  {
+    "caretMarker" : "|",
+    "domain" : "grid-selection",
+    "expected" : [
+      "3 cells · Sum 34.6T · Avg 11.5T",
+      "Count 3",
+      "Sum 34,630,054,833,231.47",
+      "Average 11,543,351,611,077.16",
+      "Min 0.1",
+      "Max 34,630,054,833,231.17",
+      "Median 0.2",
+      "Distinct 3",
+      "Empty 0"
+    ],
+    "group" : "Pill",
+    "id" : "GRD-020",
+    "input" : "34630054833231.17\n0.1\n0.2",
+    "options" : {
+      "pillAverage" : "true",
+      "pillSum" : "true"
+    },
+    "should" : "With both Settings on, the pill adds the sum and average in compact form",
+    "title" : "Pill with sum and average"
+  },
+  {
+    "caretMarker" : "|",
+    "domain" : "grid-selection",
+    "expected" : [
+      "2 cells · Avg 1.75K",
+      "Count 2",
+      "Sum 3,500",
+      "Average 1,750",
+      "Min 1,000",
+      "Max 2,500",
+      "Median 1,750",
+      "Distinct 2",
+      "Empty 0"
+    ],
+    "group" : "Pill",
+    "id" : "GRD-021",
+    "input" : "1000\n2500",
+    "options" : {
+      "pillAverage" : "true"
+    },
+    "should" : "Only the average when only that Setting is on",
+    "title" : "Pill with the average only"
+  },
+  {
+    "caretMarker" : "|",
+    "domain" : "grid-selection",
+    "expected" : [
+      "2 cells",
+      "Count 2",
+      "Distinct 2",
+      "Empty 0"
+    ],
+    "group" : "Pill",
+    "id" : "GRD-022",
+    "input" : "DK\nSE",
+    "options" : {
+      "pillAverage" : "true",
+      "pillSum" : "true"
+    },
+    "should" : "Text keeps the count only, whatever the Settings",
+    "title" : "Pill for text with the Settings on"
   }
 ]
