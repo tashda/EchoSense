@@ -450,6 +450,13 @@ extension SQLAutoCompletionEngine {
 
     private func mapFunctionOrigin(_ suggestion: SQLCompletionSuggestion,
                                    context: SQLEditorCompletionContext) -> SQLAutoCompletionSuggestion.Origin? {
+        // Built-ins first: they are hundreds per keystroke and never in the catalog.
+        if suggestion.subtitle == "Built-in" {
+            return SQLAutoCompletionSuggestion.Origin(database: nil,
+                                                      schema: "Built-in",
+                                                      object: suggestion.title)
+        }
+
         if let schemaName = suggestion.subtitle,
            let entry = lookupObject(schema: schemaName,
                                     name: suggestion.title,
@@ -457,12 +464,6 @@ extension SQLAutoCompletionEngine {
             return SQLAutoCompletionSuggestion.Origin(database: entry.database,
                                                       schema: entry.schema,
                                                       object: entry.object.name)
-        }
-
-        if suggestion.subtitle == "Built-in" {
-            return SQLAutoCompletionSuggestion.Origin(database: nil,
-                                                      schema: "Built-in",
-                                                      object: suggestion.title)
         }
 
         return SQLAutoCompletionSuggestion.Origin(database: context.selectedDatabase,
