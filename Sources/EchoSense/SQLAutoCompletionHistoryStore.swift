@@ -1,4 +1,5 @@
 import Foundation
+import Logging
 import os
 
 /// Tracks user selection history with frequency/recency scoring.
@@ -35,11 +36,19 @@ public final class SQLAutoCompletionHistoryStore: Sendable {
                                    create: true)) ?? URL(fileURLWithPath: NSTemporaryDirectory(), isDirectory: true)
         let baseDir = support.appendingPathComponent("Echo", isDirectory: true)
         if !fm.fileExists(atPath: baseDir.path) {
-            try? fm.createDirectory(at: baseDir, withIntermediateDirectories: true)
+            do {
+                try fm.createDirectory(at: baseDir, withIntermediateDirectories: true)
+            } catch {
+                Logger.history.debug("Failed to create base directory: \(error)")
+            }
         }
         let historyDir = baseDir.appendingPathComponent("AutocompleteHistory", isDirectory: true)
         if !fm.fileExists(atPath: historyDir.path) {
-            try? fm.createDirectory(at: historyDir, withIntermediateDirectories: true)
+            do {
+                try fm.createDirectory(at: historyDir, withIntermediateDirectories: true)
+            } catch {
+                Logger.history.debug("Failed to create history directory: \(error)")
+            }
         }
         fileURL = historyDir.appendingPathComponent("history.json")
 
@@ -57,7 +66,10 @@ public final class SQLAutoCompletionHistoryStore: Sendable {
                         }
                     }
                 }
+                let totalEntries = initialStorage.values.reduce(0) { $0 + $1.count }
+                Logger.history.debug("Loaded history: \(totalEntries) entries across \(initialStorage.count) contexts")
             } catch {
+                Logger.history.debug("Failed to decode history file, removing: \(error)")
                 try? fm.removeItem(at: fileURL)
             }
         }
@@ -290,7 +302,7 @@ public final class SQLAutoCompletionHistoryStore: Sendable {
             let data = try encoder.encode(snapshotData)
             try data.write(to: fileURL, options: [.atomic])
         } catch {
-            print("Failed to persist autocomplete history: \(error)")
+            Logger.history.error("Failed to persist autocomplete history: \(error)")
         }
     }
 

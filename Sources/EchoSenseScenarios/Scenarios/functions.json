@@ -1,0 +1,255 @@
+[
+  {
+    "caretMarker" : "|",
+    "comments" : [
+      {
+        "author" : "owner",
+        "date" : "2026-09-30T21:37:39Z",
+        "id" : "EBF7BEFA-6572-448C-82E9-98184D16E766",
+        "text" : "The order is wrong"
+      }
+    ],
+    "dialect" : "postgresql",
+    "echoSense" : {
+      "excludes" : [
+
+      ],
+      "insertText" : {
+
+      },
+      "items" : [
+        "COUNT",
+        "COALESCE",
+        "CONCAT"
+      ],
+      "order" : "leading",
+      "outcome" : "suggests"
+    },
+    "group" : "Functions",
+    "id" : "SPEC-11.1",
+    "knownIssue" : "Fails today: Expected these first, in this order: COUNT, COALESCE, CONCAT. Now: COUNT is #1, COALESCE is #3, CONCAT is #2.",
+    "options" : {
+      "includeSystemSchemas" : false,
+      "qualifyTableInsertions" : false
+    },
+    "popup" : {
+      "groups" : [
+        {
+          "block" : {
+            "family" : "columns",
+            "keysOnly" : false,
+            "kinds" : [
+
+            ],
+            "notInQuery" : false,
+            "place" : "query"
+          },
+          "include" : [
+
+          ],
+          "order" : [
+
+          ],
+          "typed" : true
+        },
+        {
+          "block" : {
+            "family" : "functions",
+            "keysOnly" : false,
+            "kinds" : [
+
+            ],
+            "notInQuery" : false,
+            "place" : "aggregate"
+          },
+          "include" : [
+
+          ],
+          "order" : [
+
+          ],
+          "typed" : true
+        },
+        {
+          "block" : {
+            "family" : "functions",
+            "keysOnly" : false,
+            "kinds" : [
+
+            ],
+            "notInQuery" : false,
+            "place" : "builtIn"
+          },
+          "include" : [
+            "COALESCE",
+            "CONCAT"
+          ],
+          "order" : [
+
+          ],
+          "typed" : true
+        }
+      ],
+      "never" : [
+
+      ],
+      "rest" : "any"
+    },
+    "review" : "imported",
+    "rules" : [
+
+    ],
+    "schema" : "spec",
+    "should" : "=> [columns matching \"CO\" first, then COUNT(), COALESCE(), CONCAT()]",
+    "source" : "AUTOCOMPLETE_SPEC.md 11.1",
+    "sql" : "SELECT CO| FROM users",
+    "title" : "Functions in SELECT — ranked below columns",
+    "trigger" : "typing"
+  },
+  {
+    "caretMarker" : "|",
+    "comments" : [
+
+    ],
+    "dialect" : "postgresql",
+    "echoSense" : {
+      "excludes" : [
+
+      ],
+      "insertText" : {
+
+      },
+      "items" : [
+        "LOWER"
+      ],
+      "order" : "leading",
+      "outcome" : "suggests"
+    },
+    "group" : "Functions",
+    "id" : "SPEC-11.3",
+    "options" : {
+      "includeSystemSchemas" : false,
+      "qualifyTableInsertions" : false
+    },
+    "review" : "imported",
+    "rules" : [
+
+    ],
+    "schema" : "spec",
+    "should" : "=> [LOWER()]",
+    "source" : "AUTOCOMPLETE_SPEC.md 11.3",
+    "sql" : "SELECT * FROM users WHERE LOW|",
+    "title" : "Functions in WHERE",
+    "trigger" : "typing"
+  },
+  {
+    "caretMarker" : "|",
+    "comments" : [
+
+    ],
+    "dialect" : "postgresql",
+    "echoSense" : {
+      "excludes" : [
+
+      ],
+      "insertText" : {
+
+      },
+      "items" : [
+        "COUNT"
+      ],
+      "order" : "leading",
+      "outcome" : "suggests"
+    },
+    "group" : "Functions",
+    "id" : "SPEC-11.4",
+    "options" : {
+      "includeSystemSchemas" : false,
+      "qualifyTableInsertions" : false
+    },
+    "review" : "imported",
+    "rules" : [
+
+    ],
+    "schema" : "spec",
+    "should" : "=> [COUNT()]` — Aggregates ranked highest in HAVING.",
+    "source" : "AUTOCOMPLETE_SPEC.md 11.4",
+    "sql" : "SELECT department_id FROM users GROUP BY department_id HAVING CO|",
+    "title" : "Functions in HAVING",
+    "trigger" : "typing"
+  },
+  {
+    "caretMarker" : "|",
+    "comments" : [
+
+    ],
+    "dialect" : "postgresql",
+    "echoSense" : {
+      "excludes" : [
+        "COUNT",
+        "COALESCE",
+        "CONCAT"
+      ],
+      "insertText" : {
+
+      },
+      "items" : [
+
+      ],
+      "order" : "leading",
+      "outcome" : "suggests"
+    },
+    "group" : "Functions",
+    "id" : "SPEC-11.6",
+    "options" : {
+      "includeSystemSchemas" : false,
+      "qualifyTableInsertions" : false
+    },
+    "review" : "imported",
+    "rules" : [
+
+    ],
+    "schema" : "spec",
+    "should" : "Functions do NOT appear in FROM context.",
+    "source" : "AUTOCOMPLETE_SPEC.md 11.6",
+    "sql" : "SELECT * FROM CO|",
+    "title" : "Functions NOT in FROM clause",
+    "trigger" : "typing"
+  },
+  {
+    "caretMarker" : "|",
+    "comments" : [
+
+    ],
+    "dialect" : "postgresql",
+    "echoSense" : {
+      "excludes" : [
+
+      ],
+      "insertText" : {
+
+      },
+      "items" : [
+        "calculate_tax"
+      ],
+      "order" : "leading",
+      "outcome" : "suggests"
+    },
+    "group" : "Functions",
+    "id" : "SPEC-11.7",
+    "options" : {
+      "includeSystemSchemas" : false,
+      "qualifyTableInsertions" : false
+    },
+    "review" : "imported",
+    "rules" : [
+
+    ],
+    "schema" : "spec",
+    "should" : "=> [calculate_tax()]` — User-defined functions from schema.",
+    "source" : "AUTOCOMPLETE_SPEC.md 11.7",
+    "sql" : "SELECT calc| FROM users",
+    "title" : "User-defined functions",
+    "trigger" : "typing"
+  }
+]

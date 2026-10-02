@@ -1,4 +1,4 @@
-name: "Developer Workflow: Integration & Validation"
+name: CI
 
 on:
   push:

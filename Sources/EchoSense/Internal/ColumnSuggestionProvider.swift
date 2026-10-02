@@ -68,6 +68,19 @@ struct ColumnSuggestionProvider: SuggestionProvider {
             let beforeLast = segments[segments.count - 2]
             if let schema = reference.schema?.lowercased(),
                schema == beforeLast {
+                // For 3-part paths (db.schema.table), verify the database segment too.
+                if segments.count >= 3 {
+                    let dbSegment = segments[segments.count - 3]
+                    if let db = reference.database?.lowercased(), db == dbSegment {
+                        return .table
+                    }
+                    // If reference has no database but segments do, still allow the match
+                    // when the schema+table matched — the extra segment is informational.
+                    if reference.database == nil {
+                        return .table
+                    }
+                    return .none
+                }
                 return .table
             }
         }

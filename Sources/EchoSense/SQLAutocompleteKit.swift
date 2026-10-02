@@ -50,6 +50,7 @@ public struct SQLCompletionSuggestion: Identifiable, Equatable, Sendable {
         case snippet
         case parameter
         case join
+        case database
     }
 
     public let id: String
@@ -192,11 +193,13 @@ public struct SQLColumn: Sendable {
 
 public struct SQLCompletionMetadata: Sendable {
     public struct TableReference: Equatable, Sendable {
+        public let database: String?
         public let schema: String?
         public let name: String
         public let alias: String?
 
-        public init(schema: String?, name: String, alias: String?) {
+        public init(database: String? = nil, schema: String?, name: String, alias: String?) {
+            self.database = database
             self.schema = schema
             self.name = name
             self.alias = alias

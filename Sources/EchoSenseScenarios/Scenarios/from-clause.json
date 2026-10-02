@@ -1,0 +1,560 @@
+[
+  {
+    "caretMarker" : "|",
+    "comments" : [
+
+    ],
+    "dialect" : "postgresql",
+    "echoSense" : {
+      "excludes" : [
+
+      ],
+      "insertText" : {
+        "analytics" : "analytics."
+      },
+      "items" : [
+        "users",
+        "orders",
+        "products",
+        "categories",
+        "departments",
+        "active_users",
+        "user_stats",
+        "analytics"
+      ],
+      "order" : "leading",
+      "outcome" : "suggests"
+    },
+    "group" : "FROM Clause",
+    "id" : "SPEC-2.1",
+    "knownIssue" : "Fails today: Expected these first, in this order: users, orders, products, categories, departments, active_users, user_stats, analytics. Now: users is #7, orders is #4, products is #5, categories is #2, departments is #3, active_users is #1 and 2 more.",
+    "options" : {
+      "includeSystemSchemas" : false,
+      "qualifyTableInsertions" : false
+    },
+    "review" : "imported",
+    "rules" : [
+
+    ],
+    "schema" : "spec",
+    "should" : "=> [tables/views/materialized views from all schemas, schema names]\n- History-boosted items first\n- Default schema tables above non-default schema tables\n- Tables and materialized views ranked slightly above views\n- Schemas ranked equally with tables\n- Schema suggestions insert with trailing dot (`analytics.`)",
+    "source" : "AUTOCOMPLETE_SPEC.md 2.1",
+    "sql" : "SELECT * FROM |",
+    "title" : "After FROM keyword",
+    "trigger" : "typing"
+  },
+  {
+    "caretMarker" : "|",
+    "comments" : [
+
+    ],
+    "dialect" : "postgresql",
+    "echo" : {
+      "popup" : "shown",
+      "textAfterAccepting" : "SELECT * FROM users|"
+    },
+    "echoSense" : {
+      "excludes" : [
+
+      ],
+      "insertText" : {
+
+      },
+      "items" : [
+        "users"
+      ],
+      "order" : "leading",
+      "outcome" : "suggests"
+    },
+    "group" : "FROM Clause",
+    "id" : "SPEC-2.2",
+    "options" : {
+      "includeSystemSchemas" : false,
+      "qualifyTableInsertions" : false
+    },
+    "popup" : {
+      "groups" : [
+        {
+          "block" : {
+            "family" : "objects",
+            "keysOnly" : false,
+            "kinds" : [
+              "table"
+            ],
+            "notInQuery" : false,
+            "place" : "defaultSchema"
+          },
+          "include" : [
+
+          ],
+          "order" : [
+
+          ],
+          "typed" : true
+        },
+        {
+          "block" : {
+            "family" : "objects",
+            "keysOnly" : false,
+            "kinds" : [
+              "view",
+              "materializedView"
+            ],
+            "notInQuery" : false,
+            "place" : "defaultSchema"
+          },
+          "include" : [
+
+          ],
+          "order" : [
+
+          ],
+          "typed" : true
+        }
+      ],
+      "never" : [
+        {
+          "family" : "databases",
+          "keysOnly" : false,
+          "kinds" : [
+
+          ],
+          "notInQuery" : false
+        }
+      ],
+      "rest" : "any"
+    },
+    "review" : "imported",
+    "rules" : [
+
+    ],
+    "schema" : "spec",
+    "should" : "=> [users]` — Prefix match.",
+    "source" : "AUTOCOMPLETE_SPEC.md 2.2",
+    "sql" : "SELECT * FROM us|",
+    "title" : "After FROM with partial typing",
+    "trigger" : "typing"
+  },
+  {
+    "caretMarker" : "|",
+    "comments" : [
+
+    ],
+    "dialect" : "postgresql",
+    "echoSense" : {
+      "excludes" : [
+
+      ],
+      "insertText" : {
+
+      },
+      "items" : [
+        "events",
+        "metrics"
+      ],
+      "order" : "leading",
+      "outcome" : "suggests"
+    },
+    "group" : "FROM Clause",
+    "id" : "SPEC-2.3",
+    "options" : {
+      "includeSystemSchemas" : false,
+      "qualifyTableInsertions" : false
+    },
+    "review" : "imported",
+    "rules" : [
+
+    ],
+    "schema" : "spec",
+    "should" : "=> [events, metrics]` — Tables/views from `analytics` schema only.",
+    "source" : "AUTOCOMPLETE_SPEC.md 2.3",
+    "sql" : "SELECT * FROM analytics.|",
+    "title" : "After FROM with schema dot",
+    "trigger" : "typing"
+  },
+  {
+    "caretMarker" : "|",
+    "comments" : [
+
+    ],
+    "dialect" : "postgresql",
+    "echoSense" : {
+      "excludes" : [
+
+      ],
+      "insertText" : {
+
+      },
+      "items" : [
+        "events"
+      ],
+      "order" : "leading",
+      "outcome" : "suggests"
+    },
+    "group" : "FROM Clause",
+    "id" : "SPEC-2.4",
+    "options" : {
+      "includeSystemSchemas" : false,
+      "qualifyTableInsertions" : false
+    },
+    "review" : "imported",
+    "rules" : [
+
+    ],
+    "schema" : "spec",
+    "should" : "=> [events]",
+    "source" : "AUTOCOMPLETE_SPEC.md 2.4",
+    "sql" : "SELECT * FROM analytics.ev|",
+    "title" : "After FROM with schema dot and partial typing",
+    "trigger" : "typing"
+  },
+  {
+    "caretMarker" : "|",
+    "comments" : [
+
+    ],
+    "dialect" : "postgresql",
+    "echoSense" : {
+      "excludes" : [
+
+      ],
+      "insertText" : {
+
+      },
+      "items" : [
+        "orders",
+        "products",
+        "categories",
+        "departments"
+      ],
+      "order" : "leading",
+      "outcome" : "suggests"
+    },
+    "group" : "FROM Clause",
+    "id" : "SPEC-2.5",
+    "knownIssue" : "Fails today: Expected suggestions, but the popup doesn't open. A space only asks EchoSense after FROM, JOIN, UPDATE, CALL, EXEC or INTO. EchoSense would offer active_users, categories, departments, orders, products, user_stats, users, analytics, public, events, metrics, Built-in and 44 more.",
+    "options" : {
+      "includeSystemSchemas" : false,
+      "qualifyTableInsertions" : false
+    },
+    "review" : "imported",
+    "rules" : [
+
+    ],
+    "schema" : "spec",
+    "should" : "=> [tables/views]` — Immediately show tables.",
+    "source" : "AUTOCOMPLETE_SPEC.md 2.5",
+    "sql" : "SELECT * FROM users, |",
+    "title" : "After FROM with comma — additional table",
+    "trigger" : "typing"
+  },
+  {
+    "caretMarker" : "|",
+    "comments" : [
+
+    ],
+    "dialect" : "postgresql",
+    "echoSense" : {
+      "excludes" : [
+
+      ],
+      "insertText" : {
+
+      },
+      "items" : [
+
+      ],
+      "order" : "exact",
+      "outcome" : "silent"
+    },
+    "group" : "FROM Clause",
+    "id" : "SPEC-2.6",
+    "options" : {
+      "includeSystemSchemas" : false,
+      "qualifyTableInsertions" : false
+    },
+    "review" : "imported",
+    "rules" : [
+
+    ],
+    "schema" : "spec",
+    "should" : "=> SILENT` — User may be typing an alias. No suggestions at all.",
+    "source" : "AUTOCOMPLETE_SPEC.md 2.6",
+    "sql" : "SELECT * FROM users |",
+    "title" : "Space after table on same line — SILENCE",
+    "trigger" : "typing"
+  },
+  {
+    "caretMarker" : "|",
+    "comments" : [
+
+    ],
+    "dialect" : "postgresql",
+    "echoSense" : {
+      "excludes" : [
+
+      ],
+      "insertText" : {
+
+      },
+      "items" : [
+
+      ],
+      "order" : "exact",
+      "outcome" : "silent"
+    },
+    "group" : "FROM Clause",
+    "id" : "SPEC-2.7",
+    "options" : {
+      "includeSystemSchemas" : false,
+      "qualifyTableInsertions" : false
+    },
+    "review" : "imported",
+    "rules" : [
+
+    ],
+    "schema" : "spec",
+    "should" : "=> SILENT` — Even on new line, wait for user input.",
+    "source" : "AUTOCOMPLETE_SPEC.md 2.7",
+    "sql" : "SELECT * FROM users\n|",
+    "title" : "New line after table — keywords only on typing",
+    "trigger" : "typing"
+  },
+  {
+    "caretMarker" : "|",
+    "comments" : [
+
+    ],
+    "dialect" : "postgresql",
+    "echoSense" : {
+      "excludes" : [
+
+      ],
+      "insertText" : {
+
+      },
+      "items" : [
+        "WHERE"
+      ],
+      "order" : "leading",
+      "outcome" : "suggests"
+    },
+    "group" : "FROM Clause",
+    "id" : "SPEC-2.7b",
+    "knownIssue" : "Fails today: Expected suggestions, but it offered nothing.",
+    "options" : {
+      "includeSystemSchemas" : false,
+      "qualifyTableInsertions" : false
+    },
+    "review" : "imported",
+    "rules" : [
+
+    ],
+    "schema" : "spec",
+    "should" : "=> [WHERE]` — Contextual keyword match.",
+    "source" : "AUTOCOMPLETE_SPEC.md 2.7",
+    "sql" : "SELECT * FROM users\nW|",
+    "title" : "New line after table — keywords only on typing",
+    "trigger" : "typing"
+  },
+  {
+    "caretMarker" : "|",
+    "comments" : [
+
+    ],
+    "dialect" : "postgresql",
+    "echoSense" : {
+      "excludes" : [
+
+      ],
+      "insertText" : {
+
+      },
+      "items" : [
+        "JOIN"
+      ],
+      "order" : "leading",
+      "outcome" : "suggests"
+    },
+    "group" : "FROM Clause",
+    "id" : "SPEC-2.7c",
+    "knownIssue" : "Fails today: Expected suggestions, but it offered nothing.",
+    "options" : {
+      "includeSystemSchemas" : false,
+      "qualifyTableInsertions" : false
+    },
+    "review" : "imported",
+    "rules" : [
+
+    ],
+    "schema" : "spec",
+    "should" : "=> [JOIN]",
+    "source" : "AUTOCOMPLETE_SPEC.md 2.7",
+    "sql" : "SELECT * FROM users\nJ|",
+    "title" : "New line after table — keywords only on typing",
+    "trigger" : "typing"
+  },
+  {
+    "caretMarker" : "|",
+    "comments" : [
+
+    ],
+    "dialect" : "postgresql",
+    "echoSense" : {
+      "excludes" : [
+
+      ],
+      "insertText" : {
+
+      },
+      "items" : [
+        "INNER JOIN"
+      ],
+      "order" : "leading",
+      "outcome" : "suggests"
+    },
+    "group" : "FROM Clause",
+    "id" : "SPEC-2.7d",
+    "knownIssue" : "Fails today: Expected suggestions, but EchoSense offered nothing.",
+    "options" : {
+      "includeSystemSchemas" : false,
+      "qualifyTableInsertions" : false
+    },
+    "review" : "imported",
+    "rules" : [
+
+    ],
+    "schema" : "spec",
+    "should" : "=> [INNER JOIN]",
+    "source" : "AUTOCOMPLETE_SPEC.md 2.7",
+    "sql" : "SELECT * FROM users\nIN|",
+    "title" : "New line after table — keywords only on typing",
+    "trigger" : "typing"
+  },
+  {
+    "caretMarker" : "|",
+    "comments" : [
+
+    ],
+    "dialect" : "postgresql",
+    "echoSense" : {
+      "excludes" : [
+        "active_users",
+        "user_stats"
+      ],
+      "insertText" : {
+
+      },
+      "items" : [
+        "users",
+        "orders",
+        "products",
+        "categories",
+        "departments"
+      ],
+      "order" : "leading",
+      "outcome" : "suggests"
+    },
+    "group" : "FROM Clause",
+    "id" : "SPEC-2.8",
+    "knownIssue" : "Fails today: Expected these first, in this order: users, orders, products, categories, departments. Now: users is #5, orders is #3, products is #4, categories is #1, departments is #2.",
+    "options" : {
+      "includeSystemSchemas" : false,
+      "qualifyTableInsertions" : false
+    },
+    "review" : "imported",
+    "rules" : [
+
+    ],
+    "schema" : "spec",
+    "should" : "=> [tables]` — Only tables (not views).",
+    "source" : "AUTOCOMPLETE_SPEC.md 2.8",
+    "sql" : "INSERT INTO |",
+    "title" : "INSERT INTO",
+    "trigger" : "typing"
+  },
+  {
+    "caretMarker" : "|",
+    "comments" : [
+
+    ],
+    "dialect" : "postgresql",
+    "echoSense" : {
+      "excludes" : [
+        "active_users",
+        "user_stats"
+      ],
+      "insertText" : {
+
+      },
+      "items" : [
+        "users",
+        "orders",
+        "products",
+        "categories",
+        "departments"
+      ],
+      "order" : "leading",
+      "outcome" : "suggests"
+    },
+    "group" : "FROM Clause",
+    "id" : "SPEC-2.9",
+    "knownIssue" : "Fails today: Should not offer: active_users, user_stats.",
+    "options" : {
+      "includeSystemSchemas" : false,
+      "qualifyTableInsertions" : false
+    },
+    "review" : "imported",
+    "rules" : [
+
+    ],
+    "schema" : "spec",
+    "should" : "=> [tables]",
+    "source" : "AUTOCOMPLETE_SPEC.md 2.9",
+    "sql" : "UPDATE |",
+    "title" : "UPDATE",
+    "trigger" : "typing"
+  },
+  {
+    "caretMarker" : "|",
+    "comments" : [
+
+    ],
+    "dialect" : "postgresql",
+    "echoSense" : {
+      "excludes" : [
+        "active_users",
+        "user_stats"
+      ],
+      "insertText" : {
+
+      },
+      "items" : [
+        "users",
+        "orders",
+        "products",
+        "categories",
+        "departments"
+      ],
+      "order" : "leading",
+      "outcome" : "suggests"
+    },
+    "group" : "FROM Clause",
+    "id" : "SPEC-2.10",
+    "knownIssue" : "Fails today: Should not offer: active_users, user_stats.",
+    "options" : {
+      "includeSystemSchemas" : false,
+      "qualifyTableInsertions" : false
+    },
+    "review" : "imported",
+    "rules" : [
+
+    ],
+    "schema" : "spec",
+    "should" : "=> [tables]",
+    "source" : "AUTOCOMPLETE_SPEC.md 2.10",
+    "sql" : "DELETE FROM |",
+    "title" : "DELETE FROM",
+    "trigger" : "typing"
+  }
+]

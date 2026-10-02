@@ -289,3 +289,20 @@ func mysqlSystemSchemas() {
     #expect(!schemaNames.contains("performance_schema"))
     #expect(schemaNames.contains("app"))
 }
+
+// MARK: - Lookups without a database (indexed)
+
+@Test
+func findsObjectBySchemaAndNameWithoutADatabase() {
+    let catalog = makeCatalog()
+    let entry = catalog.object(database: nil, schema: "Public", name: "Orders")
+    #expect(entry?.object.name == "orders")
+    #expect(entry?.database == "testdb")
+}
+
+@Test
+func findsObjectsByNameAlone() {
+    let catalog = makeCatalog()
+    #expect(catalog.objects(named: "ACTIVE_USERS").map(\.object.name) == ["active_users"])
+    #expect(catalog.objects(named: "missing").isEmpty)
+}

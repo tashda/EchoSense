@@ -26,7 +26,7 @@ Add EchoSense as a Swift Package dependency:
 
 ```swift
 dependencies: [
-    .package(url: "https://github.com/tashda/EchoSense", branch: "dev")
+    .package(url: "https://github.com/tashda/echo-sense", branch: "dev")
 ]
 ```
 

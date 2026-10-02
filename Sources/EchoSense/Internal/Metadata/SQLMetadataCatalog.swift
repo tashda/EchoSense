@@ -35,7 +35,16 @@ struct SQLMetadataCatalog {
         let name: String
     }
 
+    struct NameKey: Hashable {
+        let schema: String
+        let name: String
+    }
+
     let objectsByKey: [ObjectKey: [ObjectEntry]]
+    /// The same entries by schema and name, and by name alone, so lookups without a database
+    /// don't scan every object: completion maps hundreds of suggestions on each keystroke.
+    let objectsBySchemaAndName: [NameKey: [ObjectEntry]]
+    let objectsByName: [String: [ObjectEntry]]
     let metadataProvider: SQLStructureMetadataProvider
 
     init(context: SQLEditorCompletionContext,
@@ -45,6 +54,8 @@ struct SQLMetadataCatalog {
             let builtIns = SQLMetadataCatalog.builtInSchema(functions: builtInFunctions)
             let defaultCatalog = builtIns.objects.isEmpty ? SQLDatabaseCatalog(schemas: []) : SQLDatabaseCatalog(schemas: [builtIns])
             self.objectsByKey = [:]
+            self.objectsBySchemaAndName = [:]
+            self.objectsByName = [:]
             self.metadataProvider = SQLStructureMetadataProvider(catalogsByDatabase: [:],
                                                                  defaultCatalog: defaultCatalog,
                                                                  orderedDatabaseNames: [])
@@ -52,6 +63,8 @@ struct SQLMetadataCatalog {
         }
 
         var objectsIndex: [ObjectKey: [ObjectEntry]] = [:]
+        var bySchemaAndName: [NameKey: [ObjectEntry]] = [:]
+        var byName: [String: [ObjectEntry]] = [:]
         var catalogsByDatabase: [String: SQLDatabaseCatalog] = [:]
         var orderedDatabaseNames: [String] = []
 
@@ -73,13 +86,16 @@ struct SQLMetadataCatalog {
                     guard let sqlObject = SQLMetadataCatalog.sqlObject(from: object) else { continue }
                     sqlObjects.append(sqlObject)
 
+                    let nameLower = object.name.lowercased()
                     let key = ObjectKey(database: databaseLower,
                                         schema: schemaLower,
-                                        name: object.name.lowercased())
+                                        name: nameLower)
                     let entry = ObjectEntry(database: database.name,
                                             schema: schemaName,
                                             object: object)
                     objectsIndex[key, default: []].append(entry)
+                    bySchemaAndName[NameKey(schema: schemaLower, name: nameLower), default: []].append(entry)
+                    byName[nameLower, default: []].append(entry)
                 }
 
                 schemasForDatabase.append(SQLSchema(name: schemaName, objects: sqlObjects))
@@ -104,6 +120,8 @@ struct SQLMetadataCatalog {
         }
 
         self.objectsByKey = objectsIndex
+        self.objectsBySchemaAndName = bySchemaAndName
+        self.objectsByName = byName
         self.metadataProvider = SQLStructureMetadataProvider(catalogsByDatabase: catalogsByDatabase,
                                                              defaultCatalog: defaultCatalog,
                                                              orderedDatabaseNames: orderedDatabaseNames)
@@ -122,9 +140,7 @@ struct SQLMetadataCatalog {
             }
         }
 
-        let matches: [ObjectEntry] = objectsByKey
-            .filter { key, _ in key.schema == schemaLower && key.name == nameLower }
-            .flatMap { $0.value }
+        let matches = objectsBySchemaAndName[NameKey(schema: schemaLower, name: nameLower)] ?? []
 
         guard !matches.isEmpty else { return nil }
 
@@ -139,10 +155,7 @@ struct SQLMetadataCatalog {
     }
 
     func objects(named name: String) -> [ObjectEntry] {
-        let lower = name.lowercased()
-        return objectsByKey.compactMap { key, entries in
-            key.name == lower ? entries : nil
-        }.flatMap { $0 }
+        objectsByName[name.lowercased()] ?? []
     }
 
     private static func sqlObject(from object: EchoSenseSchemaObjectInfo) -> SQLObject? {

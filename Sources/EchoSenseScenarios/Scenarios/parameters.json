@@ -1,0 +1,39 @@
+[
+  {
+    "caretMarker" : "|",
+    "comments" : [
+
+    ],
+    "dialect" : "postgresql",
+    "echoSense" : {
+      "excludes" : [
+
+      ],
+      "insertText" : {
+
+      },
+      "items" : [
+        "$2"
+      ],
+      "order" : "leading",
+      "outcome" : "suggests"
+    },
+    "group" : "Parameters",
+    "id" : "SPEC-12.2",
+    "knownIssue" : "Fails today: Expected suggestions, but the popup doesn't open. Typing “$” doesn't ask EchoSense; a manual trigger (⌘.) does. EchoSense would offer $2.",
+    "options" : {
+      "includeSystemSchemas" : false,
+      "qualifyTableInsertions" : false
+    },
+    "review" : "imported",
+    "rules" : [
+
+    ],
+    "schema" : "spec",
+    "should" : "=> [$2]` — Next parameter number.",
+    "source" : "AUTOCOMPLETE_SPEC.md 12.2",
+    "sql" : "-- PostgreSQL\nSELECT * FROM users WHERE id = $1 AND name = $|",
+    "title" : "Parameter numbering auto-increments",
+    "trigger" : "typing"
+  }
+]

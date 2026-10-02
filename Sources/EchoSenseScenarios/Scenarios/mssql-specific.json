@@ -1,0 +1,39 @@
+[
+  {
+    "caretMarker" : "|",
+    "comments" : [
+
+    ],
+    "dialect" : "mssql",
+    "echoSense" : {
+      "excludes" : [
+
+      ],
+      "insertText" : {
+
+      },
+      "items" : [
+        "id",
+        "value"
+      ],
+      "order" : "leading",
+      "outcome" : "suggests"
+    },
+    "group" : "MSSQL-Specific",
+    "id" : "SPEC-23.1",
+    "options" : {
+      "includeSystemSchemas" : false,
+      "qualifyTableInsertions" : false
+    },
+    "review" : "imported",
+    "rules" : [
+
+    ],
+    "schema" : "quoting",
+    "should" : "Resolves `[Order]` and shows its columns.",
+    "source" : "AUTOCOMPLETE_SPEC.md 23.1",
+    "sql" : "-- MSSQL\nSELECT * FROM [Order] o WHERE o.|",
+    "title" : "Bracket quoting",
+    "trigger" : "typing"
+  }
+]

@@ -1,0 +1,434 @@
+[
+  {
+    "caretMarker" : "|",
+    "domain" : "json-outline",
+    "expected" : [
+      "Number: 42  $"
+    ],
+    "group" : "Values",
+    "id" : "JSN-001",
+    "input" : "42",
+    "options" : {
+
+    },
+    "should" : "A number",
+    "title" : "A number"
+  },
+  {
+    "caretMarker" : "|",
+    "domain" : "json-outline",
+    "expected" : [
+      "String: hi  $"
+    ],
+    "group" : "Values",
+    "id" : "JSN-002",
+    "input" : "\"hi\"",
+    "options" : {
+
+    },
+    "should" : "A string",
+    "title" : "A string"
+  },
+  {
+    "caretMarker" : "|",
+    "domain" : "json-outline",
+    "expected" : [
+      "Array: 3 items  $",
+      "  [0]: true  $[0]",
+      "  [1]: false  $[1]",
+      "  [2]: null  $[2]"
+    ],
+    "group" : "Values",
+    "id" : "JSN-003",
+    "input" : "[true,false,null]",
+    "options" : {
+
+    },
+    "should" : "true, false and null",
+    "title" : "true, false and null"
+  },
+  {
+    "caretMarker" : "|",
+    "domain" : "json-outline",
+    "expected" : [
+      "String: 世界  $"
+    ],
+    "group" : "Values",
+    "id" : "JSN-004",
+    "input" : "\"\\u4e16\\u754c\"",
+    "options" : {
+
+    },
+    "should" : "Unicode escapes",
+    "title" : "Unicode escapes"
+  },
+  {
+    "caretMarker" : "|",
+    "domain" : "json-outline",
+    "expected" : [
+      "Object: 0 keys  $"
+    ],
+    "group" : "Values",
+    "id" : "JSN-005",
+    "input" : "{}",
+    "options" : {
+
+    },
+    "should" : "Empty object",
+    "title" : "Empty object"
+  },
+  {
+    "caretMarker" : "|",
+    "domain" : "json-outline",
+    "expected" : [
+      "Array: 0 items  $"
+    ],
+    "group" : "Values",
+    "id" : "JSN-006",
+    "input" : "[]",
+    "options" : {
+
+    },
+    "should" : "Empty array",
+    "title" : "Empty array"
+  },
+  {
+    "caretMarker" : "|",
+    "domain" : "json-outline",
+    "expected" : [
+      "Object: 1 key  $",
+      "  a: 1  $.a"
+    ],
+    "group" : "Values",
+    "id" : "JSN-007",
+    "input" : "{\"a\":1}",
+    "options" : {
+
+    },
+    "should" : "One key is singular",
+    "title" : "One key is singular"
+  },
+  {
+    "caretMarker" : "|",
+    "domain" : "json-outline",
+    "expected" : [
+      "Array: 1 item  $",
+      "  [0]: 7  $[0]"
+    ],
+    "group" : "Values",
+    "id" : "JSN-008",
+    "input" : "[7]",
+    "options" : {
+
+    },
+    "should" : "One item is singular",
+    "title" : "One item is singular"
+  },
+  {
+    "caretMarker" : "|",
+    "domain" : "json-outline",
+    "expected" : [
+      "Object: 1 key  $",
+      "  a: 1 key  $.a",
+      "    b: 1 item  $.a.b",
+      "      [0]: 1 key  $.a.b[0]",
+      "        c: 1  $.a.b[0].c"
+    ],
+    "group" : "Structure",
+    "id" : "JSN-009",
+    "input" : "{\"a\":{\"b\":[{\"c\":1}]}}",
+    "options" : {
+
+    },
+    "should" : "Nested paths",
+    "title" : "Nested paths"
+  },
+  {
+    "caretMarker" : "|",
+    "domain" : "json-outline",
+    "expected" : [
+      "Object: 2 keys  $",
+      "  b: 1  $.b",
+      "  a: 2  $.a"
+    ],
+    "group" : "Structure",
+    "id" : "JSN-010",
+    "input" : "{\"b\":1,\"a\":2}",
+    "knownIssue" : "Keys are sorted alphabetically (an Echo test pins this). Whether the viewer should keep the document's order is the owner's to decide",
+    "options" : {
+
+    },
+    "should" : "A JSON column's keys are shown in the order they are stored",
+    "title" : "Keys keep the order of the document"
+  },
+  {
+    "caretMarker" : "|",
+    "domain" : "json-outline",
+    "expected" : [
+      "Array: 2 items  $",
+      "  [0]: 2 items  $[0]",
+      "    [0]: 1  $[0][0]",
+      "    [1]: 2  $[0][1]",
+      "  [1]: 1 item  $[1]",
+      "    [0]: 3  $[1][0]"
+    ],
+    "group" : "Structure",
+    "id" : "JSN-011",
+    "input" : "[[1,2],[3]]",
+    "options" : {
+
+    },
+    "should" : "Array of arrays",
+    "title" : "Array of arrays"
+  },
+  {
+    "caretMarker" : "|",
+    "domain" : "json-outline",
+    "expected" : [
+      "Object: 1 key  $",
+      "  a.b: 1  $['a.b']"
+    ],
+    "group" : "Paths",
+    "id" : "JSN-012",
+    "input" : "{\"a.b\":1}",
+    "options" : {
+
+    },
+    "should" : "A name with a dot",
+    "title" : "A name with a dot"
+  },
+  {
+    "caretMarker" : "|",
+    "domain" : "json-outline",
+    "expected" : [
+      "Object: 1 key  $",
+      "  a b: 1  $['a b']"
+    ],
+    "group" : "Paths",
+    "id" : "JSN-013",
+    "input" : "{\"a b\":1}",
+    "options" : {
+
+    },
+    "should" : "A name with a space",
+    "title" : "A name with a space"
+  },
+  {
+    "caretMarker" : "|",
+    "domain" : "json-outline",
+    "expected" : [
+      "Object: 1 key  $",
+      "  a-b: 1  $['a-b']"
+    ],
+    "group" : "Paths",
+    "id" : "JSN-014",
+    "input" : "{\"a-b\":1}",
+    "options" : {
+
+    },
+    "should" : "A name with a hyphen",
+    "title" : "A name with a hyphen"
+  },
+  {
+    "caretMarker" : "|",
+    "domain" : "json-outline",
+    "expected" : [
+      "Object: 1 key  $",
+      "  a_b: 1  $.a_b"
+    ],
+    "group" : "Paths",
+    "id" : "JSN-015",
+    "input" : "{\"a_b\":1}",
+    "options" : {
+
+    },
+    "should" : "A name with an underscore",
+    "title" : "A name with an underscore"
+  },
+  {
+    "caretMarker" : "|",
+    "domain" : "json-outline",
+    "expected" : [
+      "Object: 1 key  $",
+      "  it's: 1  $['it\\'s']"
+    ],
+    "group" : "Paths",
+    "id" : "JSN-016",
+    "input" : "{\"it's\":1}",
+    "options" : {
+
+    },
+    "should" : "A name with an apostrophe is escaped",
+    "title" : "A name with an apostrophe is escaped"
+  },
+  {
+    "caretMarker" : "|",
+    "domain" : "json-outline",
+    "expected" : [
+      "Object: 1 key  $",
+      "  1a: 1  $['1a']"
+    ],
+    "group" : "Paths",
+    "id" : "JSN-017",
+    "input" : "{\"1a\":1}",
+    "options" : {
+
+    },
+    "should" : "A name starting with a digit",
+    "title" : "A name starting with a digit"
+  },
+  {
+    "caretMarker" : "|",
+    "domain" : "json-outline",
+    "expected" : [
+      "Object: 1 key  $",
+      "  a[0]: 1  $['a[0]']"
+    ],
+    "group" : "Paths",
+    "id" : "JSN-018",
+    "input" : "{\"a[0]\":1}",
+    "options" : {
+
+    },
+    "should" : "A name with brackets",
+    "title" : "A name with brackets"
+  },
+  {
+    "caretMarker" : "|",
+    "domain" : "json-outline",
+    "expected" : [
+      "Object: 1 key  $",
+      "  : 1  $['']"
+    ],
+    "group" : "Paths",
+    "id" : "JSN-019",
+    "input" : "{\"\":1}",
+    "options" : {
+
+    },
+    "should" : "An empty name",
+    "title" : "An empty name"
+  },
+  {
+    "caretMarker" : "|",
+    "domain" : "json-outline",
+    "expected" : [
+      "Number: 0.1  $"
+    ],
+    "group" : "Numbers",
+    "id" : "JSN-020",
+    "input" : "0.1",
+    "options" : {
+
+    },
+    "should" : "A decimal",
+    "title" : "A decimal"
+  },
+  {
+    "caretMarker" : "|",
+    "domain" : "json-outline",
+    "expected" : [
+      "Number: 12345678901234567890  $"
+    ],
+    "group" : "Numbers",
+    "id" : "JSN-021",
+    "input" : "12345678901234567890",
+    "options" : {
+
+    },
+    "should" : "The digits in the column are the digits shown",
+    "title" : "A number too big for a double"
+  },
+  {
+    "caretMarker" : "|",
+    "domain" : "json-outline",
+    "expected" : [
+      "Number: 1.0  $"
+    ],
+    "group" : "Numbers",
+    "id" : "JSN-022",
+    "input" : "1.0",
+    "knownIssue" : "Shown as 1",
+    "options" : {
+
+    },
+    "should" : "The digits in the column are the digits shown",
+    "title" : "A trailing zero"
+  },
+  {
+    "caretMarker" : "|",
+    "domain" : "json-outline",
+    "expected" : [
+      "(invalid)"
+    ],
+    "group" : "Invalid",
+    "id" : "JSN-023",
+    "input" : "not json",
+    "options" : {
+
+    },
+    "should" : "Not JSON",
+    "title" : "Not JSON"
+  },
+  {
+    "caretMarker" : "|",
+    "domain" : "json-outline",
+    "expected" : [
+      "(invalid)"
+    ],
+    "group" : "Invalid",
+    "id" : "JSN-024",
+    "input" : "",
+    "options" : {
+
+    },
+    "should" : "Empty",
+    "title" : "Empty"
+  },
+  {
+    "caretMarker" : "|",
+    "domain" : "json-outline",
+    "expected" : [
+      "(invalid)"
+    ],
+    "group" : "Invalid",
+    "id" : "JSN-025",
+    "input" : "[1,]",
+    "knownIssue" : "Foundation's parser accepts a trailing comma, so the viewer shows the value instead of saying it is not JSON",
+    "options" : {
+
+    },
+    "should" : "A trailing comma",
+    "title" : "A trailing comma"
+  },
+  {
+    "caretMarker" : "|",
+    "domain" : "json-outline",
+    "expected" : [
+      "(invalid)"
+    ],
+    "group" : "Invalid",
+    "id" : "JSN-026",
+    "input" : "{'a':1}",
+    "options" : {
+
+    },
+    "should" : "Single quotes",
+    "title" : "Single quotes"
+  },
+  {
+    "caretMarker" : "|",
+    "domain" : "json-outline",
+    "expected" : [
+      "(invalid)"
+    ],
+    "group" : "Invalid",
+    "id" : "JSN-027",
+    "input" : "{\"a\":1",
+    "options" : {
+
+    },
+    "should" : "An unclosed object",
+    "title" : "An unclosed object"
+  }
+]

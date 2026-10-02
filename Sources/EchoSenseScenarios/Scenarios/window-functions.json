@@ -1,0 +1,125 @@
+[
+  {
+    "caretMarker" : "|",
+    "comments" : [
+
+    ],
+    "dialect" : "postgresql",
+    "echoSense" : {
+      "excludes" : [
+
+      ],
+      "insertText" : {
+
+      },
+      "items" : [
+        "id",
+        "name",
+        "email",
+        "created_at",
+        "department_id"
+      ],
+      "order" : "leading",
+      "outcome" : "suggests"
+    },
+    "group" : "Window Functions",
+    "id" : "SPEC-25.1",
+    "knownIssue" : "Fails today: Expected suggestions, but the popup doesn't open. A space only asks EchoSense after FROM, JOIN, UPDATE, CALL, EXEC or INTO. EchoSense would offer id, department_id, \"name\", created_at, email, \"partition\", $1, ABS, AGE, ARRAY_AGG, ARRAY_APPEND, ARRAY_CAT and 48 more.",
+    "options" : {
+      "includeSystemSchemas" : false,
+      "qualifyTableInsertions" : false
+    },
+    "review" : "imported",
+    "rules" : [
+
+    ],
+    "schema" : "spec",
+    "should" : "=> [columns from users]",
+    "source" : "AUTOCOMPLETE_SPEC.md 25.1",
+    "sql" : "SELECT ROW_NUMBER() OVER (PARTITION BY | ) FROM users",
+    "title" : "PARTITION BY",
+    "trigger" : "typing"
+  },
+  {
+    "caretMarker" : "|",
+    "comments" : [
+
+    ],
+    "dialect" : "postgresql",
+    "echoSense" : {
+      "excludes" : [
+
+      ],
+      "insertText" : {
+
+      },
+      "items" : [
+        "id",
+        "name",
+        "email",
+        "created_at",
+        "department_id"
+      ],
+      "order" : "leading",
+      "outcome" : "suggests"
+    },
+    "group" : "Window Functions",
+    "id" : "SPEC-25.2",
+    "knownIssue" : "Fails today: Expected suggestions, but the popup doesn't open. A space only asks EchoSense after FROM, JOIN, UPDATE, CALL, EXEC or INTO. EchoSense would offer id, department_id, \"name\", created_at, email, order, $1, ABS, AGE, ARRAY_AGG, ARRAY_APPEND, ARRAY_CAT and 48 more.",
+    "options" : {
+      "includeSystemSchemas" : false,
+      "qualifyTableInsertions" : false
+    },
+    "review" : "imported",
+    "rules" : [
+
+    ],
+    "schema" : "spec",
+    "should" : "=> [columns from users]",
+    "source" : "AUTOCOMPLETE_SPEC.md 25.2",
+    "sql" : "SELECT ROW_NUMBER() OVER (ORDER BY | ) FROM users",
+    "title" : "ORDER BY inside OVER",
+    "trigger" : "typing"
+  },
+  {
+    "caretMarker" : "|",
+    "comments" : [
+
+    ],
+    "dialect" : "postgresql",
+    "echoSense" : {
+      "excludes" : [
+
+      ],
+      "insertText" : {
+
+      },
+      "items" : [
+        "id",
+        "name",
+        "email",
+        "created_at",
+        "department_id"
+      ],
+      "order" : "leading",
+      "outcome" : "suggests"
+    },
+    "group" : "Window Functions",
+    "id" : "SPEC-25.3",
+    "knownIssue" : "Fails today: Expected suggestions, but the popup doesn't open. A space only asks EchoSense after FROM, JOIN, UPDATE, CALL, EXEC or INTO. EchoSense would offer id, department_id, \"name\", created_at, email, \"partition\", $1, ABS, AGE, ARRAY_AGG, ARRAY_APPEND, ARRAY_CAT and 48 more.",
+    "options" : {
+      "includeSystemSchemas" : false,
+      "qualifyTableInsertions" : false
+    },
+    "review" : "imported",
+    "rules" : [
+
+    ],
+    "schema" : "spec",
+    "should" : "=> [columns from users]` — `id` NOT excluded (inside function, not top-level SELECT).",
+    "source" : "AUTOCOMPLETE_SPEC.md 25.3",
+    "sql" : "SELECT ROW_NUMBER() OVER (PARTITION BY id), | FROM users",
+    "title" : "After OVER closes — back to SELECT context",
+    "trigger" : "typing"
+  }
+]

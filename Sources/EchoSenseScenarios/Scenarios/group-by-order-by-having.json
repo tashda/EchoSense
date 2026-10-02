@@ -1,0 +1,240 @@
+[
+  {
+    "caretMarker" : "|",
+    "comments" : [
+
+    ],
+    "dialect" : "postgresql",
+    "echoSense" : {
+      "excludes" : [
+
+      ],
+      "insertText" : {
+
+      },
+      "items" : [
+        "department_id"
+      ],
+      "order" : "leading",
+      "outcome" : "suggests"
+    },
+    "group" : "GROUP BY / ORDER BY / HAVING",
+    "id" : "SPEC-5.1",
+    "knownIssue" : "Fails today: Expected suggestions, but the popup doesn't open. A space only asks EchoSense after FROM, JOIN, UPDATE, CALL, EXEC or INTO. EchoSense would offer id, department_id, \"name\", created_at, email, ABS, AGE, ARRAY_AGG, ARRAY_APPEND, ARRAY_CAT, ARRAY_LENGTH, ARRAY_POSITION and 48 more.",
+    "options" : {
+      "includeSystemSchemas" : false,
+      "qualifyTableInsertions" : false
+    },
+    "review" : "imported",
+    "rules" : [
+
+    ],
+    "schema" : "spec",
+    "should" : "=> [department_id (top), then remaining columns]\n- Columns that appear in the SELECT list are ranked first.",
+    "source" : "AUTOCOMPLETE_SPEC.md 5.1",
+    "sql" : "SELECT department_id, COUNT(*) FROM users GROUP BY |",
+    "title" : "GROUP BY — prioritize SELECT-list columns",
+    "trigger" : "typing"
+  },
+  {
+    "caretMarker" : "|",
+    "comments" : [
+
+    ],
+    "dialect" : "postgresql",
+    "echoSense" : {
+      "excludes" : [
+
+      ],
+      "insertText" : {
+
+      },
+      "items" : [
+        "name",
+        "email"
+      ],
+      "order" : "leading",
+      "outcome" : "suggests"
+    },
+    "group" : "GROUP BY / ORDER BY / HAVING",
+    "id" : "SPEC-5.2",
+    "knownIssue" : "Fails today: Expected suggestions, but the popup doesn't open. A space only asks EchoSense after FROM, JOIN, UPDATE, CALL, EXEC or INTO. EchoSense would offer id, department_id, \"name\", created_at, email, ABS, AGE, ARRAY_AGG, ARRAY_APPEND, ARRAY_CAT, ARRAY_LENGTH, ARRAY_POSITION and 48 more.",
+    "options" : {
+      "includeSystemSchemas" : false,
+      "qualifyTableInsertions" : false
+    },
+    "review" : "imported",
+    "rules" : [
+
+    ],
+    "schema" : "spec",
+    "should" : "=> [name (top), email (top), then remaining columns]",
+    "source" : "AUTOCOMPLETE_SPEC.md 5.2",
+    "sql" : "SELECT name, email FROM users ORDER BY |",
+    "title" : "ORDER BY — prioritize SELECT-list columns",
+    "trigger" : "typing"
+  },
+  {
+    "caretMarker" : "|",
+    "comments" : [
+
+    ],
+    "dialect" : "postgresql",
+    "echo" : {
+      "popup" : "shown",
+      "textAfterAccepting" : "SELECT * FROM users ORDER BY name|"
+    },
+    "echoSense" : {
+      "excludes" : [
+
+      ],
+      "insertText" : {
+
+      },
+      "items" : [
+        "name"
+      ],
+      "order" : "leading",
+      "outcome" : "suggests"
+    },
+    "group" : "GROUP BY / ORDER BY / HAVING",
+    "id" : "SPEC-5.3",
+    "knownIssue" : "Fails today: Editor: Expected the text after accepting to be “SELECT * FROM users ORDER BY name|”, but it is “SELECT * FROM users ORDER BY \"name\"|”.",
+    "options" : {
+      "includeSystemSchemas" : false,
+      "qualifyTableInsertions" : false
+    },
+    "review" : "imported",
+    "rules" : [
+
+    ],
+    "schema" : "spec",
+    "should" : "=> [name]",
+    "source" : "AUTOCOMPLETE_SPEC.md 5.3",
+    "sql" : "SELECT * FROM users ORDER BY na|",
+    "title" : "ORDER BY with partial typing",
+    "trigger" : "typing"
+  },
+  {
+    "caretMarker" : "|",
+    "comments" : [
+
+    ],
+    "dialect" : "postgresql",
+    "echoSense" : {
+      "excludes" : [
+
+      ],
+      "insertText" : {
+
+      },
+      "items" : [
+        "ASC",
+        "DESC",
+        "NULLS FIRST",
+        "NULLS LAST"
+      ],
+      "order" : "leading",
+      "outcome" : "suggests"
+    },
+    "group" : "GROUP BY / ORDER BY / HAVING",
+    "id" : "SPEC-5.4",
+    "knownIssue" : "Fails today: Expected suggestions, but the popup doesn't open. A space only asks EchoSense after FROM, JOIN, UPDATE, CALL, EXEC or INTO. EchoSense would offer id, department_id, \"name\", created_at, email, ABS, AGE, ARRAY_AGG, ARRAY_APPEND, ARRAY_CAT, ARRAY_LENGTH, ARRAY_POSITION and 48 more.",
+    "options" : {
+      "includeSystemSchemas" : false,
+      "qualifyTableInsertions" : false
+    },
+    "review" : "imported",
+    "rules" : [
+
+    ],
+    "schema" : "spec",
+    "should" : "=> [ASC, DESC, NULLS FIRST, NULLS LAST]` — Exception to space-after-identifier rule.",
+    "source" : "AUTOCOMPLETE_SPEC.md 5.4",
+    "sql" : "SELECT * FROM users ORDER BY name |",
+    "title" : "ORDER BY direction — auto-suggest after column",
+    "trigger" : "typing"
+  },
+  {
+    "caretMarker" : "|",
+    "comments" : [
+
+    ],
+    "dialect" : "postgresql",
+    "echoSense" : {
+      "excludes" : [
+
+      ],
+      "insertText" : {
+
+      },
+      "items" : [
+        "id",
+        "name",
+        "email",
+        "created_at",
+        "department_id"
+      ],
+      "order" : "leading",
+      "outcome" : "suggests"
+    },
+    "group" : "GROUP BY / ORDER BY / HAVING",
+    "id" : "SPEC-5.5",
+    "knownIssue" : "Fails today: Expected suggestions, but the popup doesn't open. A space only asks EchoSense after FROM, JOIN, UPDATE, CALL, EXEC or INTO. EchoSense would offer id, department_id, \"name\", created_at, email, ABS, AGE, ARRAY_AGG, ARRAY_APPEND, ARRAY_CAT, ARRAY_LENGTH, ARRAY_POSITION and 48 more.",
+    "options" : {
+      "includeSystemSchemas" : false,
+      "qualifyTableInsertions" : false
+    },
+    "review" : "imported",
+    "rules" : [
+
+    ],
+    "schema" : "spec",
+    "should" : "=> [columns from users]` — Immediately.",
+    "source" : "AUTOCOMPLETE_SPEC.md 5.5",
+    "sql" : "SELECT * FROM users ORDER BY name ASC, |",
+    "title" : "ORDER BY after comma",
+    "trigger" : "typing"
+  },
+  {
+    "caretMarker" : "|",
+    "comments" : [
+
+    ],
+    "dialect" : "postgresql",
+    "echoSense" : {
+      "excludes" : [
+
+      ],
+      "insertText" : {
+
+      },
+      "items" : [
+        "COUNT",
+        "SUM",
+        "AVG",
+        "MIN",
+        "MAX"
+      ],
+      "order" : "leading",
+      "outcome" : "suggests"
+    },
+    "group" : "GROUP BY / ORDER BY / HAVING",
+    "id" : "SPEC-5.6",
+    "knownIssue" : "Fails today: Expected suggestions, but the popup doesn't open. A space only asks EchoSense after FROM, JOIN, UPDATE, CALL, EXEC or INTO. EchoSense would offer id, department_id, \"name\", created_at, email, $1, ABS, AGE, ARRAY_AGG, ARRAY_APPEND, ARRAY_CAT, ARRAY_LENGTH and 48 more.",
+    "options" : {
+      "includeSystemSchemas" : false,
+      "qualifyTableInsertions" : false
+    },
+    "review" : "imported",
+    "rules" : [
+
+    ],
+    "schema" : "spec",
+    "should" : "Order:\n1. Aggregate functions (`COUNT(`, `SUM(`, `AVG(`, `MIN(`, `MAX(`)\n2. Columns from tables in scope\n3. Other functions",
+    "source" : "AUTOCOMPLETE_SPEC.md 5.6",
+    "sql" : "SELECT department_id, COUNT(*) FROM users GROUP BY department_id HAVING |",
+    "title" : "HAVING — aggregates ranked highest",
+    "trigger" : "typing"
+  }
+]

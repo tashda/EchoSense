@@ -1,0 +1,78 @@
+[
+  {
+    "caretMarker" : "|",
+    "comments" : [
+
+    ],
+    "dialect" : "mssql",
+    "echoSense" : {
+      "excludes" : [
+        "users"
+      ],
+      "insertText" : {
+
+      },
+      "items" : [
+        "get_user_orders",
+        "archive_orders"
+      ],
+      "order" : "leading",
+      "outcome" : "suggests"
+    },
+    "group" : "Procedure Calls",
+    "id" : "SPEC-21.1",
+    "knownIssue" : "Engine offers nothing after EXEC; spec says stored procedures (procedure objects are not suggested)",
+    "options" : {
+      "includeSystemSchemas" : false,
+      "qualifyTableInsertions" : false
+    },
+    "review" : "imported",
+    "rules" : [
+
+    ],
+    "schema" : "spec",
+    "should" : "=> [stored procedures/functions]",
+    "source" : "AUTOCOMPLETE_SPEC.md 21.1",
+    "sql" : "-- MSSQL\nEXEC |",
+    "title" : "EXEC (MSSQL)",
+    "trigger" : "typing"
+  },
+  {
+    "caretMarker" : "|",
+    "comments" : [
+
+    ],
+    "dialect" : "postgresql",
+    "echoSense" : {
+      "excludes" : [
+        "users"
+      ],
+      "insertText" : {
+
+      },
+      "items" : [
+        "get_user_orders",
+        "archive_orders"
+      ],
+      "order" : "leading",
+      "outcome" : "suggests"
+    },
+    "group" : "Procedure Calls",
+    "id" : "SPEC-21.2",
+    "knownIssue" : "Engine offers nothing after CALL; spec says procedures/functions",
+    "options" : {
+      "includeSystemSchemas" : false,
+      "qualifyTableInsertions" : false
+    },
+    "review" : "imported",
+    "rules" : [
+
+    ],
+    "schema" : "spec",
+    "should" : "=> [stored procedures/functions]",
+    "source" : "AUTOCOMPLETE_SPEC.md 21.2",
+    "sql" : "CALL |",
+    "title" : "CALL (PostgreSQL)",
+    "trigger" : "typing"
+  }
+]

@@ -1,0 +1,265 @@
+[
+  {
+    "caretMarker" : "|",
+    "comments" : [
+
+    ],
+    "dialect" : "postgresql",
+    "echoSense" : {
+      "excludes" : [
+
+      ],
+      "insertText" : {
+
+      },
+      "items" : [
+
+      ],
+      "order" : "exact",
+      "outcome" : "none"
+    },
+    "group" : "Keywords",
+    "id" : "SPEC-13.1",
+    "options" : {
+      "includeSystemSchemas" : false,
+      "qualifyTableInsertions" : false
+    },
+    "review" : "imported",
+    "rules" : [
+
+    ],
+    "schema" : "spec",
+    "should" : "=> NONE` — Typing `SEL` does NOT suggest `SELECT`.",
+    "source" : "AUTOCOMPLETE_SPEC.md 13.1",
+    "sql" : "SEL|",
+    "title" : "Never word-completed",
+    "trigger" : "typing"
+  },
+  {
+    "caretMarker" : "|",
+    "comments" : [
+
+    ],
+    "dialect" : "postgresql",
+    "echoSense" : {
+      "excludes" : [
+
+      ],
+      "insertText" : {
+
+      },
+      "items" : [
+
+      ],
+      "order" : "exact",
+      "outcome" : "none"
+    },
+    "group" : "Keywords",
+    "id" : "SPEC-13.1b",
+    "options" : {
+      "includeSystemSchemas" : false,
+      "qualifyTableInsertions" : false
+    },
+    "review" : "imported",
+    "rules" : [
+
+    ],
+    "schema" : "spec",
+    "should" : "=> NONE",
+    "source" : "AUTOCOMPLETE_SPEC.md 13.1",
+    "sql" : "WHER|",
+    "title" : "Never word-completed",
+    "trigger" : "typing"
+  },
+  {
+    "caretMarker" : "|",
+    "comments" : [
+
+    ],
+    "dialect" : "postgresql",
+    "echoSense" : {
+      "excludes" : [
+
+      ],
+      "insertText" : {
+
+      },
+      "items" : [
+        "WHERE"
+      ],
+      "order" : "leading",
+      "outcome" : "suggests"
+    },
+    "group" : "Keywords",
+    "id" : "SPEC-13.2",
+    "knownIssue" : "Fails today: Expected suggestions, but it offered nothing.",
+    "options" : {
+      "includeSystemSchemas" : false,
+      "qualifyTableInsertions" : false
+    },
+    "review" : "imported",
+    "rules" : [
+
+    ],
+    "schema" : "spec",
+    "should" : "=> [WHERE]` — Contextual match after new line.",
+    "source" : "AUTOCOMPLETE_SPEC.md 13.2",
+    "sql" : "SELECT * FROM users\nW|",
+    "title" : "Contextual keyword suggestions — new line + typing",
+    "trigger" : "typing"
+  },
+  {
+    "caretMarker" : "|",
+    "comments" : [
+
+    ],
+    "dialect" : "postgresql",
+    "echoSense" : {
+      "excludes" : [
+
+      ],
+      "insertText" : {
+
+      },
+      "items" : [
+        "INNER JOIN"
+      ],
+      "order" : "leading",
+      "outcome" : "suggests"
+    },
+    "group" : "Keywords",
+    "id" : "SPEC-13.2b",
+    "knownIssue" : "Fails today: Expected suggestions, but EchoSense offered nothing.",
+    "options" : {
+      "includeSystemSchemas" : false,
+      "qualifyTableInsertions" : false
+    },
+    "review" : "imported",
+    "rules" : [
+
+    ],
+    "schema" : "spec",
+    "should" : "=> [INNER JOIN]",
+    "source" : "AUTOCOMPLETE_SPEC.md 13.2",
+    "sql" : "SELECT * FROM users\nIN|",
+    "title" : "Contextual keyword suggestions — new line + typing",
+    "trigger" : "typing"
+  },
+  {
+    "caretMarker" : "|",
+    "comments" : [
+
+    ],
+    "dialect" : "postgresql",
+    "echoSense" : {
+      "excludes" : [
+
+      ],
+      "insertText" : {
+
+      },
+      "items" : [
+
+      ],
+      "order" : "exact",
+      "outcome" : "none"
+    },
+    "group" : "Keywords",
+    "id" : "SPEC-13.3",
+    "knownIssue" : "Fails today: Expected nothing even when triggered by hand, but that offered WITH, WHERE, VIEW.",
+    "options" : {
+      "includeSystemSchemas" : false,
+      "qualifyTableInsertions" : false
+    },
+    "review" : "imported",
+    "rules" : [
+
+    ],
+    "schema" : "spec",
+    "should" : "=> NONE` — User might be typing an alias.",
+    "source" : "AUTOCOMPLETE_SPEC.md 13.3",
+    "sql" : "SELECT * FROM users W|",
+    "title" : "Same line after identifier — no keywords",
+    "trigger" : "typing"
+  },
+  {
+    "caretMarker" : "|",
+    "comments" : [
+
+    ],
+    "dialect" : "postgresql",
+    "echoSense" : {
+      "excludes" : [
+
+      ],
+      "insertText" : {
+
+      },
+      "items" : [
+        "ASC",
+        "DESC",
+        "NULLS FIRST",
+        "NULLS LAST"
+      ],
+      "order" : "leading",
+      "outcome" : "suggests"
+    },
+    "group" : "Keywords",
+    "id" : "SPEC-13.5",
+    "knownIssue" : "Fails today: Expected suggestions, but the popup doesn't open. A space only asks EchoSense after FROM, JOIN, UPDATE, CALL, EXEC or INTO. EchoSense would offer id, department_id, \"name\", created_at, email, ABS, AGE, ARRAY_AGG, ARRAY_APPEND, ARRAY_CAT, ARRAY_LENGTH, ARRAY_POSITION and 48 more.",
+    "options" : {
+      "includeSystemSchemas" : false,
+      "qualifyTableInsertions" : false
+    },
+    "review" : "imported",
+    "rules" : [
+
+    ],
+    "schema" : "spec",
+    "should" : "=> [ASC, DESC, NULLS FIRST, NULLS LAST]` — Auto-suggested after ORDER BY column.",
+    "source" : "AUTOCOMPLETE_SPEC.md 13.5",
+    "sql" : "SELECT * FROM users ORDER BY name |",
+    "title" : "ORDER BY direction — exception to space rule",
+    "trigger" : "typing"
+  },
+  {
+    "caretMarker" : "|",
+    "comments" : [
+
+    ],
+    "dialect" : "postgresql",
+    "echoSense" : {
+      "excludes" : [
+
+      ],
+      "insertText" : {
+
+      },
+      "items" : [
+        "ILIKE",
+        "IN",
+        "IS NULL",
+        "IS NOT NULL"
+      ],
+      "order" : "leading",
+      "outcome" : "suggests"
+    },
+    "group" : "Keywords",
+    "id" : "SPEC-13.6",
+    "knownIssue" : "Fails today: Missing: IS NULL, IS NOT NULL.",
+    "options" : {
+      "includeSystemSchemas" : false,
+      "qualifyTableInsertions" : false
+    },
+    "review" : "imported",
+    "rules" : [
+
+    ],
+    "schema" : "spec",
+    "should" : "=> [ILIKE (PostgreSQL), IN, IS NULL, IS NOT NULL]",
+    "source" : "AUTOCOMPLETE_SPEC.md 13.6",
+    "sql" : "SELECT * FROM users WHERE name I|",
+    "title" : "Operator keywords — on typing only",
+    "trigger" : "typing"
+  }
+]

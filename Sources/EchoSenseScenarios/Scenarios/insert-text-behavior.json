@@ -1,0 +1,43 @@
+[
+  {
+    "caretMarker" : "|",
+    "comments" : [
+
+    ],
+    "dialect" : "postgresql",
+    "echoSense" : {
+      "excludes" : [
+
+      ],
+      "insertText" : {
+        "name" : "name"
+      },
+      "items" : [
+        "id",
+        "name",
+        "email",
+        "created_at",
+        "department_id"
+      ],
+      "order" : "leading",
+      "outcome" : "suggests"
+    },
+    "group" : "Insert Text Behavior",
+    "id" : "SPEC-16.4",
+    "knownIssue" : "Fails today: Missing: name.",
+    "options" : {
+      "includeSystemSchemas" : false,
+      "qualifyTableInsertions" : false
+    },
+    "review" : "imported",
+    "rules" : [
+
+    ],
+    "schema" : "spec",
+    "should" : "Suggestion insert text is `name`, not `u.name`. The `u.` is already typed.",
+    "source" : "AUTOCOMPLETE_SPEC.md 16.4",
+    "sql" : "SELECT u.| FROM users u",
+    "title" : "Already-typed path components stripped",
+    "trigger" : "typing"
+  }
+]

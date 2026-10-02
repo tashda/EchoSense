@@ -152,6 +152,26 @@ struct SpecFROMClauseTests {
         #expect(!tableNames.contains("metrics"))
     }
 
+    // MARK: 2.4b FROM unknown schema dot → no suggestions
+
+    @Test("2.4b FROM unknown_schema. returns no table suggestions")
+    func fromUnknownSchemaDotReturnsEmpty() {
+        let engine = SpecHelpers.makeSpecEngine()
+        let text = "SELECT * FROM db_owner."
+        let query = SQLAutoCompletionQuery(
+            token: "db_owner.", prefix: "", pathComponents: ["db_owner"],
+            replacementRange: NSRange(location: 23, length: 0),
+            precedingKeyword: "from", precedingCharacter: ".",
+            focusTable: nil, tablesInScope: [], clause: .from
+        )
+
+        let result = engine.suggestions(for: query, text: text, caretLocation: text.count)
+        let tableNames = SpecHelpers.suggestionTitles(from: result, kind: .table)
+
+        // db_owner is not a known schema — should not suggest tables from other schemas
+        #expect(tableNames.isEmpty)
+    }
+
     // MARK: 2.5 FROM after comma → tables immediately
 
     @Test("2.5 FROM after comma suggests tables immediately")

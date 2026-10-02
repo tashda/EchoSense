@@ -1,0 +1,154 @@
+[
+  {
+    "caretMarker" : "|",
+    "comments" : [
+
+    ],
+    "dialect" : "postgresql",
+    "echoSense" : {
+      "excludes" : [
+
+      ],
+      "insertText" : {
+
+      },
+      "items" : [
+        "id",
+        "name"
+      ],
+      "order" : "leading",
+      "outcome" : "suggests"
+    },
+    "group" : "Derived Tables (Subqueries in FROM)",
+    "id" : "SPEC-8.1",
+    "knownIssue" : "Fails today: Expected these first, in order: id, name. Got: \"name\", id.",
+    "options" : {
+      "includeSystemSchemas" : false,
+      "qualifyTableInsertions" : false
+    },
+    "review" : "imported",
+    "rules" : [
+
+    ],
+    "schema" : "spec",
+    "should" : "=> [id, name]",
+    "source" : "AUTOCOMPLETE_SPEC.md 8.1",
+    "sql" : "SELECT sub.| FROM (SELECT id, name FROM users) sub",
+    "title" : "Derived table — columns from inner SELECT",
+    "trigger" : "typing"
+  },
+  {
+    "caretMarker" : "|",
+    "comments" : [
+
+    ],
+    "dialect" : "postgresql",
+    "echoSense" : {
+      "excludes" : [
+
+      ],
+      "insertText" : {
+
+      },
+      "items" : [
+        "user_id",
+        "user_name"
+      ],
+      "order" : "leading",
+      "outcome" : "suggests"
+    },
+    "group" : "Derived Tables (Subqueries in FROM)",
+    "id" : "SPEC-8.2",
+    "options" : {
+      "includeSystemSchemas" : false,
+      "qualifyTableInsertions" : false
+    },
+    "review" : "imported",
+    "rules" : [
+
+    ],
+    "schema" : "spec",
+    "should" : "=> [user_id, user_name]",
+    "source" : "AUTOCOMPLETE_SPEC.md 8.2",
+    "sql" : "SELECT sub.| FROM (SELECT id AS user_id, name AS user_name FROM users) sub",
+    "title" : "Derived table with aliased columns",
+    "trigger" : "typing"
+  },
+  {
+    "caretMarker" : "|",
+    "comments" : [
+
+    ],
+    "dialect" : "postgresql",
+    "echoSense" : {
+      "excludes" : [
+
+      ],
+      "insertText" : {
+
+      },
+      "items" : [
+        "id",
+        "name",
+        "email",
+        "created_at",
+        "department_id"
+      ],
+      "order" : "leading",
+      "outcome" : "suggests"
+    },
+    "group" : "Derived Tables (Subqueries in FROM)",
+    "id" : "SPEC-8.3",
+    "knownIssue" : "Fails today: Expected these first, in order: id, name, email, created_at, department_id. Got: \"name\", created_at, department_id, email, id.",
+    "options" : {
+      "includeSystemSchemas" : false,
+      "qualifyTableInsertions" : false
+    },
+    "review" : "imported",
+    "rules" : [
+
+    ],
+    "schema" : "spec",
+    "should" : "=> [id, name, email, created_at, department_id]` — Resolved from `users` metadata.",
+    "source" : "AUTOCOMPLETE_SPEC.md 8.3",
+    "sql" : "SELECT sub.| FROM (SELECT * FROM users) sub",
+    "title" : "Derived table with SELECT * — resolve",
+    "trigger" : "typing"
+  },
+  {
+    "caretMarker" : "|",
+    "comments" : [
+
+    ],
+    "dialect" : "postgresql",
+    "echoSense" : {
+      "excludes" : [
+
+      ],
+      "insertText" : {
+
+      },
+      "items" : [
+        "id"
+      ],
+      "order" : "leading",
+      "outcome" : "suggests"
+    },
+    "group" : "Derived Tables (Subqueries in FROM)",
+    "id" : "SPEC-8.4",
+    "options" : {
+      "includeSystemSchemas" : false,
+      "qualifyTableInsertions" : false
+    },
+    "review" : "imported",
+    "rules" : [
+
+    ],
+    "schema" : "spec",
+    "should" : "=> [id]",
+    "source" : "AUTOCOMPLETE_SPEC.md 8.4",
+    "sql" : "SELECT outer_sub.| FROM (SELECT inner_sub.id FROM (SELECT id FROM users) inner_sub) outer_sub",
+    "title" : "Nested derived tables",
+    "trigger" : "typing"
+  }
+]

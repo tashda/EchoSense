@@ -1,0 +1,111 @@
+[
+  {
+    "caretMarker" : "|",
+    "comments" : [
+
+    ],
+    "dialect" : "postgresql",
+    "echoSense" : {
+      "excludes" : [
+
+      ],
+      "insertText" : {
+        "Expand * to columns" : "id, name, email, created_at, department_id"
+      },
+      "items" : [
+        "Expand * to columns"
+      ],
+      "order" : "leading",
+      "outcome" : "suggests"
+    },
+    "group" : "Star Expansion",
+    "id" : "SPEC-10.1",
+    "options" : {
+      "includeSystemSchemas" : false,
+      "qualifyTableInsertions" : false
+    },
+    "review" : "imported",
+    "rules" : [
+
+    ],
+    "schema" : "spec",
+    "should" : "Manual trigger required. `=> [\"Expand * to columns\"]`\nInsert text: `id, name, email, created_at, department_id` (unqualified).",
+    "source" : "AUTOCOMPLETE_SPEC.md 10.1",
+    "sql" : "SELECT *| FROM users",
+    "title" : "Single table — unqualified",
+    "trigger" : "manual"
+  },
+  {
+    "caretMarker" : "|",
+    "comments" : [
+
+    ],
+    "dialect" : "postgresql",
+    "echoSense" : {
+      "excludes" : [
+
+      ],
+      "insertText" : {
+        "Expand * to columns" : "u.id, u.name, u.email, u.created_at, u.department_id, o.id, o.user_id, o.total, o.status, o.created_at"
+      },
+      "items" : [
+        "Expand * to columns"
+      ],
+      "order" : "leading",
+      "outcome" : "suggests"
+    },
+    "group" : "Star Expansion",
+    "id" : "SPEC-10.2",
+    "options" : {
+      "includeSystemSchemas" : false,
+      "qualifyTableInsertions" : false
+    },
+    "review" : "imported",
+    "rules" : [
+
+    ],
+    "schema" : "spec",
+    "should" : "Manual trigger required. `=> [\"Expand * to columns\"]`\nInsert text: `u.id, u.name, u.email, u.created_at, u.department_id, o.id, o.user_id, o.total, o.status, o.created_at` (ALL qualified).",
+    "source" : "AUTOCOMPLETE_SPEC.md 10.2",
+    "sql" : "SELECT *| FROM users u JOIN orders o ON u.id = o.user_id",
+    "title" : "Multiple tables — all qualified",
+    "trigger" : "manual"
+  },
+  {
+    "caretMarker" : "|",
+    "comments" : [
+
+    ],
+    "dialect" : "postgresql",
+    "echoSense" : {
+      "excludes" : [
+
+      ],
+      "insertText" : {
+        "Expand * to columns" : "u.id, u.name, u.email, u.created_at, u.department_id"
+      },
+      "items" : [
+        "Expand * to columns"
+      ],
+      "order" : "leading",
+      "outcome" : "suggests"
+    },
+    "group" : "Star Expansion",
+    "id" : "SPEC-10.3",
+    "knownIssue" : "Fails today: Expected suggestions, but EchoSense offered nothing.",
+    "options" : {
+      "includeSystemSchemas" : false,
+      "qualifyTableInsertions" : false
+    },
+    "review" : "imported",
+    "rules" : [
+
+    ],
+    "schema" : "spec",
+    "should" : "Manual trigger required. `=> [\"Expand * to columns\"]`\nInsert text: `u.id, u.name, u.email, u.created_at, u.department_id` (only `users` columns, qualified).",
+    "source" : "AUTOCOMPLETE_SPEC.md 10.3",
+    "sql" : "SELECT u.*| FROM users u JOIN orders o ON u.id = o.user_id",
+    "title" : "Alias-qualified star",
+    "trigger" : "manual"
+  }
+]

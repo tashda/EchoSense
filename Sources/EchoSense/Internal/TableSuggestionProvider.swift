@@ -21,9 +21,15 @@ struct TableSuggestionProvider: SuggestionProvider {
                 targetCatalog = context.catalog
             }
         } else if preceding.count == 1 {
-            // If the single preceding component is a database name, schema suggestions handle this step.
-            let potentialDB = preceding[0]
-            if context.metadata.databaseNames.contains(where: { $0.lowercased() == potentialDB }) {
+            // Disambiguate: local schema takes priority over database name.
+            let component = preceding[0]
+            let matchesLocalSchema = context.catalog.schemas.contains(where: { $0.name.lowercased() == component })
+            let matchesDatabase = !matchesLocalSchema
+                && context.metadata.databaseNames.contains(where: { $0.lowercased() == component })
+            if matchesDatabase {
+                // Pure `db.` reference — the user has not chosen a schema yet, so showing
+                // tables would produce invalid `db.table` insertions. Defer entirely to
+                // SchemaSuggestionProvider.
                 return []
             }
             targetCatalog = context.catalog
@@ -33,9 +39,33 @@ struct TableSuggestionProvider: SuggestionProvider {
             targetCatalog = context.catalog
         }
 
-        let schemaFilterLower = preceding.last
+        // Determine if this is a cross-database reference.
+        // Disambiguation: if a name matches BOTH a local schema AND a database,
+        // prefer local schema (the common case). Only treat as cross-DB when the
+        // name matches a database but NOT a local schema.
+        let isCrossDB: Bool
+        if preceding.count >= 1 {
+            let matchesLocalSchema = context.catalog.schemas.contains(where: { $0.name.lowercased() == preceding[0] })
+            let matchesDatabase = context.metadata.databaseNames.contains(where: { $0.lowercased() == preceding[0] })
+            isCrossDB = matchesDatabase && !matchesLocalSchema
+        } else {
+            isCrossDB = false
+        }
+        let schemaFilterLower: String?
+        if isCrossDB {
+            schemaFilterLower = preceding.count >= 2 ? preceding.last : nil
+        } else {
+            schemaFilterLower = preceding.last
+        }
         let exactSchema = schemaFilterLower.flatMap { filter in
             targetCatalog.schemas.first(where: { $0.name.lowercased() == filter })
+        }
+
+        // When the user typed an explicit "schema." (trailing dot), only show tables
+        // from that exact schema. If the schema doesn't exist, return nothing — suggesting
+        // tables from other schemas would produce invalid qualified references.
+        if identifier.isTrailingDot, schemaFilterLower != nil, exactSchema == nil {
+            return []
         }
 
         var candidateSchemas: [SQLSchema]
@@ -75,6 +105,9 @@ struct TableSuggestionProvider: SuggestionProvider {
                     } else {
                         components = [schema.name]
                     }
+                } else if isCrossDB && schemaFilterLower == nil {
+                    // Cross-DB without explicit schema: insert db.schema.table
+                    components.append(schema.name)
                 } else if let lastIndex = components.indices.last,
                           schema.name.lowercased().hasPrefix(components[lastIndex].lowercased()) {
                     components[lastIndex] = schema.name
@@ -167,10 +200,12 @@ struct SchemaSuggestionProvider: SuggestionProvider {
                                  context: context)
         } else if preceding.count == 1 {
             let component = preceding[0]
-            if context.metadata.databaseNames.contains(where: { $0.lowercased() == component }),
+            // Disambiguate: local schema takes priority over database name.
+            let matchesLocalSchema = context.catalog.schemas.contains(where: { $0.name.lowercased() == component })
+            if !matchesLocalSchema,
+               context.metadata.databaseNames.contains(where: { $0.lowercased() == component }),
                let dbCatalog = context.metadata.catalog(for: component) {
                 // The preceding component is a database name — suggest its schemas.
-                // If it's a trailing dot after a schema name inside that catalog, let table suggestions handle it.
                 if identifier.isTrailingDot,
                    dbCatalog.schemas.contains(where: { $0.name.lowercased() == component }) {
                     return []
@@ -223,6 +258,8 @@ struct SchemaSuggestionProvider: SuggestionProvider {
             let insertText = context.qualify(components) + "."
             let detail = displayDatabase.map { "\($0).\(schema.name)" }
             let fuzzyAdjustment = score < 0.95 ? Int(-100 * (1.0 - score)) : 0
+            // Built-in schema (synthetic, holds built-in functions) ranks at the bottom
+            let builtInPenalty = schema.name.lowercased() == "built-in" ? -500 : 0
 
             results.append(SQLCompletionSuggestion(id: "schema|\(schema.name.lowercased())",
                                                    title: schema.name,
@@ -230,7 +267,7 @@ struct SchemaSuggestionProvider: SuggestionProvider {
                                                    detail: detail,
                                                    insertText: insertText,
                                                    kind: .schema,
-                                                   priority: basePriority + fuzzyAdjustment))
+                                                   priority: basePriority + fuzzyAdjustment + builtInPenalty))
         }
         return results
     }
@@ -253,6 +290,11 @@ struct DatabaseSuggestionProvider: SuggestionProvider {
         // Only suggest databases when at the very first segment (no preceding path components).
         guard context.identifier.precedingSegments.isEmpty else { return [] }
 
+        // Require at least one typed character before showing database suggestions.
+        // Without this, 40+ databases would flood the completion list on every empty
+        // FROM/JOIN trigger, pushing local tables out of view.
+        guard !context.identifier.lowercasePrefix.isEmpty else { return [] }
+
         let databaseNames = context.metadata.databaseNames
         guard !databaseNames.isEmpty else { return [] }
 
@@ -268,7 +310,7 @@ struct DatabaseSuggestionProvider: SuggestionProvider {
                                                    subtitle: "Database",
                                                    detail: dbName,
                                                    insertText: insertText,
-                                                   kind: .schema,
+                                                   kind: .database,
                                                    priority: priority))
         }
         return results

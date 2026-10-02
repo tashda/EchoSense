@@ -60,6 +60,7 @@ extension SQLAutoCompletionEngine {
 
         var origin: SQLAutoCompletionSuggestion.Origin?
         var dataType: String?
+        var columnFacts: SQLAutoCompletionSuggestion.ColumnFacts?
         var tableColumns: [SQLAutoCompletionSuggestion.TableColumn]?
 
         switch suggestion.kind {
@@ -78,12 +79,15 @@ extension SQLAutoCompletionEngine {
                                                             object: suggestion.title)
             }
         case .schema:
-            origin = SQLAutoCompletionSuggestion.Origin(database: context.selectedDatabase,
+            origin = SQLAutoCompletionSuggestion.Origin(database: suggestion.subtitle ?? context.selectedDatabase,
                                                         schema: suggestion.title)
+        case .database:
+            origin = SQLAutoCompletionSuggestion.Origin(database: suggestion.title)
         case .column:
             let details = mapColumnSuggestion(suggestion, context: context)
             origin = details.origin
             dataType = details.dataType
+            columnFacts = details.facts
         case .function, .procedure:
             origin = mapFunctionOrigin(suggestion, context: context)
         default:
@@ -111,6 +115,7 @@ extension SQLAutoCompletionEngine {
                                            kind: mappedKind,
                                            origin: origin,
                                            dataType: dataType,
+                                           columnFacts: columnFacts,
                                            tableColumns: tableColumns,
                                            snippetText: snippetText,
                                            priority: suggestion.priority)
@@ -128,6 +133,7 @@ extension SQLAutoCompletionEngine {
         case .snippet: return .snippet
         case .parameter: return .parameter
         case .join: return .join
+        case .database: return .database
         }
     }
 
@@ -143,6 +149,7 @@ extension SQLAutoCompletionEngine {
         case .snippet: return .snippet
         case .parameter: return .parameter
         case .join: return .join
+        case .database: return .database
         }
     }
 
@@ -229,11 +236,13 @@ extension SQLAutoCompletionEngine {
         }
 
         // When the user has finished typing a dotted path qualifier (token ends with ".")
-        // and no additional prefix has been typed yet, any single-component adjusted
-        // insert text is a valid completion at this depth — providers already filtered
-        // for the correct catalog/schema level.
+        // and no additional prefix has been typed yet, single-component adjusted insert
+        // text may be valid for columns (alias.col → col), schemas, keywords, and functions.
+        // Tables/views fall through to the path-aware cross-DB check below.
         if tokenLower.hasSuffix(".") && prefixLower.isEmpty && !suggestion.insertText.contains(".") {
-            return true
+            if suggestion.kind == .column || suggestion.kind == .schema || suggestion.kind == .keyword || suggestion.kind == .function {
+                return true
+            }
         }
 
         if tokenLower.isEmpty && prefixLower.isEmpty && pathMatches() {
@@ -281,6 +290,38 @@ extension SQLAutoCompletionEngine {
 
         if tokenLower.isEmpty && prefixLower.isEmpty && pathLower.isEmpty {
             return true
+        }
+
+        // When path components are present (e.g. "db." or "schema."), enforce path matching
+        // even when prefix is empty — only show suggestions that belong to the referenced path.
+        if !pathLower.isEmpty {
+            if pathMatches() { return true }
+            // adjustedInsertText strips already-typed path segments from insertText
+            // (e.g. "analytics.events" → "events", "db.schema.table" → "schema.table"),
+            // which breaks pathMatches. Fall back to checking the suggestion's origin.
+            if let origin = suggestion.origin {
+                var originComponents: [String] = []
+                if let db = origin.database?.lowercased() { originComponents.append(db) }
+                if let schema = origin.schema?.lowercased() { originComponents.append(schema) }
+                if let object = origin.object?.lowercased() { originComponents.append(object) }
+                // Match pathLower as a contiguous prefix subsequence of origin components,
+                // starting at any position (db, schema, or object).
+                if !originComponents.isEmpty {
+                    for start in originComponents.indices {
+                        if start + pathLower.count > originComponents.count { break }
+                        var matched = true
+                        for (offset, typed) in pathLower.enumerated() {
+                            let candidate = originComponents[start + offset]
+                            if !candidate.hasPrefix(typed) {
+                                matched = false
+                                break
+                            }
+                        }
+                        if matched { return true }
+                    }
+                }
+            }
+            return false
         }
 
         if !tokenLower.isEmpty {
@@ -340,9 +381,9 @@ extension SQLAutoCompletionEngine {
     }
 
     private func mapColumnSuggestion(_ suggestion: SQLCompletionSuggestion,
-                                     context: SQLEditorCompletionContext) -> (origin: SQLAutoCompletionSuggestion.Origin?, dataType: String?) {
+                                     context: SQLEditorCompletionContext) -> (origin: SQLAutoCompletionSuggestion.Origin?, dataType: String?, facts: SQLAutoCompletionSuggestion.ColumnFacts?) {
         guard let components = parseColumnIdentifier(from: suggestion.id) else {
-            return (nil, nil)
+            return (nil, nil, nil)
         }
 
         if components.isCTE {
@@ -351,7 +392,7 @@ extension SQLAutoCompletionEngine {
                                                             schema: nil,
                                                             object: qualifier,
                                                             column: components.column)
-            return (origin, nil)
+            return (origin, nil, nil)
         }
 
         guard let tableName = components.table else {
@@ -359,7 +400,7 @@ extension SQLAutoCompletionEngine {
                                                             schema: components.schema,
                                                             object: nil,
                                                             column: components.column)
-            return (origin, nil)
+            return (origin, nil, nil)
         }
 
         if let entry = lookupObject(schema: components.schema,
@@ -370,16 +411,20 @@ extension SQLAutoCompletionEngine {
                                                             object: entry.object.name,
                                                             column: components.column)
             if let columnInfo = entry.object.columns.first(where: { $0.name.caseInsensitiveCompare(components.column) == .orderedSame }) {
-                return (origin, columnInfo.dataType)
+                let target = columnInfo.foreignKey.map { "\($0.referencedSchema).\($0.referencedTable).\($0.referencedColumn)" }
+                let facts = SQLAutoCompletionSuggestion.ColumnFacts(isNullable: columnInfo.isNullable,
+                                                                    isPrimaryKey: columnInfo.isPrimaryKey,
+                                                                    foreignKeyTarget: target)
+                return (origin, columnInfo.dataType, facts)
             }
-            return (origin, nil)
+            return (origin, nil, nil)
         }
 
         let origin = SQLAutoCompletionSuggestion.Origin(database: context.selectedDatabase,
                                                         schema: components.schema,
                                                         object: tableName,
                                                         column: components.column)
-        return (origin, nil)
+        return (origin, nil, nil)
     }
 
     private func parseColumnIdentifier(from identifier: String) -> (schema: String?, table: String?, column: String, isCTE: Bool)? {
@@ -405,6 +450,13 @@ extension SQLAutoCompletionEngine {
 
     private func mapFunctionOrigin(_ suggestion: SQLCompletionSuggestion,
                                    context: SQLEditorCompletionContext) -> SQLAutoCompletionSuggestion.Origin? {
+        // Built-ins first: they are hundreds per keystroke and never in the catalog.
+        if suggestion.subtitle == "Built-in" {
+            return SQLAutoCompletionSuggestion.Origin(database: nil,
+                                                      schema: "Built-in",
+                                                      object: suggestion.title)
+        }
+
         if let schemaName = suggestion.subtitle,
            let entry = lookupObject(schema: schemaName,
                                     name: suggestion.title,
@@ -412,12 +464,6 @@ extension SQLAutoCompletionEngine {
             return SQLAutoCompletionSuggestion.Origin(database: entry.database,
                                                       schema: entry.schema,
                                                       object: entry.object.name)
-        }
-
-        if suggestion.subtitle == "Built-in" {
-            return SQLAutoCompletionSuggestion.Origin(database: nil,
-                                                      schema: "Built-in",
-                                                      object: suggestion.title)
         }
 
         return SQLAutoCompletionSuggestion.Origin(database: context.selectedDatabase,
@@ -459,9 +505,9 @@ extension SQLAutoCompletionEngine {
         guard !query.pathComponents.isEmpty else { return original }
 
         let originalComponents = original.split(separator: ".").map(String.init)
-        var remaining = originalComponents
         let typedComponents = query.pathComponents.map { $0.lowercased() }
 
+        var remaining = originalComponents
         var index = 0
         while index < min(typedComponents.count, remaining.count),
               remaining[index].lowercased() == typedComponents[index] {

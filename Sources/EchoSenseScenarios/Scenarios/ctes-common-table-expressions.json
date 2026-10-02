@@ -1,0 +1,355 @@
+[
+  {
+    "caretMarker" : "|",
+    "comments" : [
+
+    ],
+    "dialect" : "postgresql",
+    "echoSense" : {
+      "excludes" : [
+
+      ],
+      "insertText" : {
+
+      },
+      "items" : [
+        "id",
+        "name"
+      ],
+      "order" : "leading",
+      "outcome" : "suggests"
+    },
+    "group" : "CTEs (Common Table Expressions)",
+    "id" : "SPEC-7.1",
+    "knownIssue" : "Fails today: Expected these first, in order: id, name. Got: \"name\", id.",
+    "options" : {
+      "includeSystemSchemas" : false,
+      "qualifyTableInsertions" : false
+    },
+    "review" : "imported",
+    "rules" : [
+
+    ],
+    "schema" : "spec",
+    "should" : "=> [id, name]` — CTE columns from explicit list.",
+    "source" : "AUTOCOMPLETE_SPEC.md 7.1",
+    "sql" : "WITH active(id, name) AS (SELECT id, name FROM users WHERE status = 'active')\nSELECT | FROM active",
+    "title" : "CTE with explicit column list",
+    "trigger" : "typing"
+  },
+  {
+    "caretMarker" : "|",
+    "comments" : [
+
+    ],
+    "dialect" : "postgresql",
+    "echoSense" : {
+      "excludes" : [
+
+      ],
+      "insertText" : {
+
+      },
+      "items" : [
+        "id",
+        "name"
+      ],
+      "order" : "leading",
+      "outcome" : "suggests"
+    },
+    "group" : "CTEs (Common Table Expressions)",
+    "id" : "SPEC-7.2",
+    "knownIssue" : "Fails today: Expected these first, in order: id, name. Got: \"name\", id.",
+    "options" : {
+      "includeSystemSchemas" : false,
+      "qualifyTableInsertions" : false
+    },
+    "review" : "imported",
+    "rules" : [
+
+    ],
+    "schema" : "spec",
+    "should" : "=> [id, name]` — Columns inferred from inner SELECT.",
+    "source" : "AUTOCOMPLETE_SPEC.md 7.2",
+    "sql" : "WITH active AS (SELECT id, name FROM users WHERE status = 'active')\nSELECT | FROM active",
+    "title" : "CTE without explicit column list — infer from inner SELECT",
+    "trigger" : "typing"
+  },
+  {
+    "caretMarker" : "|",
+    "comments" : [
+
+    ],
+    "dialect" : "postgresql",
+    "echoSense" : {
+      "excludes" : [
+
+      ],
+      "insertText" : {
+
+      },
+      "items" : [
+        "user_id",
+        "user_name"
+      ],
+      "order" : "leading",
+      "outcome" : "suggests"
+    },
+    "group" : "CTEs (Common Table Expressions)",
+    "id" : "SPEC-7.3",
+    "knownIssue" : "Fails today: Expected suggestions, but the popup doesn't open. A space only asks EchoSense after FROM, JOIN, UPDATE, CALL, EXEC or INTO. EchoSense would offer user_id, user_name, $1, ABS, AGE, ARRAY_AGG, ARRAY_APPEND, ARRAY_CAT, ARRAY_LENGTH, ARRAY_POSITION, ARRAY_REMOVE, AVG and 48 more.",
+    "options" : {
+      "includeSystemSchemas" : false,
+      "qualifyTableInsertions" : false
+    },
+    "review" : "imported",
+    "rules" : [
+
+    ],
+    "schema" : "spec",
+    "should" : "=> [user_id, user_name]` — Aliased column names.",
+    "source" : "AUTOCOMPLETE_SPEC.md 7.3",
+    "sql" : "WITH active AS (SELECT id AS user_id, name AS user_name FROM users)\nSELECT | FROM active",
+    "title" : "CTE with aliased columns — use aliases",
+    "trigger" : "typing"
+  },
+  {
+    "caretMarker" : "|",
+    "comments" : [
+
+    ],
+    "dialect" : "postgresql",
+    "echoSense" : {
+      "excludes" : [
+
+      ],
+      "insertText" : {
+
+      },
+      "items" : [
+        "id",
+        "name",
+        "email",
+        "created_at",
+        "department_id"
+      ],
+      "order" : "leading",
+      "outcome" : "suggests"
+    },
+    "group" : "CTEs (Common Table Expressions)",
+    "id" : "SPEC-7.4",
+    "knownIssue" : "Fails today: Expected these first, in order: id, name, email, created_at, department_id. Got: \"name\", created_at, department_id, email, id.",
+    "options" : {
+      "includeSystemSchemas" : false,
+      "qualifyTableInsertions" : false
+    },
+    "review" : "imported",
+    "rules" : [
+
+    ],
+    "schema" : "spec",
+    "should" : "=> [id, name, email, created_at, department_id]` — Resolved from `users` metadata.",
+    "source" : "AUTOCOMPLETE_SPEC.md 7.4",
+    "sql" : "WITH active AS (SELECT * FROM users)\nSELECT | FROM active",
+    "title" : "CTE with SELECT * — resolve to actual columns",
+    "trigger" : "typing"
+  },
+  {
+    "caretMarker" : "|",
+    "comments" : [
+
+    ],
+    "dialect" : "postgresql",
+    "echoSense" : {
+      "excludes" : [
+
+      ],
+      "insertText" : {
+
+      },
+      "items" : [
+        "active",
+        "users",
+        "orders"
+      ],
+      "order" : "leading",
+      "outcome" : "suggests"
+    },
+    "group" : "CTEs (Common Table Expressions)",
+    "id" : "SPEC-7.5",
+    "knownIssue" : "Fails today: Missing: active.",
+    "options" : {
+      "includeSystemSchemas" : false,
+      "qualifyTableInsertions" : false
+    },
+    "review" : "imported",
+    "rules" : [
+
+    ],
+    "schema" : "spec",
+    "should" : "=> [active, users, orders, ...]` — CTE name appears as a table option.",
+    "source" : "AUTOCOMPLETE_SPEC.md 7.5",
+    "sql" : "WITH active(id, name) AS (SELECT id, name FROM users)\nSELECT * FROM |",
+    "title" : "CTE name as table in FROM",
+    "trigger" : "typing"
+  },
+  {
+    "caretMarker" : "|",
+    "comments" : [
+
+    ],
+    "dialect" : "postgresql",
+    "echoSense" : {
+      "excludes" : [
+
+      ],
+      "insertText" : {
+
+      },
+      "items" : [
+        "id",
+        "name"
+      ],
+      "order" : "leading",
+      "outcome" : "suggests"
+    },
+    "group" : "CTEs (Common Table Expressions)",
+    "id" : "SPEC-7.6",
+    "knownIssue" : "Fails today: Expected these first, in order: id, name. Got: \"name\", id.",
+    "options" : {
+      "includeSystemSchemas" : false,
+      "qualifyTableInsertions" : false
+    },
+    "review" : "imported",
+    "rules" : [
+
+    ],
+    "schema" : "spec",
+    "should" : "=> [id, name]",
+    "source" : "AUTOCOMPLETE_SPEC.md 7.6",
+    "sql" : "WITH active(id, name) AS (SELECT id, name FROM users)\nSELECT active.| FROM active",
+    "title" : "CTE column with dot access",
+    "trigger" : "typing"
+  },
+  {
+    "caretMarker" : "|",
+    "comments" : [
+
+    ],
+    "dialect" : "postgresql",
+    "echoSense" : {
+      "excludes" : [
+
+      ],
+      "insertText" : {
+
+      },
+      "items" : [
+        "a.id",
+        "r.id",
+        "name",
+        "total"
+      ],
+      "order" : "leading",
+      "outcome" : "suggests"
+    },
+    "group" : "CTEs (Common Table Expressions)",
+    "id" : "SPEC-7.7",
+    "knownIssue" : "Fails today: Expected suggestions, but the popup doesn't open. A space only asks EchoSense after FROM, JOIN, UPDATE, CALL, EXEC or INTO. EchoSense would offer \"name\", id, $1, ABS, AGE, ARRAY_AGG, ARRAY_APPEND, ARRAY_CAT, ARRAY_LENGTH, ARRAY_POSITION, ARRAY_REMOVE, AVG and 48 more.",
+    "options" : {
+      "includeSystemSchemas" : false,
+      "qualifyTableInsertions" : false
+    },
+    "review" : "imported",
+    "rules" : [
+
+    ],
+    "schema" : "spec",
+    "should" : "- `id` exists in both → qualified: `a.id`, `r.id`\n- `name` unique → unqualified: `name`\n- `total` unique → unqualified: `total`",
+    "source" : "AUTOCOMPLETE_SPEC.md 7.7",
+    "sql" : "WITH\n  active(id, name) AS (SELECT id, name FROM users),\n  recent_orders(id, total) AS (SELECT id, total FROM orders)\nSELECT | FROM active a JOIN recent_orders r ON a.id = r.id",
+    "title" : "Multiple CTEs — smart qualification",
+    "trigger" : "typing"
+  },
+  {
+    "caretMarker" : "|",
+    "comments" : [
+
+    ],
+    "dialect" : "postgresql",
+    "echoSense" : {
+      "excludes" : [
+
+      ],
+      "insertText" : {
+
+      },
+      "items" : [
+        "Id",
+        "Name"
+      ],
+      "order" : "leading",
+      "outcome" : "suggests"
+    },
+    "group" : "CTEs (Common Table Expressions)",
+    "id" : "SPEC-7.8",
+    "knownIssue" : "Fails today: Expected these first, in order: Id, Name. Got: \"name\", id.",
+    "options" : {
+      "includeSystemSchemas" : false,
+      "qualifyTableInsertions" : false
+    },
+    "review" : "imported",
+    "rules" : [
+
+    ],
+    "schema" : "spec",
+    "should" : "=> [Id, Name]` — Case-insensitive lookup, preserves original casing.",
+    "source" : "AUTOCOMPLETE_SPEC.md 7.8",
+    "sql" : "WITH Active(Id, Name) AS (SELECT id, name FROM users)\nSELECT | FROM Active",
+    "title" : "CTE column lookup is case-insensitive",
+    "trigger" : "typing"
+  },
+  {
+    "caretMarker" : "|",
+    "comments" : [
+
+    ],
+    "dialect" : "postgresql",
+    "echoSense" : {
+      "excludes" : [
+        "active_users",
+        "user_stats",
+        "source"
+      ],
+      "insertText" : {
+
+      },
+      "items" : [
+        "users",
+        "orders",
+        "products",
+        "categories",
+        "departments"
+      ],
+      "order" : "leading",
+      "outcome" : "suggests"
+    },
+    "group" : "CTEs (Common Table Expressions)",
+    "id" : "SPEC-7.9",
+    "knownIssue" : "Fails today: Expected these first, in this order: users, orders, products, categories, departments. Now: users is #13, orders is #11, products is #12, categories is #9, departments is #10.",
+    "options" : {
+      "includeSystemSchemas" : false,
+      "qualifyTableInsertions" : false
+    },
+    "review" : "imported",
+    "rules" : [
+
+    ],
+    "schema" : "spec",
+    "should" : "=> [tables]` — CTE doesn't change INSERT behavior.",
+    "source" : "AUTOCOMPLETE_SPEC.md 7.9",
+    "sql" : "WITH source(id, name) AS (SELECT id, name FROM users)\nINSERT INTO |",
+    "title" : "CTE before INSERT",
+    "trigger" : "typing"
+  }
+]

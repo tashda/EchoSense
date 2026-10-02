@@ -1,0 +1,237 @@
+[
+  {
+    "caretMarker" : "|",
+    "comments" : [
+
+    ],
+    "dialect" : "postgresql",
+    "echoSense" : {
+      "excludes" : [
+
+      ],
+      "insertText" : {
+
+      },
+      "items" : [
+        "name",
+        "email",
+        "created_at",
+        "department_id"
+      ],
+      "order" : "leading",
+      "outcome" : "suggests"
+    },
+    "group" : "INSERT / UPDATE / DELETE",
+    "id" : "SPEC-6.1",
+    "knownIssue" : "Fails today: Expected these first, in order: name, email, created_at, department_id. Got: id, department_id, \"name\", created_at.",
+    "options" : {
+      "includeSystemSchemas" : false,
+      "qualifyTableInsertions" : false
+    },
+    "review" : "imported",
+    "rules" : [
+
+    ],
+    "schema" : "spec",
+    "should" : "=> [name, email, created_at, department_id]\n- Auto-increment/serial/identity columns (`id`) deprioritized (shown last or excluded).",
+    "source" : "AUTOCOMPLETE_SPEC.md 6.1",
+    "sql" : "INSERT INTO users (|)",
+    "title" : "INSERT column list — auto-increment deprioritized",
+    "trigger" : "typing"
+  },
+  {
+    "caretMarker" : "|",
+    "comments" : [
+
+    ],
+    "dialect" : "postgresql",
+    "echoSense" : {
+      "excludes" : [
+
+      ],
+      "insertText" : {
+
+      },
+      "items" : [
+
+      ],
+      "order" : "exact",
+      "outcome" : "silent"
+    },
+    "group" : "INSERT / UPDATE / DELETE",
+    "id" : "SPEC-6.2",
+    "options" : {
+      "includeSystemSchemas" : false,
+      "qualifyTableInsertions" : false
+    },
+    "review" : "imported",
+    "rules" : [
+
+    ],
+    "schema" : "spec",
+    "should" : "=> SILENT` — User typing literal values.",
+    "source" : "AUTOCOMPLETE_SPEC.md 6.2",
+    "sql" : "INSERT INTO users (name, email) VALUES (|)",
+    "title" : "INSERT VALUES — silent",
+    "trigger" : "typing"
+  },
+  {
+    "caretMarker" : "|",
+    "comments" : [
+
+    ],
+    "dialect" : "postgresql",
+    "echoSense" : {
+      "excludes" : [
+
+      ],
+      "insertText" : {
+
+      },
+      "items" : [
+        "id",
+        "name",
+        "email",
+        "created_at",
+        "department_id"
+      ],
+      "order" : "leading",
+      "outcome" : "suggests"
+    },
+    "group" : "INSERT / UPDATE / DELETE",
+    "id" : "SPEC-6.3",
+    "knownIssue" : "Fails today: Expected suggestions, but the popup doesn't open. A space only asks EchoSense after FROM, JOIN, UPDATE, CALL, EXEC or INTO. EchoSense would offer id, department_id, \"name\", created_at, email, $1, ABS, AGE, ARRAY_AGG, ARRAY_APPEND, ARRAY_CAT, ARRAY_LENGTH and 48 more.",
+    "options" : {
+      "includeSystemSchemas" : false,
+      "qualifyTableInsertions" : false
+    },
+    "review" : "imported",
+    "rules" : [
+
+    ],
+    "schema" : "spec",
+    "should" : "=> [columns from users]",
+    "source" : "AUTOCOMPLETE_SPEC.md 6.3",
+    "sql" : "UPDATE users SET |",
+    "title" : "UPDATE SET — columns immediately",
+    "trigger" : "typing"
+  },
+  {
+    "caretMarker" : "|",
+    "comments" : [
+
+    ],
+    "dialect" : "postgresql",
+    "echoSense" : {
+      "excludes" : [
+
+      ],
+      "insertText" : {
+
+      },
+      "items" : [
+
+      ],
+      "order" : "exact",
+      "outcome" : "silent"
+    },
+    "group" : "INSERT / UPDATE / DELETE",
+    "id" : "SPEC-6.4",
+    "options" : {
+      "includeSystemSchemas" : false,
+      "qualifyTableInsertions" : false
+    },
+    "review" : "imported",
+    "rules" : [
+
+    ],
+    "schema" : "spec",
+    "should" : "=> SILENT` — Same rule as WHERE right-hand side.",
+    "source" : "AUTOCOMPLETE_SPEC.md 6.4",
+    "sql" : "UPDATE users SET name = |",
+    "title" : "UPDATE SET right-hand side — silent",
+    "trigger" : "typing"
+  },
+  {
+    "caretMarker" : "|",
+    "comments" : [
+
+    ],
+    "dialect" : "postgresql",
+    "echoSense" : {
+      "excludes" : [
+
+      ],
+      "insertText" : {
+
+      },
+      "items" : [
+        "id",
+        "name",
+        "email",
+        "created_at",
+        "department_id"
+      ],
+      "order" : "leading",
+      "outcome" : "suggests"
+    },
+    "group" : "INSERT / UPDATE / DELETE",
+    "id" : "SPEC-6.5",
+    "knownIssue" : "Fails today: Expected suggestions, but the popup doesn't open. A space only asks EchoSense after FROM, JOIN, UPDATE, CALL, EXEC or INTO. EchoSense would offer id, department_id, \"name\", created_at, email, $1, ABS, AGE, ARRAY_AGG, ARRAY_APPEND, ARRAY_CAT, ARRAY_LENGTH and 48 more.",
+    "options" : {
+      "includeSystemSchemas" : false,
+      "qualifyTableInsertions" : false
+    },
+    "review" : "imported",
+    "rules" : [
+
+    ],
+    "schema" : "spec",
+    "should" : "=> [columns from users]",
+    "source" : "AUTOCOMPLETE_SPEC.md 6.5",
+    "sql" : "UPDATE users SET name = 'foo', |",
+    "title" : "UPDATE SET after comma — columns immediately",
+    "trigger" : "typing"
+  },
+  {
+    "caretMarker" : "|",
+    "comments" : [
+
+    ],
+    "dialect" : "postgresql",
+    "echoSense" : {
+      "excludes" : [
+
+      ],
+      "insertText" : {
+
+      },
+      "items" : [
+        "id",
+        "name",
+        "email",
+        "created_at",
+        "department_id"
+      ],
+      "order" : "leading",
+      "outcome" : "suggests"
+    },
+    "group" : "INSERT / UPDATE / DELETE",
+    "id" : "SPEC-6.6",
+    "knownIssue" : "Fails today: Expected suggestions, but the popup doesn't open. A space only asks EchoSense after FROM, JOIN, UPDATE, CALL, EXEC or INTO. EchoSense would offer id, department_id, \"name\", created_at, email, $1, ABS, AGE, ARRAY_AGG, ARRAY_APPEND, ARRAY_CAT, ARRAY_LENGTH and 48 more.",
+    "options" : {
+      "includeSystemSchemas" : false,
+      "qualifyTableInsertions" : false
+    },
+    "review" : "imported",
+    "rules" : [
+
+    ],
+    "schema" : "spec",
+    "should" : "=> [columns from users, functions]",
+    "source" : "AUTOCOMPLETE_SPEC.md 6.6",
+    "sql" : "DELETE FROM users WHERE |",
+    "title" : "DELETE WHERE",
+    "trigger" : "typing"
+  }
+]

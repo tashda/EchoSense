@@ -36,10 +36,12 @@ public enum SQLAutoCompletionKind: String, Equatable, Codable, Sendable {
     case snippet
     case parameter
     case join
+    case database
 
     public var iconSystemName: String {
         switch self {
         case .schema: return "square.grid.2x2"
+        case .database: return "cylinder"
         case .table: return "tablecells"
         case .view: return "rectangle.stack"
         case .materializedView: return "rectangle.stack.fill"
@@ -95,6 +97,21 @@ public struct SQLAutoCompletionSuggestion: Identifiable, Equatable, Codable, Sen
         }
     }
 
+    /// What the schema knows about a column suggestion: nullability and keys. Lets an editor
+    /// describe the column without another metadata lookup.
+    public struct ColumnFacts: Equatable, Codable, Sendable {
+        public let isNullable: Bool
+        public let isPrimaryKey: Bool
+        /// The referenced column as `schema.table.column`, when the column is a foreign key.
+        public let foreignKeyTarget: String?
+
+        public init(isNullable: Bool, isPrimaryKey: Bool, foreignKeyTarget: String? = nil) {
+            self.isNullable = isNullable
+            self.isPrimaryKey = isPrimaryKey
+            self.foreignKeyTarget = foreignKeyTarget
+        }
+    }
+
     public enum Source: Equatable, Codable, Sendable {
         case engine
         case history
@@ -109,6 +126,7 @@ public struct SQLAutoCompletionSuggestion: Identifiable, Equatable, Codable, Sen
     public let kind: SQLAutoCompletionKind
     public let origin: Origin?
     public let dataType: String?
+    public let columnFacts: ColumnFacts?
     public let tableColumns: [TableColumn]?
     public let snippetText: String?
     public let priority: Int
@@ -122,6 +140,7 @@ public struct SQLAutoCompletionSuggestion: Identifiable, Equatable, Codable, Sen
                 kind: SQLAutoCompletionKind,
                 origin: Origin? = nil,
                 dataType: String? = nil,
+                columnFacts: ColumnFacts? = nil,
                 tableColumns: [TableColumn]? = nil,
                 snippetText: String? = nil,
                 priority: Int = 1000,
@@ -138,6 +157,7 @@ public struct SQLAutoCompletionSuggestion: Identifiable, Equatable, Codable, Sen
             self.origin = nil
         }
         self.dataType = dataType
+        self.columnFacts = columnFacts
         self.tableColumns = tableColumns?.isEmpty == true ? nil : tableColumns
         self.snippetText = snippetText
         self.priority = priority
@@ -158,6 +178,7 @@ extension SQLAutoCompletionSuggestion {
         case .snippet: return "Snippet"
         case .parameter: return "Parameter"
         case .join: return "Join"
+        case .database: return "Database"
         }
     }
 
@@ -183,6 +204,8 @@ extension SQLAutoCompletionSuggestion {
         switch kind {
         case .schema:
             return joined([origin.schema])
+        case .database:
+            return joined([origin.database])
         case .table, .view, .materializedView:
             return joined([origin.schema, origin.object])
         case .column:
@@ -243,11 +266,13 @@ public struct SQLAutoCompletionResult: Sendable {
 }
 
 public struct SQLAutoCompletionTableFocus: Equatable, Sendable {
+    public let database: String?
     public let schema: String?
     public let name: String
     public let alias: String?
 
-    public init(schema: String?, name: String, alias: String?) {
+    public init(database: String? = nil, schema: String?, name: String, alias: String?) {
+        self.database = database
         self.schema = schema
         self.name = name
         self.alias = alias

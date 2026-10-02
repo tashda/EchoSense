@@ -1,0 +1,161 @@
+[
+  {
+    "caretMarker" : "|",
+    "comments" : [
+
+    ],
+    "dialect" : "postgresql",
+    "echoSense" : {
+      "excludes" : [
+        "mydb"
+      ],
+      "insertText" : {
+
+      },
+      "items" : [
+        "users"
+      ],
+      "order" : "leading",
+      "outcome" : "suggests"
+    },
+    "group" : "Cross-Database (MSSQL)",
+    "id" : "SPEC-24.1",
+    "knownIssue" : "Fails today: Expected these first, in this order: users. Now: users is #7.",
+    "options" : {
+      "includeSystemSchemas" : false,
+      "qualifyTableInsertions" : false
+    },
+    "review" : "imported",
+    "rules" : [
+      "RULE-001"
+    ],
+    "schema" : "spec",
+    "should" : "No database names shown.",
+    "source" : "AUTOCOMPLETE_SPEC.md 24.1",
+    "sql" : "SELECT * FROM |",
+    "title" : "Database names never auto-suggested in FROM",
+    "trigger" : "typing"
+  },
+  {
+    "caretMarker" : "|",
+    "comments" : [
+
+    ],
+    "dialect" : "mssql",
+    "echoSense" : {
+      "excludes" : [
+
+      ],
+      "insertText" : {
+        "customers" : "otherdb.dbo.customers",
+        "invoices" : "otherdb.dbo.invoices"
+      },
+      "items" : [
+        "invoices",
+        "customers"
+      ],
+      "order" : "leading",
+      "outcome" : "suggests"
+    },
+    "group" : "Cross-Database (MSSQL)",
+    "id" : "SPEC-24.2",
+    "knownIssue" : "Engine offers nothing after `otherdb.`; cross-database lookup needs the other database's structure loaded (lazy load not modelled by the runner yet)",
+    "options" : {
+      "includeSystemSchemas" : false,
+      "qualifyTableInsertions" : false
+    },
+    "popup" : {
+      "groups" : [
+        {
+          "block" : {
+            "family" : "objects",
+            "keysOnly" : false,
+            "kinds" : [
+              "table",
+              "view"
+            ],
+            "notInQuery" : false,
+            "place" : "databaseBeforeDot"
+          },
+          "include" : [
+
+          ],
+          "order" : [
+
+          ],
+          "typed" : false
+        },
+        {
+          "block" : {
+            "family" : "schemas",
+            "keysOnly" : false,
+            "kinds" : [
+
+            ],
+            "notInQuery" : false,
+            "place" : "databaseBeforeDot"
+          },
+          "include" : [
+
+          ],
+          "order" : [
+
+          ],
+          "typed" : false
+        }
+      ],
+      "never" : [
+
+      ],
+      "rest" : "none"
+    },
+    "review" : "imported",
+    "rules" : [
+
+    ],
+    "schema" : "spec",
+    "should" : "- EchoSense lazy-loads metadata for `otherdb`\n- Returns status: Loading → Loaded / Not Found\n- Once loaded, shows tables (insert text: `otherdb.dbo.tablename`)",
+    "source" : "AUTOCOMPLETE_SPEC.md 24.2",
+    "sql" : "SELECT * FROM otherdb.|",
+    "title" : "Database dot triggers lazy load",
+    "trigger" : "typing"
+  },
+  {
+    "caretMarker" : "|",
+    "comments" : [
+
+    ],
+    "dialect" : "mssql",
+    "echoSense" : {
+      "excludes" : [
+        "users"
+      ],
+      "insertText" : {
+
+      },
+      "items" : [
+        "invoices",
+        "customers"
+      ],
+      "order" : "leading",
+      "outcome" : "suggests"
+    },
+    "group" : "Cross-Database (MSSQL)",
+    "id" : "SPEC-24.3",
+    "knownIssue" : "Fails today: Expected these first, in this order: invoices, customers. Now: invoices is #2, customers is #1.",
+    "options" : {
+      "includeSystemSchemas" : false,
+      "qualifyTableInsertions" : false
+    },
+    "review" : "imported",
+    "rules" : [
+
+    ],
+    "schema" : "spec",
+    "should" : "=> [tables from otherdb.dbo]",
+    "source" : "AUTOCOMPLETE_SPEC.md 24.3",
+    "sql" : "SELECT * FROM otherdb.dbo.|",
+    "title" : "Database.schema.table path",
+    "trigger" : "typing"
+  }
+]

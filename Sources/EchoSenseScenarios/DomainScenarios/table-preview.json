@@ -1,0 +1,130 @@
+[
+  {
+    "caretMarker" : "|",
+    "domain" : "table-preview",
+    "expected" : [
+      "SELECT TOP 1000 * FROM [dbo].[Orders];"
+    ],
+    "group" : "Dialects",
+    "id" : "TBL-001",
+    "input" : "dbo.Orders",
+    "options" : {
+      "dialect" : "mssql"
+    },
+    "should" : "SQL Server uses TOP and brackets",
+    "title" : "SQL Server uses TOP and brackets"
+  },
+  {
+    "caretMarker" : "|",
+    "domain" : "table-preview",
+    "expected" : [
+      "SELECT * FROM \"public\".\"orders\" LIMIT 1000;"
+    ],
+    "group" : "Dialects",
+    "id" : "TBL-002",
+    "input" : "public.orders",
+    "options" : {
+      "dialect" : "postgresql"
+    },
+    "should" : "PostgreSQL uses LIMIT and double quotes",
+    "title" : "PostgreSQL uses LIMIT and double quotes"
+  },
+  {
+    "caretMarker" : "|",
+    "domain" : "table-preview",
+    "expected" : [
+      "SELECT * FROM `shop`.`orders` LIMIT 1000;"
+    ],
+    "group" : "Dialects",
+    "id" : "TBL-003",
+    "input" : "shop.orders",
+    "options" : {
+      "dialect" : "mysql"
+    },
+    "should" : "MySQL uses LIMIT and backticks",
+    "title" : "MySQL uses LIMIT and backticks"
+  },
+  {
+    "caretMarker" : "|",
+    "domain" : "table-preview",
+    "expected" : [
+      "SELECT * FROM \"orders\" LIMIT 1000;"
+    ],
+    "group" : "Dialects",
+    "id" : "TBL-004",
+    "input" : "main.orders",
+    "options" : {
+      "dialect" : "sqlite"
+    },
+    "should" : "SQLite has no schema",
+    "title" : "SQLite has no schema"
+  },
+  {
+    "caretMarker" : "|",
+    "domain" : "table-preview",
+    "expected" : [
+      "SELECT TOP 1000 * FROM [dbo].[a]]b];"
+    ],
+    "group" : "Quoting",
+    "id" : "TBL-005",
+    "input" : "",
+    "options" : {
+      "dialect" : "mssql",
+      "schema" : "dbo",
+      "table" : "a]b"
+    },
+    "should" : "A closing bracket is doubled",
+    "title" : "A closing bracket is doubled"
+  },
+  {
+    "caretMarker" : "|",
+    "domain" : "table-preview",
+    "expected" : [
+      "SELECT * FROM \"public\".\"a\"\"b\" LIMIT 1000;"
+    ],
+    "group" : "Quoting",
+    "id" : "TBL-006",
+    "input" : "",
+    "options" : {
+      "dialect" : "postgresql",
+      "schema" : "public",
+      "table" : "a\"b"
+    },
+    "should" : "A double quote is doubled",
+    "title" : "A double quote is doubled"
+  },
+  {
+    "caretMarker" : "|",
+    "domain" : "table-preview",
+    "expected" : [
+      "SELECT * FROM `shop`.`a``b` LIMIT 1000;"
+    ],
+    "group" : "Quoting",
+    "id" : "TBL-007",
+    "input" : "",
+    "options" : {
+      "dialect" : "mysql",
+      "schema" : "shop",
+      "table" : "a`b"
+    },
+    "should" : "A backtick is doubled",
+    "title" : "A backtick is doubled"
+  },
+  {
+    "caretMarker" : "|",
+    "domain" : "table-preview",
+    "expected" : [
+      "SELECT * FROM \"My Schema\".\"Order Items\" LIMIT 1000;"
+    ],
+    "group" : "Quoting",
+    "id" : "TBL-008",
+    "input" : "",
+    "options" : {
+      "dialect" : "postgresql",
+      "schema" : "My Schema",
+      "table" : "Order Items"
+    },
+    "should" : "Names with spaces and capitals",
+    "title" : "Names with spaces and capitals"
+  }
+]
