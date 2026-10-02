@@ -7,6 +7,11 @@ import os
 /// Thread-safety: Uses `OSAllocatedUnfairLock` for synchronous mutual exclusion.
 /// This avoids the cooperative-thread-pool deadlock that occurs with `DispatchQueue`
 /// reader-writer patterns under Swift Testing's parallel execution.
+public protocol SQLHistoryPersistence: Sendable {
+    /// Hosts persist encrypted snapshots. Revisions increase within this process; ignore stale saves.
+    func save(_ data: Data, revision: UInt64) async throws
+}
+
 public final class SQLAutoCompletionHistoryStore: Sendable {
 
     struct HistoryEntry: Sendable {
@@ -20,61 +25,20 @@ public final class SQLAutoCompletionHistoryStore: Sendable {
     private struct State: Sendable {
         var storage: [String: [HistoryEntry]] = [:]
         var pendingSave: Bool = false
+        var revision: UInt64 = 0
+        var persistence: (any SQLHistoryPersistence)?
     }
 
     private let state: OSAllocatedUnfairLock<State>
     private let maxEntriesPerContext = 20
-    private let fileURL: URL
     private let saveDebounceInterval: TimeInterval = 1.0
     private let persistenceVersion = 1
 
-    private init() {
-        let fm = FileManager.default
-        let support = (try? fm.url(for: .applicationSupportDirectory,
-                                   in: .userDomainMask,
-                                   appropriateFor: nil,
-                                   create: true)) ?? URL(fileURLWithPath: NSTemporaryDirectory(), isDirectory: true)
-        let baseDir = support.appendingPathComponent("Echo", isDirectory: true)
-        if !fm.fileExists(atPath: baseDir.path) {
-            do {
-                try fm.createDirectory(at: baseDir, withIntermediateDirectories: true)
-            } catch {
-                Logger.history.debug("Failed to create base directory: \(error)")
-            }
-        }
-        let historyDir = baseDir.appendingPathComponent("AutocompleteHistory", isDirectory: true)
-        if !fm.fileExists(atPath: historyDir.path) {
-            do {
-                try fm.createDirectory(at: historyDir, withIntermediateDirectories: true)
-            } catch {
-                Logger.history.debug("Failed to create history directory: \(error)")
-            }
-        }
-        fileURL = historyDir.appendingPathComponent("history.json")
+    private init() { state = OSAllocatedUnfairLock(initialState: State()) }
 
-        // Load from disk
-        var initialStorage: [String: [HistoryEntry]] = [:]
-        if fm.fileExists(atPath: fileURL.path) {
-            do {
-                let data = try Data(contentsOf: fileURL)
-                let snapshot = try JSONDecoder().decode(Snapshot.self, from: data)
-                if snapshot.version == 1 {
-                    for (context, entries) in snapshot.entriesByContext {
-                        let mapped = entries.map { $0.makeEntry() }
-                        if !mapped.isEmpty {
-                            initialStorage[context] = mapped
-                        }
-                    }
-                }
-                let totalEntries = initialStorage.values.reduce(0) { $0 + $1.count }
-                Logger.history.debug("Loaded history: \(totalEntries) entries across \(initialStorage.count) contexts")
-            } catch {
-                Logger.history.debug("Failed to decode history file, removing: \(error)")
-                try? fm.removeItem(at: fileURL)
-            }
-        }
-
-        state = OSAllocatedUnfairLock(initialState: State(storage: initialStorage))
+    /// Echo owns storage, encryption and startup loading; the completion engine stays synchronous.
+    public func setPersistence(_ persistence: (any SQLHistoryPersistence)?) {
+        state.withLock { $0.persistence = persistence }
     }
 
     public struct Snapshot: Codable, Sendable {
@@ -126,6 +90,7 @@ public final class SQLAutoCompletionHistoryStore: Sendable {
                 entries = Array(entries.prefix(maxEntries))
             }
             state.storage[key] = entries
+            state.revision += 1
 
             if !state.pendingSave {
                 state.pendingSave = true
@@ -195,6 +160,7 @@ public final class SQLAutoCompletionHistoryStore: Sendable {
         let maxEntries = maxEntriesPerContext
 
         let needsSave = state.withLock { state in
+            state.revision += 1
             if !merge {
                 state.storage.removeAll()
             }
@@ -231,12 +197,8 @@ public final class SQLAutoCompletionHistoryStore: Sendable {
     }
 
     public func currentUsageBytes() -> UInt64 {
-        let fm = FileManager.default
-        if let attributes = try? fm.attributesOfItem(atPath: fileURL.path),
-           let fileSize = attributes[.size] as? NSNumber {
-            return fileSize.uint64Value
-        }
-        return 0
+        let snapshot = state.withLock { makeSnapshot(from: $0.storage) }
+        return UInt64((try? JSONEncoder().encode(snapshot).count) ?? 0)
     }
 
     public func flush() {
@@ -265,8 +227,9 @@ public final class SQLAutoCompletionHistoryStore: Sendable {
         state.withLock { state in
             state.pendingSave = false
             state.storage.removeAll()
+            state.revision += 1
         }
-        removePersistedFile()
+        persistImmediately()
     }
 
     private func scheduleSave() {
@@ -293,23 +256,15 @@ public final class SQLAutoCompletionHistoryStore: Sendable {
     }
 
     private func persistImmediately() {
-        let snapshotData = state.withLock { state in
-            makeSnapshot(from: state.storage)
+        let (snapshot, revision, persistence) = state.withLock {
+            (makeSnapshot(from: $0.storage), $0.revision, $0.persistence)
         }
-        do {
-            let encoder = JSONEncoder()
-            encoder.outputFormatting = [.prettyPrinted]
-            let data = try encoder.encode(snapshotData)
-            try data.write(to: fileURL, options: [.atomic])
-        } catch {
-            Logger.history.error("Failed to persist autocomplete history: \(error)")
-        }
-    }
-
-    private func removePersistedFile() {
-        let fm = FileManager.default
-        if fm.fileExists(atPath: fileURL.path) {
-            try? fm.removeItem(at: fileURL)
+        guard let persistence else { return }
+        Task(name: "Persist completion history") {
+            do {
+                let data = try JSONEncoder().encode(snapshot)
+                try await persistence.save(data, revision: revision)
+            } catch { Logger.history.error("Failed to persist autocomplete history: \(error)") }
         }
     }
 }
