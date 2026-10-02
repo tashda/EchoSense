@@ -50,7 +50,7 @@ jobs:
             generate-documentation --target EchoSense \
             --disable-indexing \
             --transform-for-static-hosting \
-            --hosting-base-path /EchoSense \
+            --hosting-base-path /echo-sense \
             --output-path "$(pwd)/docs"
 
       - name: Setup Pages

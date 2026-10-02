@@ -42,7 +42,7 @@ jobs:
         run: |
           python3 .github/scripts/generate_release_notes.py \
             --repo-key echosense \
-            --repo-name EchoSense \
+            --repo-name echo-sense \
             --new-tag "${{ steps.version.outputs.tag }}" \
             --previous-tag "${{ steps.version.outputs.previous_tag }}" \
             --output release-notes.md
